@@ -160,18 +160,18 @@ supervisor during the requirements review.
   \centering
   \caption{Non-functional requirements}
   \label{tab:nfr}
-  \begin{tabularx}{\textwidth}{lX}
-    \toprule
-    \textbf{Criterion} & \textbf{Description} \\
-    \midrule
-    Performance      & Catalogue and store pages render in under one second on a 10\,Mbit/s connection; typical API endpoints respond in under 300\,ms. \\
-    Security         & Passwords hashed by Better-Auth; sessions in HTTP-only, \texttt{SameSite=Lax} cookies; HTTP security headers via Helmet; uploads validated by type and size; every protected route gated by an auth guard and the \texttt{@Roles()} decorator, with object-level ownership enforced in the service layer. Required secrets are validated at start-up. \\
-    Scalability      & The backend is stateless and horizontally scalable behind a reverse proxy; uploads live on a volume that can migrate to object storage with no code change. \\
-    Availability     & The production stack runs under Docker Compose with restart policies; deployment is zero-downtime through rolling container replacement. \\
-    Usability        & The frontend follows accessible component patterns, is fully responsive, and uses slug-based, human-readable URLs. \\
-    Maintainability  & The codebase is split into bounded NestJS modules, the schema is versioned through Prisma migrations, and the infrastructure is reproducible through Terraform. \\
-    Observability    & Application logs are emitted to \texttt{stdout} and aggregated by Docker; the chat assistant offers a queryable view of the database for diagnostics. \\
-    \bottomrule
+  \begin{tabularx}{\textwidth}{|l|X|}
+    \hline
+    \rowcolor{tableHeader}
+    \textcolor{white}{\textbf{Criterion}} & \textcolor{white}{\textbf{Description}} \\
+    \hline
+    Performance      & Catalogue and store pages render in under one second on a 10\,Mbit/s connection; typical API endpoints respond in under 300\,ms. \\ \hline
+    Security         & Passwords hashed by Better-Auth; sessions in HTTP-only, \texttt{SameSite=Lax} cookies; HTTP security headers via Helmet; uploads validated by type and size; every protected route gated by an auth guard and the \texttt{@Roles()} decorator, with object-level ownership enforced in the service layer. Required secrets are validated at start-up. \\ \hline
+    Scalability      & The backend is stateless and horizontally scalable behind a reverse proxy; uploads live on a volume that can migrate to object storage with no code change. \\ \hline
+    Availability     & The production stack runs under Docker Compose with restart policies; deployment is zero-downtime through rolling container replacement. \\ \hline
+    Usability        & The frontend follows accessible component patterns, is fully responsive, and uses slug-based, human-readable URLs. \\ \hline
+    Maintainability  & The codebase is split into bounded NestJS modules, the schema is versioned through Prisma migrations, and the infrastructure is reproducible through Terraform. \\ \hline
+    Observability    & Application logs are emitted to \texttt{stdout} and aggregated by Docker; the chat assistant offers a queryable view of the database for diagnostics. \\ \hline
   \end{tabularx}
 \end{table}
 
@@ -435,14 +435,14 @@ each service.
   \centering
   \caption{AI models used per service}
   \label{tab:aimodels}
-  \begin{tabularx}{\textwidth}{lX}
-    \toprule
-    \textbf{Service} & \textbf{Model / provider} \\
-    \midrule
-    Store and product verification & Multimodal LLM (Google Gemini) screening images and listing text \\
-    AI storefront redesign         & Groq \texttt{llama-3.3-70b-versatile} generating the storefront customisation \\
-    Database chat assistant        & Hosted LLM translating natural-language questions into safe database queries \\
-    \bottomrule
+  \begin{tabularx}{\textwidth}{|l|X|}
+    \hline
+    \rowcolor{tableHeader}
+    \textcolor{white}{\textbf{Service}} & \textcolor{white}{\textbf{Model / provider}} \\
+    \hline
+    Store and product verification & Multimodal LLM (Google Gemini) screening images and listing text \\ \hline
+    AI storefront redesign         & Groq \texttt{llama-3.3-70b-versatile} generating the storefront customisation \\ \hline
+    Database chat assistant        & Hosted LLM translating natural-language questions into safe database queries \\ \hline
   \end{tabularx}
 \end{table}
 
@@ -457,19 +457,19 @@ API testing.
   \centering
   \caption{Tools used throughout the project}
   \label{tab:tools}
-  \begin{tabular}{>{\centering\arraybackslash}m{1.4cm} l m{8.2cm}}
-    \toprule
-    \textbf{Logo} & \textbf{Tool} & \textbf{Role} \\
-    \midrule
-    \includegraphics[height=0.8cm]{img/github.png}    & GitHub    & Version control, pull-request review and CI/CD via GitHub Actions. \\
-    \includegraphics[height=0.8cm]{img/notion.png}    & Notion    & Backlog management, task board and record of user stories. \\
-    \includegraphics[height=0.8cm]{img/vscode.png}    & VS Code   & Primary IDE, extended for TypeScript, Prisma, ESLint and Git. \\
-    \includegraphics[height=0.8cm]{img/docker.png}    & Docker    & Containerisation of all services for dev/prod parity. \\
-    \includegraphics[height=0.8cm]{img/terraform.png} & Terraform & Infrastructure-as-code provisioning of the DigitalOcean resources. \\
-    \includegraphics[height=0.8cm]{img/n8n.png}       & n8n       & Visual workflow automation orchestrating the AI features. \\
-    \includegraphics[height=0.8cm]{img/postman.png}   & Postman   & Manual testing and documentation of the REST endpoints. \\
-    \includegraphics[height=0.8cm]{img/pnpm.png}      & pnpm      & Fast, disk-efficient package manager for the monorepo. \\
-    \bottomrule
+  \begin{tabular}{|>{\centering\arraybackslash}m{1.4cm}|l|m{8.2cm}|}
+    \hline
+    \rowcolor{tableHeader}
+    \textcolor{white}{\textbf{Logo}} & \textcolor{white}{\textbf{Tool}} & \textcolor{white}{\textbf{Role}} \\
+    \hline
+    \includegraphics[height=0.8cm]{img/github.png}    & GitHub    & Version control, pull-request review and CI/CD via GitHub Actions. \\ \hline
+    \includegraphics[height=0.8cm]{img/notion.png}    & Notion    & Backlog management, task board and record of user stories. \\ \hline
+    \includegraphics[height=0.8cm]{img/vscode.png}    & VS Code   & Primary IDE, extended for TypeScript, Prisma, ESLint and Git. \\ \hline
+    \includegraphics[height=0.8cm]{img/docker.png}    & Docker    & Containerisation of all services for dev/prod parity. \\ \hline
+    \includegraphics[height=0.8cm]{img/terraform.png} & Terraform & Infrastructure-as-code provisioning of the DigitalOcean resources. \\ \hline
+    \includegraphics[height=0.8cm]{img/n8n.png}       & n8n       & Visual workflow automation orchestrating the AI features. \\ \hline
+    \includegraphics[height=0.8cm]{img/postman.png}   & Postman   & Manual testing and documentation of the REST endpoints. \\ \hline
+    \includegraphics[height=0.8cm]{img/pnpm.png}      & pnpm      & Fast, disk-efficient package manager for the monorepo. \\ \hline
   \end{tabular}
 \end{table}
 
