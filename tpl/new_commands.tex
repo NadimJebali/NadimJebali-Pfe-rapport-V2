@@ -140,6 +140,24 @@
 \definecolor{featPremium}{HTML}{E4DFEC}
 \definecolor{featCICD}{HTML}{F2DCDB}
 
+%====== clickable cross-references (hyperref) ======%
+% Loaded last (after minitoc and caption). Makes every \ref, the table
+% of contents / list of figures / list of tables, citations and URLs
+% clickable links that jump to their target chapter, section, figure,
+% table or reference. biblatex detects hyperref at end of preamble, so
+% citation links work even though biblatex is loaded earlier.
+\usepackage{hyperref}
+\hypersetup{
+  colorlinks=true,
+  linkcolor=isiBlue,   % \ref to chapters, sections, figures, tables
+  citecolor=isiBlue,   % \cite to the bibliography / webography
+  urlcolor=isiBlue,    % \url and href
+  linktoc=all,         % both the entry text and its page number link
+  bookmarksnumbered=true,
+  pdftitle={Design and Development of a Multi-Vendor E-Commerce Marketplace},
+  pdfauthor={Nadim Jebali}
+}
+
 %========= English chrome: caption label override =========%
 % The class hard-codes French caption labels (name = Tableau).
 % With the English language selected above, override the table
