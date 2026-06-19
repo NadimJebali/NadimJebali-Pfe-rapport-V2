@@ -113,7 +113,10 @@
 % @author: Stoufa
 % Package babel-french Warning: Option `frenchb' for Babel is *deprecated*
 %\usepackage[english,arabic,frenchb]{babel}
-\usepackage[english,arabic,french]{babel}
+% English chrome: make English the MAIN language so auto-strings
+% (chapter word, Table of Contents, List of Figures/Tables) render
+% in English. Arabic and French stay loaded for the abstracts/resume.
+\usepackage[arabic,french,main=english]{babel}
 
 %%%%%%%%%%%
 
@@ -301,7 +304,7 @@
   \fancyhf{}
   \renewcommand{\footrulewidth}{0pt}
   \renewcommand{\headrulewidth}{0pt}
-  \fancyfoot[C]{{\noindent\makebox[\textwidth][c]{Année Universitaire \@collegeYear}}}
+  \fancyfoot[C]{{\noindent\makebox[\textwidth][c]{Academic Year \@collegeYear}}}
 }
 
 \fancypagestyle{backcover}{

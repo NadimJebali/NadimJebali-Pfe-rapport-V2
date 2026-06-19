@@ -1,0 +1,36 @@
+@startwbs
+<style>
+wbsDiagram {
+  node {
+    BackgroundColor #DEEBF7
+    LineColor #1F4E79
+    LineThickness 1.2
+    RoundCorner 10
+    Padding 10
+    Margin 8
+    FontName Sans
+    FontSize 14
+  }
+  :depth(0) {
+    BackgroundColor #1F4E79
+    FontColor white
+    FontStyle bold
+  }
+  :depth(1) {
+    BackgroundColor #2E75B6
+    FontColor white
+    FontStyle bold
+  }
+}
+</style>
+* General\nManagement
+** Engineering
+*** Web & Mobile
+*** AI Systems
+*** IoT & Embedded
+*** 3D Solutions
+** Project Supervision\n& Quality
+*** Professional\nSupervision
+*** Code Review\n& QA
+** R&D /\nInnovation
+@endwbs

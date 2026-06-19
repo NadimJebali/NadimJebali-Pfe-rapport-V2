@@ -99,8 +99,8 @@
     \newpage}
 
 %================ document main language ================%
-%\selectlanguage{english}
-\selectlanguage{french}
+\selectlanguage{english}
+%\selectlanguage{french}
 
 %================== required packages ===================%
 
@@ -112,3 +112,37 @@
 \usepackage{pdflscape}
 \usepackage{rotating}
 \usepackage{wrapfig}
+
+%====== table packages used by chapters 1 & 2 ======%
+\usepackage{booktabs}   % \toprule \midrule \bottomrule
+\usepackage{tabularx}   % auto-width tabular* columns
+\usepackage{makecell}   % \makecell multi-line cells
+
+%====== colours for the product backlog table (chapter 2) ======%
+\definecolor{tableHeader}{RGB}{31,78,121}
+% MoSCoW priorities
+\definecolor{moscowMust}{HTML}{F8CBAD}
+\definecolor{moscowShould}{HTML}{FFE699}
+\definecolor{moscowCould}{HTML}{C6E0B4}
+\definecolor{moscowWont}{HTML}{D9D9D9}
+% complexity
+\definecolor{complexLow}{HTML}{C6EFCE}
+\definecolor{complexMed}{HTML}{FFEB9C}
+\definecolor{complexHigh}{HTML}{FFD966}
+\definecolor{complexVHigh}{HTML}{F4B183}
+% feature bands
+\definecolor{featAuth}{HTML}{DEEBF7}
+\definecolor{featStore}{HTML}{E2EFDA}
+\definecolor{featProduct}{HTML}{FCE4D6}
+\definecolor{featOrder}{HTML}{FFF2CC}
+\definecolor{featAdmin}{HTML}{EDEDED}
+\definecolor{featAI}{HTML}{DDEDF8}
+\definecolor{featPremium}{HTML}{E4DFEC}
+\definecolor{featCICD}{HTML}{F2DCDB}
+
+%========= English chrome: caption label override =========%
+% The class hard-codes French caption labels (name = Tableau).
+% With the English language selected above, override the table
+% label to English. (Figures already use "Figure", identical in
+% English.) Done here, after caption is loaded by the class.
+\captionsetup[table]{name=Table}

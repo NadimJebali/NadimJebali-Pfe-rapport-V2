@@ -1,0 +1,35 @@
+@startgantt
+printscale weekly
+project starts 2026-02-02
+
+' ---- colours ----
+[Inception & Requirements] as [INC] lasts 2 weeks
+[INC] is colored in #BDD7EE
+
+-- Release 1 --
+[Sprint 1: Authentication & Onboarding] as [S1] lasts 3 weeks
+[S1] starts at [INC]'s end
+[S1] is colored in #9DC3E6
+[Sprint 2: Store & Product Management] as [S2] lasts 4 weeks
+[S2] starts at [S1]'s end
+[S2] is colored in #9DC3E6
+[Release 1 delivered] happens at [S2]'s end
+
+-- Release 2 --
+[Sprint 3: Orders & Administration] as [S3] lasts 3 weeks
+[S3] starts at [S2]'s end
+[S3] is colored in #2E75B6
+[Sprint 4: AI, Premium & CI/CD] as [S4] lasts 4 weeks
+[S4] starts at [S3]'s end
+[S4] is colored in #2E75B6
+[Release 2 delivered] happens at [S4]'s end
+
+-- Closure --
+[Tests & Deployment] as [DEP] lasts 2 weeks
+[DEP] starts at [S4]'s end
+[DEP] is colored in #BDD7EE
+
+[Report Writing] as [DOC] lasts 18 weeks
+[DOC] starts at [INC]'s start
+[DOC] is colored in #D9D9D9
+@endgantt
