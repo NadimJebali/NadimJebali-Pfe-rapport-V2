@@ -446,12 +446,14 @@ each service.
   \end{tabularx}
 \end{table}
 
-\subsection{Technological Tools}
+\subsection{Tools, Frameworks and Languages}
 
-Table~\ref{tab:tools} lists the tools used throughout the project,
+The system is implemented in \textbf{TypeScript} end to end.
+Table~\ref{tab:tools} lists the tools used throughout the project ---
 covering source control, project tracking, development,
 containerisation, infrastructure provisioning, workflow automation and
-API testing.
+API testing --- while Table~\ref{tab:frameworks} summarises the main
+frameworks and libraries.
 
 \begin{table}[H]
   \centering
@@ -473,27 +475,6 @@ API testing.
   \end{tabular}
 \end{table}
 
-\subsection{Database}
-
-The platform stores its data in a \textbf{MariaDB} relational database
-accessed through the \textbf{Prisma} ORM, which provides a type-safe
-client and versioned migrations. The relational model captures users
-and their roles, stores and their customisation, products with
-categories and tags, and orders with their line items.
-Figure~\ref{fig:er} shows the entity-relationship diagram.
-
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=\columnwidth,keepaspectratio]{img/er-diagram.png}
-  \caption{Entity-relationship diagram of the database}
-  \label{fig:er}
-\end{figure}
-
-\subsection{Frameworks and Languages}
-
-The system is implemented in \textbf{TypeScript} end to end.
-Table~\ref{tab:frameworks} summarises the main frameworks and libraries.
-
 \begin{table}[H]
   \centering
   \caption{Frameworks and languages}
@@ -513,6 +494,24 @@ Table~\ref{tab:frameworks} summarises the main frameworks and libraries.
     n8n           & Workflow engine hosting the AI orchestration. \\ \hline
   \end{tabularx}
 \end{table}
+
+\subsection{Database}
+
+The platform stores its data in a \textbf{MariaDB} relational database
+accessed through the \textbf{Prisma} ORM, which provides a type-safe
+client and versioned migrations. The database schema follows directly
+from the domain model: the entities and associations of the class
+diagram presented earlier (Figure~\ref{fig:class}) map onto the database
+tables --- users and their roles, stores and their customisation,
+products with categories and tags, and orders with their line items ---
+with Prisma generating and versioning the corresponding migrations.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\columnwidth,keepaspectratio]{img/class-diagram.png}
+  \caption{Class diagram underpinning the database schema}
+  \label{fig:db-class}
+\end{figure}
 
 \section*{Conclusion}
 
