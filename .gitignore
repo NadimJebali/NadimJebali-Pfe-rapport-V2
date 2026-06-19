@@ -1,0 +1,25 @@
+# ── LaTeX build artifacts ──────────────────────────────
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.fdb_latexmk
+*.fls
+*.idx
+*.ilg
+*.ind
+*.lof
+*.log
+*.lot
+*.maf
+*.mtc*
+*.out
+*.run.xml
+*.synctex.gz
+*.toc
+*-blx.bib
+
+# ── Editor / OS noise ──────────────────────────────────
+.DS_Store
+*.swp
+*~
