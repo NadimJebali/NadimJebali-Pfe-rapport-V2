@@ -5,8 +5,9 @@ skinparam defaultFontSize 12
 skinparam backgroundColor #FFFFFF
 skinparam shadowing false
 skinparam packageStyle rectangle
-skinparam nodesep 12
-skinparam ranksep 65
+skinparam linetype ortho
+skinparam nodesep 10
+skinparam ranksep 90
 
 skinparam actor {
   BackgroundColor #FFFFFF
@@ -35,57 +36,58 @@ left to right direction
 ' Colour key (by actor): Customer #DBEAFE | Seller #DCFCE7
 '                        Administrator #FCE7F3 | AI/System #EDE9FE | shared #E5E7EB
 
-' ── Primary actors (left) ──────────────────────────────
-actor "Visitor"       as Visitor
-actor "Customer"      as Customer
-actor "Seller"        as Seller
-actor "Administrator" as Admin
+' ── Primary actors on the LEFT ─────────────────────────
+actor "Visitor"  as Visitor
+actor "Customer" as Customer
+actor "Seller"   as Seller
 
 Visitor  <|-- Customer
 Customer <|-- Seller
 
 rectangle "Marketplace Platform" {
 
-  ' shared authentication (grey)
-  (Register)                    as A1 #E5E7EB
-  (Verify e-mail)               as A2 #E5E7EB
-  (Log in / Log out)            as A3 #E5E7EB
-
-  ' customer use cases (blue)
-  (Browse \& search catalogue)  as C1 #DBEAFE
-  (View store / product)        as C2 #DBEAFE
-  (Manage cart)                 as C3 #DBEAFE
-  (Checkout)                    as C4 #DBEAFE
-  (Place an order)              as C5 #DBEAFE
-  (Consult order history)       as C6 #DBEAFE
-  (Apply to become seller)      as C7 #DBEAFE
-
-  ' seller use cases (green)
-  (Create / edit store)         as S1 #DCFCE7
-  (Customise storefront)        as S2 #DCFCE7
-  (AI redesign storefront)      as S3 #DCFCE7
-  (Manage products)             as S4 #DCFCE7
-  (Activate store sale)         as S5 #DCFCE7
-  (View store orders)           as S6 #DCFCE7
-  (Upgrade to premium)          as S7 #DCFCE7
-
-  ' administrator use cases (pink)
-  (Review seller applications)  as D1 #FCE7F3
-  (Moderate stores \& products) as D2 #FCE7F3
-  (Suspend / delete store)      as D3 #FCE7F3
-  (Override AI verdict)         as D4 #FCE7F3
-  (Curate featured content)     as D5 #FCE7F3
-  (Manage categories)           as D6 #FCE7F3
-  (Query database via AI chat)  as D7 #FCE7F3
-
-  ' AI / system use cases (lavender)
-  (Auto-verify store / product) as V1 #EDE9FE
-  (Flag suspicious content)     as V2 #EDE9FE
+  ' clusters are ordered top-to-bottom so each sits next to its actor
+  together {
+    (Register)                    as A1 #E5E7EB
+    (Verify e-mail)               as A2 #E5E7EB
+    (Log in / Log out)            as A3 #E5E7EB
+  }
+  together {
+    (Browse & search catalogue)  as C1 #DBEAFE
+    (View store / product)        as C2 #DBEAFE
+    (Manage cart)                 as C3 #DBEAFE
+    (Checkout)                    as C4 #DBEAFE
+    (Place an order)              as C5 #DBEAFE
+    (Consult order history)       as C6 #DBEAFE
+    (Apply to become seller)      as C7 #DBEAFE
+  }
+  together {
+    (Create / edit store)         as S1 #DCFCE7
+    (Customise storefront)        as S2 #DCFCE7
+    (AI redesign storefront)      as S3 #DCFCE7
+    (Manage products)             as S4 #DCFCE7
+    (Activate store sale)         as S5 #DCFCE7
+    (View store orders)           as S6 #DCFCE7
+    (Upgrade to premium)          as S7 #DCFCE7
+  }
+  together {
+    (Review seller applications)  as D1 #FCE7F3
+    (Moderate stores & products) as D2 #FCE7F3
+    (Suspend / delete store)      as D3 #FCE7F3
+    (Override AI verdict)         as D4 #FCE7F3
+    (Curate featured content)     as D5 #FCE7F3
+    (Manage categories)           as D6 #FCE7F3
+    (Query database via AI chat)  as D7 #FCE7F3
+  }
+  together {
+    (Auto-verify store / product) as V1 #EDE9FE
+    (Flag suspicious content)     as V2 #EDE9FE
+  }
 }
 
-' ── Secondary actors (right) ───────────────────────────
+' ── Actors on the RIGHT ────────────────────────────────
+actor "Administrator"                as Admin
 actor "AI Verification\n(n8n + LLM)" as AI
-actor "E-mail Service"               as MAIL
 
 ' ── Associations ───────────────────────────────────────
 Visitor  --> A1
@@ -102,7 +104,6 @@ Seller   --> S4
 Seller   --> S5
 Seller   --> S6
 Seller   --> S7
-Admin    --> A3
 Admin    --> D1
 Admin    --> D2
 Admin    --> D3
@@ -111,19 +112,16 @@ Admin    --> D5
 Admin    --> D6
 Admin    --> D7
 
-' ── Include / extend / triggers ────────────────────────
+' ── Dependencies (curated to limit crossings) ──────────
 A1 .> A2 : <<include>>
 C4 .> C5 : <<include>>
 S2 .> S3 : <<extend>>
 C7 .> D1 : <<triggers>>
-S1 .> V1 : <<triggers>>
 S4 .> V1 : <<triggers>>
 V1 .> V2 : <<extend>>
 V2 .> D4 : <<auto-flag>>
 
-' ── Secondary-actor wiring ─────────────────────────────
-A2 --> MAIL
-C5 --> MAIL
+' ── AI actor wiring ────────────────────────────────────
 V1 --> AI
 S3 --> AI
 D7 --> AI
