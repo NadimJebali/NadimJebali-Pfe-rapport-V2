@@ -518,3 +518,238 @@ placeholder for the corresponding screenshot of the running application.
   \caption{AI database-chat assistant.}
   \label{fig:real-aichat}
 \end{figure}
+
+\section{Tests \& Validation}
+\label{sec:tests}
+
+Quality is enforced by an automated suite of \textbf{445 tests} that runs
+on every push and gates every deployment.
+
+\subsection{Testing Strategy and Tooling}
+
+The backend is tested with \textbf{Jest~30} and \texttt{ts-jest}, which
+transforms TypeScript on the fly and runs every co-located
+\texttt{*.spec.ts} file; collaborators such as the Prisma service, the
+notification service, the SMTP mailer and the authentication guards are
+replaced with deterministic mocks. The frontend is tested with
+\textbf{Vitest} and React Testing Library with \texttt{jest-dom}, which
+mount components, query the DOM by accessible role and text, and assert
+on the rendered output. Good tests here verify observable behaviour ---
+the result of a service call, the response of an endpoint, the rendered
+state of a component --- rather than internal implementation details, so
+they survive refactoring.
+
+\subsection{Test Pyramid}
+
+The suite follows the classical pyramid: a wide base of fast pure-logic
+and frontend tests, a thicker middle of service-level tests that run the
+real service code against a mocked Prisma client, and a narrow top of
+integration tests that exercise the wired-up HTTP stack through
+supertest and the global deny-by-default guard.
+Figure~\ref{fig:test-pyramid} shows how the tests distribute across these
+layers.
+
+\begin{figure}[H]
+  \centering
+  \begin{minipage}{0.85\textwidth}
+  \centering
+  \texttt{\begin{tabular}{c}
+    \textbf{Integration (83 tests)} \\
+    \footnotesize Nest app + ValidationPipe + supertest + global guard \\
+    \footnotesize controllers across the modules; deny-by-default guard wiring \\[4pt]
+    \hline\\[-6pt]
+    \textbf{Service unit tests (219 tests)} \\
+    \footnotesize Real service code, mocked Prisma \\
+    \footnotesize Product, Store, Order, Payment, User, Settings, Notification, \ldots \\[4pt]
+    \hline\\[-6pt]
+    \textbf{Pure-logic + frontend (143 tests)} \\
+    \footnotesize No I/O, no framework wiring \\
+    \footnotesize \texttt{validate-env}, \texttt{tndToStripeUsdMinor}, guards; stores, hooks, components \\
+  \end{tabular}}
+  \end{minipage}
+  \caption{Test pyramid --- 445 tests across backend (Jest, 337) and frontend (Vitest, 108).}
+  \label{fig:test-pyramid}
+\end{figure}
+
+\subsection{Backend Unit and Integration Tests}
+
+Backend unit tests inject an in-memory mock of the Prisma service into
+the real service under test through the NestJS \texttt{TestingModule},
+which lets each test drive arbitrary return values and assert on the
+exact arguments passed to Prisma --- validating business rules such as
+ownership enforcement, the server-side payment-amount derivation and the
+stale-checkout reconciliation. Integration tests boot the Nest
+application with its validation pipe and global guard and drive real
+controllers through supertest, confirming that the deny-by-default
+authorisation wiring admits exactly the intended routes.
+
+\subsection{Frontend Tests}
+
+The frontend tests cover the Zustand stores, the custom hooks and the
+React components, mounting them in a jsdom environment and asserting on
+accessible, user-visible output. Together with the backend suite they
+give the layered coverage summarised in the pyramid above.
+
+\subsection{Code Coverage and Continuous Integration}
+
+Both runners collect coverage, and the whole suite is wired into the
+continuous-integration pipeline: every push runs linting, a build and the
+full test run for the backend and the frontend, and a red suite blocks
+the build-and-deploy jobs that follow (Section~\ref{sec:cicd}).
+Figure~\ref{fig:real-ci} stands in for the CI run and coverage summary.
+
+\begin{figure}[H]
+  \centering
+  \imagePlaceholder[5cm]{Continuous-integration run --- test and coverage summary for backend and frontend}
+  \caption{Continuous-integration test and coverage summary.}
+  \label{fig:real-ci}
+\end{figure}
+
+\section{DevOps \& Deployment}
+
+The platform is delivered as a set of containers, provisioned on
+reproducible infrastructure and shipped by an automated pipeline. The
+logical and physical architecture were established in
+Section~\ref{chap:requirements}; this section details the realisation of
+the delivery chain.
+
+\subsection{Containerisation}
+
+Each service ships as a Docker image. The backend uses a
+\textbf{multi-stage} build (Listing~\ref{lst:dockerfile}): a builder
+stage installs dependencies, generates the Prisma client and compiles
+the application, then prunes development dependencies, and a slim
+production stage copies only the build artefacts and runs as the
+unprivileged \texttt{node} user, applying database migrations on start.
+
+\begin{lstlisting}[caption={Backend multi-stage Dockerfile (excerpt).},label={lst:dockerfile}]
+# build stage
+FROM node:20-alpine AS builder
+RUN corepack enable && corepack prepare pnpm@10 --activate
+WORKDIR /app
+COPY package.json pnpm-lock.yaml ./
+RUN pnpm install --frozen-lockfile
+COPY . .
+RUN npx prisma generate && pnpm run build && pnpm prune --prod
+
+# production stage
+FROM node:20-alpine
+WORKDIR /app
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/prisma ./prisma
+USER node
+EXPOSE 3000
+CMD ["sh", "-c", "npx prisma migrate deploy && node dist/src/main"]
+\end{lstlisting}
+
+The services are composed with Docker Compose: a MariaDB database with a
+health check, the backend, the frontend, an n8n engine (with a one-shot
+initialiser that imports the version-controlled workflows), and a
+\textbf{Caddy} reverse proxy that terminates TLS with automatically
+renewed Let's Encrypt certificates and adds the HTTP security headers.
+Listing~\ref{lst:compose} shows the backend and proxy service blocks.
+
+\begin{lstlisting}[caption={Docker Compose --- backend and reverse-proxy services (excerpt).},label={lst:compose}]
+services:
+  backend:
+    image: registry/marketplace-backend:${IMAGE_TAG:-latest}
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_HOST: db
+      NODE_ENV: production
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
+      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET}
+      N8N_VERIFY_WEBHOOK_URL: http://n8n:5678/webhook/ai-verify
+    volumes:
+      - uploads:/app/uploads
+
+  caddy:
+    image: caddy:2-alpine
+    restart: always
+    ports: ["80:80", "443:443"]
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+\end{lstlisting}
+
+\subsection{Infrastructure as Code}
+
+The production environment is described declaratively with
+\textbf{Terraform} using the DigitalOcean provider, so the whole server
+can be recreated identically with a single \texttt{terraform apply} and
+every change is reviewable as a diff. Three resources define the
+environment: a private \texttt{digitalocean\_vpc}, an
+\texttt{ubuntu-24-04-x64} \texttt{digitalocean\_droplet} attached to it
+with the operator's SSH key, and a firewall configured through the
+droplet's \texttt{user\_data} cloud-init script. That script makes the
+first boot zero-touch: it installs Docker Engine and the Compose plugin,
+then configures UFW to \emph{deny all inbound by default} while allowing
+only SSH, HTTP, HTTPS and the n8n webhook port. The provider also manages
+the DNS records that point the domain at the droplet.
+
+\subsection{CI/CD Pipeline}
+\label{sec:cicd}
+
+A \textbf{GitHub Actions} workflow turns a push to \texttt{main} into a
+live deployment (Listing~\ref{lst:deploy}). It first runs the backend and
+frontend test jobs; only if both pass does it provision the
+infrastructure with Terraform, build and push the backend and frontend
+Docker images to the registry, and finally deploy by copying the Compose
+file to the droplet over SSH and bringing the stack up. Secrets are
+injected from the CI secret store, so no credential lives in the
+repository, and DNS is updated to the droplet's address automatically.
+
+\begin{lstlisting}[caption={GitHub Actions build-and-deploy pipeline (excerpt).},label={lst:deploy}]
+name: Build, Push & Deploy
+on:
+  push:
+    branches: [main]
+
+jobs:
+  test-backend:    # pnpm install, prisma generate, lint, build, jest
+    runs-on: ubuntu-latest
+  test-frontend:   # pnpm install, lint, build, vitest
+    runs-on: ubuntu-latest
+  provision:       # terraform init + apply (droplet, firewall, DNS)
+    runs-on: ubuntu-latest
+  build-backend:   # docker build + push to the registry
+    needs: [test-backend, test-frontend]
+    runs-on: ubuntu-latest
+  deploy:
+    needs: [provision, build-backend, build-frontend]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy over SSH
+        run: ssh $HOST "docker compose pull && docker compose up -d"
+\end{lstlisting}
+
+\subsection{Production Environment}
+
+In production the public entry point is the Caddy proxy, which terminates
+HTTPS and forwards traffic to the frontend container; the frontend serves
+the single-page application and proxies the API calls to the backend; the
+backend talks to the MariaDB database and to the n8n engine that carries
+the AI workflows. All services run under Docker Compose with restart
+policies on a single DigitalOcean droplet, giving the simple,
+reproducible and observable deployment targeted by the non-functional
+requirements of Section~\ref{chap:requirements}.
+
+\section*{Conclusion}
+
+This chapter delivered Release~2 and, with it, a complete product.
+Sprint~3 made the marketplace transactable --- a multi-store cart and
+checkout, the server-authoritative Stripe payment flow confirmed by a
+signature-verified webhook, and the administration tooling to moderate
+stores and products, curate featured content and manage categories.
+Sprint~4 added the intelligence and delivery layers --- the automated AI
+verification pipeline with administrative override, the database chat
+assistant, the premium tier built on the same payment machinery, and the
+testing and DevOps that bring the platform to production: a layered suite
+of 445 tests, containerised services behind a TLS-terminating proxy,
+infrastructure described with Terraform, and a GitHub Actions pipeline
+that tests, builds and deploys on every push to \texttt{main}. The
+marketplace planned in the first two chapters is now fully realised,
+validated and deployable.

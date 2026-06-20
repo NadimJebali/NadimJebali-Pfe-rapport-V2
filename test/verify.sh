@@ -148,6 +148,20 @@ check "img/seq-verify.png rendered"               test -f img/seq-verify.png
 # de-branded seq-verify source (the reused diagram had cheebo-ai-verify baked in)
 check "seq-verify source de-branded"              absent diagrams/seq-verify.puml 'cheebo'
 
+# ----- slice #12: Tests & Validation + DevOps & Deployment + conclusion ----
+section "Slice #12 — Tests, DevOps & Ch.4 conclusion"
+check "Ch.4 has a Tests & Validation section"     present chap_04.tex 'section\{Tests'
+check "Ch.4 has the test-pyramid figure"          present chap_04.tex 'label\{fig:test-pyramid\}'
+check "Ch.4 documents the 445-test suite"         present chap_04.tex '445'
+check "Ch.4 has a DevOps & Deployment section"    present chap_04.tex 'DevOps'
+check "Ch.4 has the Dockerfile listing"           present chap_04.tex 'label=\{lst:dockerfile\}'
+check "Ch.4 has the docker-compose listing"       present chap_04.tex 'label=\{lst:compose\}'
+check "Ch.4 has the CI/CD deploy listing"         present chap_04.tex 'label=\{lst:deploy\}'
+check "Ch.4 covers Terraform IaC"                 present chap_04.tex 'Terraform'
+check "Ch.4 covers GitHub Actions CI/CD"          present chap_04.tex 'GitHub Actions'
+check "Ch.4 covers Caddy TLS termination"         present chap_04.tex 'Caddy'
+check "Ch.4 ends with a Conclusion"               present chap_04.tex 'section\*\{Conclusion\}'
+
 # ----- summary -------------------------------------------------------------
 section "Result"
 printf '  %d passed, %d failed\n\n' "$PASS" "$FAIL"
