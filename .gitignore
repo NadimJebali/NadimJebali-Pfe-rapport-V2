@@ -15,7 +15,7 @@
 *.mtc*
 *.out
 *.run.xml
-*.synctex.gz
+*.synctex*
 *.toc
 *-blx.bib
 

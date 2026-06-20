@@ -1,5 +1,4 @@
 @startuml arch-docker-v2
-!pragma layout smetana
 
 !include <logos/react>
 !include <logos/nestjs>
