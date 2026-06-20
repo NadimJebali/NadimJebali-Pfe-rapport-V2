@@ -441,8 +441,8 @@ each service.
     \rowcolor{tableHeader}
     \textcolor{white}{\textbf{Service}} & \textcolor{white}{\textbf{Model / provider}} \\
     \hline
-    Store and product verification & Multimodal LLM (Google Gemini) screening images and listing text \\ \hline
-    AI storefront redesign         & Groq \texttt{llama-3.3-70b-versatile} generating the storefront customisation \\ \hline
+    Store and product verification & Multimodal LLM (Google Gemini~\cite{gemini}) screening images and listing text \\ \hline
+    AI storefront redesign         & Groq~\cite{groq} \texttt{llama-3.3-70b-versatile} generating the storefront customisation \\ \hline
     Database chat assistant        & Hosted LLM translating natural-language questions into safe database queries \\ \hline
   \end{tabularx}
 \end{table}
@@ -465,14 +465,14 @@ frameworks and libraries.
     \rowcolor{tableHeader}
     \textcolor{white}{\textbf{Logo}} & \textcolor{white}{\textbf{Tool}} & \textcolor{white}{\textbf{Role}} \\
     \hline
-    \includegraphics[height=0.8cm]{img/github.png}    & GitHub    & Version control, pull-request review and CI/CD via GitHub Actions. \\ \hline
-    \includegraphics[height=0.8cm]{img/notion.png}    & Notion    & Backlog management, task board and record of user stories. \\ \hline
-    \includegraphics[height=0.8cm]{img/vscode.png}    & VS Code   & Primary IDE, extended for TypeScript, Prisma, ESLint and Git. \\ \hline
-    \includegraphics[height=0.8cm]{img/docker.png}    & Docker    & Containerisation of all services for dev/prod parity. \\ \hline
-    \includegraphics[height=0.8cm]{img/terraform.png} & Terraform & Infrastructure-as-code provisioning of the DigitalOcean resources. \\ \hline
-    \includegraphics[height=0.8cm]{img/n8n.png}       & n8n       & Visual workflow automation orchestrating the AI features. \\ \hline
-    \includegraphics[height=0.8cm]{img/postman.png}   & Postman   & Manual testing and documentation of the REST endpoints. \\ \hline
-    \includegraphics[height=0.8cm]{img/pnpm.png}      & pnpm      & Fast, disk-efficient package manager for the monorepo. \\ \hline
+    \includegraphics[height=0.8cm]{img/github.png}    & GitHub~\cite{github}       & Version control, pull-request review and CI/CD via GitHub Actions. \\ \hline
+    \includegraphics[height=0.8cm]{img/notion.png}    & Notion~\cite{notion}       & Backlog management, task board and record of user stories. \\ \hline
+    \includegraphics[height=0.8cm]{img/vscode.png}    & VS Code~\cite{vscode}      & Primary IDE, extended for TypeScript, Prisma, ESLint and Git. \\ \hline
+    \includegraphics[height=0.8cm]{img/docker.png}    & Docker~\cite{docker}       & Containerisation of all services for dev/prod parity. \\ \hline
+    \includegraphics[height=0.8cm]{img/terraform.png} & Terraform~\cite{terraform} & Infrastructure-as-code provisioning of the DigitalOcean resources. \\ \hline
+    \includegraphics[height=0.8cm]{img/n8n.png}       & n8n~\cite{n8n}             & Visual workflow automation orchestrating the AI features. \\ \hline
+    \includegraphics[height=0.8cm]{img/postman.png}   & Postman~\cite{postman}     & Manual testing and documentation of the REST endpoints. \\ \hline
+    \includegraphics[height=0.8cm]{img/pnpm.png}      & pnpm~\cite{pnpm}           & Fast, disk-efficient package manager for the monorepo. \\ \hline
   \end{tabular}
 \end{table}
 
@@ -485,11 +485,11 @@ frameworks and libraries.
     \rowcolor{tableHeader}
     \textcolor{white}{\textbf{Technology}} & \textcolor{white}{\textbf{Role}} \\
     \hline
-    TypeScript    & Statically-typed language used across the frontend and the backend. \\ \hline
-    React         & Single-page application library for the customer, seller and admin interfaces. \\ \hline
-    NestJS        & Modular Node.js framework structuring the backend into feature modules. \\ \hline
-    Prisma        & ORM and migration tool over MariaDB. \\ \hline
-    Better-Auth   & Authentication library handling sessions and email verification. \\ \hline
+    TypeScript~\cite{typescript}  & Statically-typed language used across the frontend and the backend. \\ \hline
+    React~\cite{react}            & Single-page application library for the customer, seller and admin interfaces. \\ \hline
+    NestJS~\cite{nestjs}          & Modular Node.js framework structuring the backend into feature modules. \\ \hline
+    Prisma~\cite{prisma}          & ORM and migration tool over MariaDB. \\ \hline
+    Better-Auth~\cite{betterauth} & Authentication library handling sessions and email verification. \\ \hline
     Docker        & Container runtime packaging every service. \\ \hline
     Terraform     & Declarative provisioning of the cloud infrastructure. \\ \hline
     n8n           & Workflow engine hosting the AI orchestration. \\ \hline
@@ -498,8 +498,8 @@ frameworks and libraries.
 
 \subsection{Database}
 
-The platform stores its data in a \textbf{MariaDB} relational database
-accessed through the \textbf{Prisma} ORM, which provides a type-safe
+The platform stores its data in a \textbf{MariaDB}~\cite{mariadb}
+relational database accessed through the \textbf{Prisma} ORM, which provides a type-safe
 client and versioned migrations. The database schema follows directly
 from the domain model: the entities and associations of the class
 diagram presented earlier (Figure~\ref{fig:class}) map onto the database

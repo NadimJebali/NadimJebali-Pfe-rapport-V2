@@ -1,4 +1,57 @@
-\chapter*{Conclusion générale}
-\addcontentsline{toc}{chapter}{Conclusion générale}
-\markboth{\textbf{Conclusion générale}}{}
+\chapter*{General Conclusion}
+\addcontentsline{toc}{chapter}{General Conclusion}
+\markboth{\textbf{General Conclusion}}{}
 
+This report has presented the design and development of a multi-vendor
+e-commerce marketplace, carried out as a final-year engineering project
+within the host company. The work set out to address concrete gaps in the
+local e-commerce landscape --- heavyweight seller onboarding, the absence
+of integrated payment, and the lack of any quality moderation --- with a
+platform on which independent sellers open a store, publish a catalogue,
+and sell to customers under a single, trustworthy roof.
+
+The first two chapters framed the problem and the solution. After
+situating the project in its organisational and competitive context, we
+analysed the requirements, identified the actors, and specified the
+functional and non-functional needs, which we modelled with UML use-case
+and class diagrams. The Scrum framework then organised the work into a
+product backlog of thirty-six user stories and a plan of two releases of
+two sprints each, underpinned by the architecture and technical choices
+that frame the realisation.
+
+The last two chapters delivered that plan. \textbf{Release~1} built the
+foundations of the marketplace: an identity layer with email
+verification, role-based access and database-backed sessions; the
+seller-onboarding loop of application and administrative review; and the
+core selling capabilities --- store creation, a seven-section WYSIWYG
+storefront editor with AI-assisted redesign, product management, and
+store-wide sales. \textbf{Release~2} turned the populated catalogue into
+a complete product: a multi-store cart and checkout with a
+server-authoritative Stripe payment flow confirmed by a
+signature-verified webhook; the administration and moderation tooling; an
+automated AI verification pipeline with administrative override and a
+natural-language database-chat assistant; a premium subscription tier;
+and the quality and delivery layers --- a layered suite of 445 automated
+tests, containerised services behind a TLS-terminating reverse proxy,
+infrastructure described as code with Terraform, and a continuous
+deployment pipeline that tests, builds and ships on every push to the
+main branch.
+
+Beyond the deliverable itself, the project was an opportunity to practise
+the full software-engineering cycle end to end --- from requirements
+analysis and agile planning to test-driven implementation, AI
+integration and modern DevOps --- and to make pragmatic engineering
+decisions under real constraints, such as deriving payment amounts on the
+server, screening user content automatically, and keeping the whole
+environment reproducible.
+
+Several directions remain open for future work. The features deliberately
+left out of scope --- a native mobile application, multi-currency
+settlement, advanced fraud detection, an on-premise language model, and a
+dedicated full-text search engine --- are natural next steps. The AI
+verification and redesign workflows could be extended with richer models
+and human-in-the-loop feedback, the analytics could grow into seller- and
+marketplace-level dashboards, and the single-droplet deployment could
+evolve towards a horizontally scaled, observable production environment.
+Together these would carry the platform from a complete, validated
+prototype towards a production marketplace at scale.

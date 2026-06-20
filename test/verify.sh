@@ -162,6 +162,18 @@ check "Ch.4 covers GitHub Actions CI/CD"          present chap_04.tex 'GitHub Ac
 check "Ch.4 covers Caddy TLS termination"         present chap_04.tex 'Caddy'
 check "Ch.4 ends with a Conclusion"               present chap_04.tex 'section\*\{Conclusion\}'
 
+# ----- back-matter & polish -----------------------------------------------
+section "Back-matter & polish"
+check "General Conclusion written (English)"      present conclusion.tex 'General Conclusion'
+check "General Conclusion has prose"              bash -c '[ "$(wc -l < conclusion.tex)" -ge 20 ]'
+check "no French 'Conclusion generale' heading"  bash -c '! grep -rq "Conclusion g" *.tex'
+check "Dedication heading in English"             present dedicaces.tex 'Dedication'
+check "Acknowledgements heading in English"       present remerciement.tex 'Acknowledgements'
+check "no French Dedicace/Remerciements headings" bash -c '! grep -rqE "D.dicace|Remerciements" *.tex'
+check "bibliography de-doubled (no \\input webo)"  absent main.tex '\\input\{webo\}'
+check "bibliography title is English"             present main.tex 'title=\{Bibliography\}'
+check "biblio has the stack references"           bash -c 'grep -q "@electronic{nestjs" biblio.bib && grep -q "@electronic{stripe" biblio.bib'
+
 # ----- summary -------------------------------------------------------------
 section "Result"
 printf '  %d passed, %d failed\n\n' "$PASS" "$FAIL"

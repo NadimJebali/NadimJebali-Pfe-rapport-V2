@@ -100,7 +100,7 @@ confirmation email; a seller can see the orders that include their
 products; and an administrator can moderate stores and products, suspend
 or delete a store, curate featured content and manage the category tree.
 The payment flow is the centrepiece: amounts are computed server-side,
-charged through a single Stripe PaymentIntent, and confirmed
+charged through a single Stripe~\cite{stripe} PaymentIntent, and confirmed
 asynchronously by a signature-verified webhook.
 
 \subsection{Sprint Use-Case Diagram}
@@ -527,12 +527,12 @@ on every push and gates every deployment.
 
 \subsection{Testing Strategy and Tooling}
 
-The backend is tested with \textbf{Jest~30} and \texttt{ts-jest}, which
+The backend is tested with \textbf{Jest~30}~\cite{jest} and \texttt{ts-jest}, which
 transforms TypeScript on the fly and runs every co-located
 \texttt{*.spec.ts} file; collaborators such as the Prisma service, the
 notification service, the SMTP mailer and the authentication guards are
 replaced with deterministic mocks. The frontend is tested with
-\textbf{Vitest} and React Testing Library with \texttt{jest-dom}, which
+\textbf{Vitest}~\cite{vitest} and React Testing Library with \texttt{jest-dom}, which
 mount components, query the DOM by accessible role and text, and assert
 on the rendered output. Good tests here verify observable behaviour ---
 the result of a service call, the response of an endpoint, the rendered
@@ -646,7 +646,7 @@ CMD ["sh", "-c", "npx prisma migrate deploy && node dist/src/main"]
 The services are composed with Docker Compose: a MariaDB database with a
 health check, the backend, the frontend, an n8n engine (with a one-shot
 initialiser that imports the version-controlled workflows), and a
-\textbf{Caddy} reverse proxy that terminates TLS with automatically
+\textbf{Caddy}~\cite{caddy} reverse proxy that terminates TLS with automatically
 renewed Let's Encrypt certificates and adds the HTTP security headers.
 Listing~\ref{lst:compose} shows the backend and proxy service blocks.
 
@@ -678,7 +678,7 @@ services:
 \subsection{Infrastructure as Code}
 
 The production environment is described declaratively with
-\textbf{Terraform} using the DigitalOcean provider, so the whole server
+\textbf{Terraform} using the DigitalOcean~\cite{digitalocean} provider, so the whole server
 can be recreated identically with a single \texttt{terraform apply} and
 every change is reviewable as a diff. Three resources define the
 environment: a private \texttt{digitalocean\_vpc}, an
@@ -693,7 +693,7 @@ the DNS records that point the domain at the droplet.
 \subsection{CI/CD Pipeline}
 \label{sec:cicd}
 
-A \textbf{GitHub Actions} workflow turns a push to \texttt{main} into a
+A \textbf{GitHub Actions}~\cite{githubactions} workflow turns a push to \texttt{main} into a
 live deployment (Listing~\ref{lst:deploy}). It first runs the backend and
 frontend test jobs; only if both pass does it provision the
 infrastructure with Terraform, build and push the backend and frontend
