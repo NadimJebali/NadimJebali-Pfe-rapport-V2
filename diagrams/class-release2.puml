@@ -20,6 +20,8 @@ skinparam enum {
 enum OrderStatus {
   PENDING
   CONFIRMED
+  SHIPPED
+  DELIVERED
   CANCELLED
 }
 enum PaymentStatus {
