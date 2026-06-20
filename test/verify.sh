@@ -63,16 +63,32 @@ check "\\imagePlaceholder defined"                 present tpl/new_commands.tex 
 check "listings package loaded"                   present tpl/new_commands.tex 'usepackage\{listings\}'
 check "chap_03.tex exists"                        test -f chap_03.tex
 check "chap_04.tex exists"                        test -f chap_04.tex
-check "chap_03 renders a placeholder (smoke)"     present chap_03.tex '\\imagePlaceholder'
-check "chap_03 renders a listing (smoke)"         present chap_03.tex 'lstlisting'
-check "chap_04 renders a placeholder (smoke)"     present chap_04.tex '\\imagePlaceholder'
-check "chap_04 renders a listing (smoke)"         present chap_04.tex 'lstlisting'
+check "\\imagePlaceholder used in a chapter"       bash -c 'grep -lq "imagePlaceholder" chap_03.tex chap_04.tex'
+check "a code listing present in a chapter"       bash -c 'grep -Elq "lstlisting|lstinputlisting" chap_03.tex chap_04.tex'
 # Ch.1 out-of-scope no longer mentions payment (check the 3 lines after the label).
 check "Ch.1 out-of-scope drops payment"           bash -c '! grep -A3 "Out of scope" chap_01.tex | grep -qi "payment"'
 # Ch.2 backlog gains a payment user story (US36) and the counts stay consistent.
 check "Ch.2 backlog has payment story US36"       present chap_02.tex 'US36 &.*pay'
 check "Ch.2 analysis summary count = 36"          present chap_02.tex '36 user stories'
 check "Ch.2 Sprint 3 row includes US36"           bash -c 'grep -q "Sprint 3.*US36" chap_02.tex'
+
+# ----- slice #8: Ch.3 Release 1 overview + backlog + Sprint 1 --------------
+section "Slice #8 — Ch.3 Release 1 + Sprint 1"
+check "Ch.3 prefactor smoke stub removed"         absent chap_03.tex 'under construction|smoke test'
+check "Ch.3 has the release label"                present chap_03.tex 'label\{chap:release1\}'
+check "Ch.3 embeds the R1 use-case diagram"       present chap_03.tex 'uc-release1'
+check "Ch.3 embeds the R1 class diagram"          present chap_03.tex 'class-release1'
+check "Ch.3 embeds the Sprint 1 use-case diagram" present chap_03.tex 'uc-sprint1'
+check "Ch.3 embeds the registration activity"     present chap_03.tex 'act-registration'
+check "Ch.3 reuses the auth sequence diagram"     present chap_03.tex 'seq-auth'
+check "Ch.3 has the Release 1 backlog table"      present chap_03.tex 'label\{tab:backlog-r1\}'
+check "Ch.3 has >= 4 textual use-case tables"     bash -c '[ "$(grep -c "Use case:" chap_03.tex)" -ge 4 ]'
+check "Ch.3 has >= 5 realisation placeholders"    bash -c '[ "$(grep -c "imagePlaceholder" chap_03.tex)" -ge 5 ]'
+check "img/uc-release1.png rendered"              test -f img/uc-release1.png
+check "img/class-release1.png rendered"           test -f img/class-release1.png
+check "img/uc-sprint1.png rendered"               test -f img/uc-sprint1.png
+check "img/act-registration.png rendered"         test -f img/act-registration.png
+# every \ref in Ch.3 figures/tables actually resolves (no ?? already gated globally)
 
 # ----- summary -------------------------------------------------------------
 section "Result"

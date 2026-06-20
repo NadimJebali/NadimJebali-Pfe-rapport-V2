@@ -1,0 +1,107 @@
+@startuml uc-release1
+
+skinparam defaultFontName Helvetica
+skinparam defaultFontSize 11
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam packageStyle rectangle
+skinparam linetype ortho
+skinparam nodesep 12
+skinparam ranksep 65
+
+skinparam actor {
+  BackgroundColor #FFFFFF
+  BorderColor #1E40AF
+  FontColor #1E293B
+  FontStyle bold
+  FontSize 12
+}
+skinparam usecase {
+  BorderThickness 1.2
+  FontColor #1E293B
+  FontSize 11
+}
+skinparam rectangle {
+  BackgroundColor #F8FAFC
+  BorderColor #1E40AF
+  BorderThickness 2
+  FontColor #1E40AF
+  FontStyle bold
+  FontSize 13
+}
+
+left to right direction
+
+' ── Primary actors (LEFT) ───────────────────────────────────
+actor Visitor       as Visitor
+actor Customer      as Customer
+actor Seller        as Seller
+actor Administrator as Admin
+
+Visitor  <|-- Customer
+Customer <|-- Seller
+
+rectangle "Release 1 --- Foundations & Core Marketplace" {
+
+  rectangle "Authentication & Account" #EFF6FF {
+    (Register)                     as A1 #DBEAFE
+    (Verify email)                 as A2 #DBEAFE
+    (Log in)                       as A3 #DBEAFE
+    (Log out)                      as A4 #DBEAFE
+  }
+
+  rectangle "Browsing" #FFFBEB {
+    (Browse catalogue by category) as B1 #FEF3C7
+    (View store)                   as B2 #FEF3C7
+    (View product)                 as B3 #FEF3C7
+    (Apply to become seller)       as B4 #FEF3C7
+  }
+
+  rectangle "Store & Products" #F0FDF4 {
+    (Create store)                 as S1 #DCFCE7
+    (Customise storefront)         as S2 #DCFCE7
+    (Apply preset)                 as S3 #DCFCE7
+    (Operate multiple stores)      as S4 #DCFCE7
+    (Manage products)              as S5 #DCFCE7
+    (Upload product images)        as S6 #DCFCE7
+    (Tag products)                 as S7 #DCFCE7
+    (Activate store sale)          as S8 #DCFCE7
+  }
+
+  rectangle "Administration" #FDF2F8 {
+    (Review seller applications)   as D1 #FCE7F3
+    (Approve / reject)             as D2 #FCE7F3
+  }
+}
+
+' ── Secondary actor (RIGHT) ─────────────────────────────────
+actor "Email Service" as MAIL #FEF9C3
+
+' ── Associations ────────────────────────────────────────────
+Visitor  --> A1
+Visitor  --> B1
+Visitor  --> B2
+Visitor  --> B3
+Customer --> A3
+Customer --> A4
+Customer --> B4
+Seller   --> S1
+Seller   --> S2
+Seller   --> S3
+Seller   --> S4
+Seller   --> S5
+Seller   --> S6
+Seller   --> S7
+Seller   --> S8
+Admin    --> D1
+
+' ── Include / extend / triggers ─────────────────────────────
+A1 .> A2 : <<include>>
+S1 .> S2 : <<extend>>
+S5 .> S6 : <<include>>
+S5 .> S7 : <<include>>
+B4 .> D1 : <<triggers>>
+D1 .> D2 : <<include>>
+A2 --> MAIL
+
+@enduml

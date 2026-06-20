@@ -1,0 +1,68 @@
+@startuml uc-sprint1
+
+skinparam defaultFontName Helvetica
+skinparam defaultFontSize 11
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam packageStyle rectangle
+skinparam linetype ortho
+skinparam nodesep 12
+skinparam ranksep 70
+
+skinparam actor {
+  BackgroundColor #FFFFFF
+  BorderColor #1E40AF
+  FontColor #1E293B
+  FontStyle bold
+  FontSize 12
+}
+skinparam usecase {
+  BorderThickness 1.2
+  FontColor #1E293B
+  FontSize 11
+}
+skinparam rectangle {
+  BackgroundColor #F8FAFC
+  BorderColor #1E40AF
+  BorderThickness 2
+  FontColor #1E40AF
+  FontStyle bold
+  FontSize 13
+}
+
+left to right direction
+
+actor Visitor       as Visitor
+actor Customer      as Customer
+actor Administrator as Admin
+
+Visitor <|-- Customer
+
+rectangle "Sprint 1 --- Authentication & Seller Onboarding" {
+  (Register)               as A1 #DBEAFE
+  (Verify email)           as A2 #DBEAFE
+  (Log in)                 as A3 #DBEAFE
+  (Log out)                as A4 #DBEAFE
+  (Apply to become seller) as A5 #FEF3C7
+  (Review application)     as D1 #FCE7F3
+  (Approve)                as D2 #FCE7F3
+  (Reject)                 as D3 #FCE7F3
+  (Request more info)      as D4 #FCE7F3
+}
+
+actor "Email Service" as MAIL #FEF9C3
+
+Visitor  --> A1
+Customer --> A3
+Customer --> A4
+Customer --> A5
+Admin    --> D1
+
+A1 .> A2 : <<include>>
+A5 .> D1 : <<triggers>>
+D1 .> D2 : <<extend>>
+D1 .> D3 : <<extend>>
+D1 .> D4 : <<extend>>
+A2 --> MAIL
+
+@enduml

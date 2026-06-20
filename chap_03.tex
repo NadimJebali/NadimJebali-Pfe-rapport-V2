@@ -1,26 +1,283 @@
 \chapter{Release~1: Foundations \& Core Marketplace}
-\minitoc
-\bigskip
+\label{chap:release1}
 
-% =====================================================================
-% STUB (slice #7 prefactor). The Release 1 content — overview, backlog,
-% Sprint 1 (Authentication & Onboarding) and Sprint 2 (Store & Product)
-% with its conclusion — is authored in slices #8 and #9.
-%
-% The two floats below are a prefactor smoke test: they prove that the
-% \imagePlaceholder command and the listings setup render end-to-end
-% before any chapter prose is written. They are removed in slice #8.
-% =====================================================================
+\section*{Introduction}
 
-This chapter is under construction.
+This chapter opens the realisation of the platform. It covers the first
+release, \textit{Foundations \& Core Marketplace}, which establishes the
+identity layer, the seller-onboarding loop and the core selling
+capabilities on which every later feature depends. The chapter begins
+with a release overview --- a release-scoped use-case diagram and the
+subset of the domain model touched by the release --- followed by the
+release backlog. It then presents the two sprints of the release. The
+present chapter details \textbf{Sprint~1 (Authentication \& Seller
+Onboarding)}; \textbf{Sprint~2 (Store \& Product Management)} and the
+chapter conclusion follow. Each sprint is described at a uniform depth:
+its objective, its use-case diagram, an analysis-and-design section
+(textual use-case descriptions, activity diagrams and sequence
+diagrams), and a realisation section illustrating the delivered
+interfaces.
+
+\section{Release Overview}
+
+Release~1 delivers the marketplace skeleton over two sprints. Sprint~1
+builds authentication and the seller-onboarding loop, so that a visitor
+can register, verify their email, sign in, and request the seller role
+for an administrator to review. Sprint~2 builds store and product
+management, so that an approved seller can open a store, customise its
+storefront, populate a catalogue and run a store-wide sale, while
+customers browse that catalogue by category. The architecture and the
+technology stack that frame this realisation were established in
+Section~\ref{chap:requirements} and are not repeated here; this release
+instantiates them for the foundational features.
+
+\subsection{Release Use-Case Diagram}
+
+Figure~\ref{fig:uc-release1} scopes the use cases delivered by
+Release~1 around its four actors. A \textit{Visitor} can register and
+browse; a \textit{Customer} (the role granted on registration) can
+additionally authenticate and apply to become a seller; a
+\textit{Seller} inherits every customer ability and gains store and
+product management; the \textit{Administrator} reviews seller
+applications. The release deliberately excludes transactions,
+AI verification and the premium tier, which belong to Release~2.
 
 \begin{figure}[H]
   \centering
-  \imagePlaceholder[4cm]{prefactor smoke test --- realisation placeholder}
-  \caption{Prefactor smoke test --- realisation placeholder frame.}
-  \label{fig:smoke-placeholder}
+  \includegraphics[height=0.85\textheight,keepaspectratio]{img/uc-release1.png}
+  \caption{Release~1 use-case diagram (foundations and core marketplace).}
+  \label{fig:uc-release1}
 \end{figure}
 
-\begin{lstlisting}[language=bash,caption={Prefactor smoke test --- inline code listing.}]
-echo "listings render correctly"
-\end{lstlisting}
+\subsection{Release Domain Model}
+
+Figure~\ref{fig:class-release1} shows the slice of the domain model
+introduced by Release~1: the \texttt{User} together with its
+\texttt{Session}s and optional \texttt{SellerApplication}, the
+\texttt{Store} it owns, and the \texttt{Product} catalogue with its
+images, tags and category hierarchy. This subset of the global class
+diagram of Section~\ref{chap:requirements} is the data foundation on
+which the two sprints operate.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\columnwidth,keepaspectratio]{img/class-release1.png}
+  \caption{Release~1 domain model (subset of the platform class diagram).}
+  \label{fig:class-release1}
+\end{figure}
+
+\section{Release~1 Backlog}
+
+The release backlog draws fifteen user stories from the product backlog
+of Section~\ref{chap:requirements} and allocates them to the two
+sprints, as summarised in Table~\ref{tab:backlog-r1}. Story points reuse
+the complexity estimates of the product backlog.
+
+\begin{table}[H]
+  \centering
+  \caption{Release~1 backlog --- user stories grouped by sprint and feature.}
+  \label{tab:backlog-r1}
+  \renewcommand{\arraystretch}{1.2}
+  \begin{tabularx}{\textwidth}{|l|l|X|c|}
+    \hline
+    \rowcolor{tableHeader}
+    \textcolor{white}{\textbf{Sprint}} & \textcolor{white}{\textbf{Feature}} &
+    \textcolor{white}{\textbf{User stories}} & \textcolor{white}{\textbf{Pts}} \\
+    \hline
+    \multirow{2}{*}{Sprint 1} & Authentication      & US01, US02, US03, US04 & 6 \\ \cline{2-4}
+                              & Administration      & US18                   & 2 \\ \hline
+    \multirow{2}{*}{Sprint 2} & Store Management    & US05--US09, US34       & 15 \\ \cline{2-4}
+                              & Product Management  & US10, US11, US12, US13 & 6 \\ \hline
+    \multicolumn{3}{|r|}{\textbf{Release~1 total}} & \textbf{29} \\ \hline
+  \end{tabularx}
+\end{table}
+
+\section{Sprint 1 --- Authentication \& Seller Onboarding}
+
+\subsection{Sprint Objective}
+
+Sprint~1 delivers the identity layer of the marketplace and the loop
+that turns a customer into a seller. By the end of the sprint a visitor
+can create an account secured by email verification, sign in and out
+through database-backed sessions, and submit a seller application; an
+administrator can review that application and, on approval, promote the
+account to the seller role. Authentication is provided by the
+\textbf{Better-Auth} library, integrated into the NestJS backend through
+a thin adapter; it ships email/password credentials, email verification,
+database-persisted sessions and cookie transport, so that no
+cryptography is hand-written. Every protected route is gated by an
+authentication guard and the \texttt{@Roles()} decorator, with
+object-level ownership enforced in the service layer.
+
+\subsection{Sprint Use-Case Diagram}
+
+Figure~\ref{fig:uc-sprint1} details the sprint's use cases. Registration
+\emph{includes} email verification; submitting a seller application
+\emph{triggers} an administrative review, which may \emph{extend} into an
+approval, a rejection or a request for more information.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\columnwidth,keepaspectratio]{img/uc-sprint1.png}
+  \caption{Sprint~1 use-case diagram (authentication and seller onboarding).}
+  \label{fig:uc-sprint1}
+\end{figure}
+
+\subsection{Analysis and Design}
+
+The four central use cases of the sprint are specified textually below,
+then the registration control flow is given as an activity diagram and
+the authentication exchange as a sequence diagram.
+
+\subsubsection{Textual Use-Case Descriptions}
+
+\begin{table}[H]
+  \centering
+  \caption{Textual description of the \emph{Register} use case.}
+  \label{tab:uc-register}
+  \renewcommand{\arraystretch}{1.25}
+  \begin{tabularx}{\textwidth}{|>{\bfseries}p{3cm}|X|}
+    \hline
+    \rowcolor{tableHeader}
+    \multicolumn{2}{|l|}{\textcolor{white}{\textbf{Use case: Register}}} \\
+    \hline
+    Actor & Visitor (unauthenticated). \\ \hline
+    Objective & Create a marketplace account with an email address and a password. \\ \hline
+    Pre-conditions & No account exists for the supplied email address. \\ \hline
+    Post-conditions & A \texttt{User} is created with the \textsc{customer} role and \texttt{emailVerified = false}; a one-time verification token is generated and emailed; a pending-verification session cookie is returned. \\ \hline
+    Nominal scenario & 1.~The visitor opens the sign-up page. \newline 2.~The visitor enters a name, email and password. \newline 3.~The visitor submits the form. \newline 4.~Better-Auth creates the user and persists the credentials. \newline 5.~The system sends the verification email and shows a ``check your inbox'' screen. \\ \hline
+    Alternative scenarios & A1.~Email already registered: an error invites the visitor to sign in instead. \newline E1.~Weak or malformed input: client- and server-side validation reject the request and the form is redisplayed with messages. \\ \hline
+  \end{tabularx}
+\end{table}
+
+\begin{table}[H]
+  \centering
+  \caption{Textual description of the \emph{Log in} use case.}
+  \label{tab:uc-login}
+  \renewcommand{\arraystretch}{1.25}
+  \begin{tabularx}{\textwidth}{|>{\bfseries}p{3cm}|X|}
+    \hline
+    \rowcolor{tableHeader}
+    \multicolumn{2}{|l|}{\textcolor{white}{\textbf{Use case: Log in}}} \\
+    \hline
+    Actor & Registered user (Customer, Seller or Administrator). \\ \hline
+    Objective & Open an authenticated session and reach the role-appropriate dashboard. \\ \hline
+    Pre-conditions & The account exists. \\ \hline
+    Post-conditions & A database-backed session token is issued in an HTTP-only cookie; the user is redirected to their dashboard. \\ \hline
+    Nominal scenario & 1.~The user opens the sign-in page. \newline 2.~The user enters their email and password. \newline 3.~Better-Auth validates the credentials against the \texttt{User} table. \newline 4.~A session row is created and the session cookie is set. \newline 5.~The user is redirected to their dashboard. \\ \hline
+    Alternative scenarios & A1.~Invalid credentials: a generic error is shown without revealing which field failed. \newline A2.~Unverified email: sign-in succeeds but store creation and ordering remain blocked until the email is verified. \\ \hline
+  \end{tabularx}
+\end{table}
+
+\begin{table}[H]
+  \centering
+  \caption{Textual description of the \emph{Apply to become seller} use case.}
+  \label{tab:uc-apply}
+  \renewcommand{\arraystretch}{1.25}
+  \begin{tabularx}{\textwidth}{|>{\bfseries}p{3cm}|X|}
+    \hline
+    \rowcolor{tableHeader}
+    \multicolumn{2}{|l|}{\textcolor{white}{\textbf{Use case: Apply to become seller}}} \\
+    \hline
+    Actor & Customer (with a verified email). \\ \hline
+    Objective & Request the seller role by submitting a seller application. \\ \hline
+    Pre-conditions & The user is an authenticated customer and has no application in progress. \\ \hline
+    Post-conditions & A \texttt{SellerApplication} is persisted with status \textsc{pending} and queued for administrator review. \\ \hline
+    Nominal scenario & 1.~The customer opens the ``become a seller'' form. \newline 2.~The customer enters their full name, phone number, home address and business description, optionally a website, and uploads an identity document. \newline 3.~The customer submits the form. \newline 4.~The system stores the application as \textsc{pending} and notifies the administrators. \\ \hline
+    Alternative scenarios & A1.~An application already exists: its current status is displayed instead of the form. \newline E1.~A required document is missing: validation rejects the submission. \\ \hline
+  \end{tabularx}
+\end{table}
+
+\begin{table}[H]
+  \centering
+  \caption{Textual description of the \emph{Review seller application} use case.}
+  \label{tab:uc-review}
+  \renewcommand{\arraystretch}{1.25}
+  \begin{tabularx}{\textwidth}{|>{\bfseries}p{3cm}|X|}
+    \hline
+    \rowcolor{tableHeader}
+    \multicolumn{2}{|l|}{\textcolor{white}{\textbf{Use case: Review seller application}}} \\
+    \hline
+    Actor & Administrator. \\ \hline
+    Objective & Decide on a pending seller application. \\ \hline
+    Pre-conditions & At least one application is in the \textsc{pending} or \textsc{more\_info\_requested} state. \\ \hline
+    Post-conditions & The application status becomes \textsc{approved}, \textsc{rejected} or \textsc{more\_info\_requested}; on approval the applicant's role is promoted to \textsc{seller}, unlocking store creation; an optional administrator note is recorded. \\ \hline
+    Nominal scenario & 1.~The administrator opens the applications panel. \newline 2.~The administrator selects a pending application and inspects its details and documents. \newline 3.~The administrator approves, rejects, or requests more information, optionally adding a note. \newline 4.~The system updates the status and notifies the applicant. \\ \hline
+    Alternative scenarios & A1.~Request more information: the status becomes \textsc{more\_info\_requested} and the applicant may amend and resubmit. \\ \hline
+  \end{tabularx}
+\end{table}
+
+\subsubsection{Activity Diagram}
+
+Figure~\ref{fig:act-registration} models the registration and
+email-verification control flow. Two decision points govern the path: a
+uniqueness check on the email at sign-up, and a validity check on the
+one-time token at verification. Only once the token is accepted and
+\texttt{emailVerified} is set to \texttt{true} does the account unlock
+the protected actions of store creation and order placement.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[height=0.82\textheight,keepaspectratio]{img/act-registration.png}
+  \caption{Activity diagram --- registration and email verification.}
+  \label{fig:act-registration}
+\end{figure}
+
+\subsubsection{Sequence Diagram}
+
+Figure~\ref{fig:seq-auth} traces the three-stage authentication exchange
+between the React single-page application, the NestJS API, the
+Better-Auth adapter, the mail service and the database. Registration
+creates the user and sends the verification email; verification flips
+\texttt{emailVerified} to \texttt{true}; login validates the credentials
+and issues a fresh database-backed session whose token travels in an
+HTTP-only cookie and is checked by the authentication guard on every
+subsequent protected request.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\columnwidth,keepaspectratio]{img/seq-auth.png}
+  \caption{Sequence diagram --- registration, email verification and login.}
+  \label{fig:seq-auth}
+\end{figure}
+
+\subsection{Realisation}
+
+The sprint delivers the authentication and onboarding interfaces shown in
+the following figures. Each frame is a placeholder for the corresponding
+screenshot of the running application.
+
+\begin{figure}[H]
+  \centering
+  \imagePlaceholder[6cm]{Registration page --- name, email and password form}
+  \caption{Registration page.}
+  \label{fig:real-register}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \imagePlaceholder[5cm]{Email-verification screen --- ``check your inbox'' and verified confirmation}
+  \caption{Email-verification screen.}
+  \label{fig:real-verify}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \imagePlaceholder[6cm]{Login page --- credentials form and session redirect}
+  \caption{Login page.}
+  \label{fig:real-login}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \imagePlaceholder[7cm]{Seller-application form --- identity, business details and document upload}
+  \caption{Seller-application form.}
+  \label{fig:real-apply}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \imagePlaceholder[7cm]{Administrator review panel --- pending applications with approve / reject / request-more-info actions}
+  \caption{Administrator seller-application review panel.}
+  \label{fig:real-review}
+\end{figure}

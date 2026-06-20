@@ -1,0 +1,48 @@
+@startuml act-registration
+
+skinparam defaultFontName Helvetica
+skinparam defaultFontSize 12
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+
+skinparam activity {
+  BackgroundColor #DBEAFE
+  BorderColor #1E40AF
+  FontColor #1E293B
+}
+skinparam activityDiamond {
+  BackgroundColor #FEF3C7
+  BorderColor #1E40AF
+  FontColor #1E293B
+}
+
+start
+:Fill the registration form;
+:Submit email and password;
+
+if (Email already registered?) then (yes)
+  :Show "email already in use";
+  stop
+else (no)
+  :Create User account
+  (emailVerified = false);
+  :Generate one-time token
+  and send verification email;
+  :Show "check your inbox" screen;
+endif
+
+:Open the verification link from the inbox;
+
+if (Token valid and not expired?) then (yes)
+  :Set emailVerified = true;
+  :Show "account verified";
+  :Unlock store creation
+  and order placement;
+  stop
+else (no)
+  :Show "invalid or expired link";
+  :Offer to resend the email;
+  stop
+endif
+
+@enduml

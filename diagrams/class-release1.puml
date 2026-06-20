@@ -1,0 +1,114 @@
+@startuml class-release1
+
+skinparam defaultFontName Helvetica
+skinparam defaultFontSize 11
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+
+skinparam class {
+  BackgroundColor #FFFFFF
+  BorderColor #1E40AF
+  BorderThickness 1.5
+  ArrowColor #475569
+  FontColor #1E293B
+}
+skinparam enum {
+  BackgroundColor #EFF6FF
+  BorderColor #1E40AF
+}
+
+enum UserRole {
+  CUSTOMER
+  SELLER
+  ADMIN
+}
+
+enum StoreStatus {
+  PENDING
+  ACTIVE
+  SUSPENDED
+  DELETED
+}
+
+enum SellerApplicationStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  MORE_INFO_REQUESTED
+}
+
+class User {
+  +id : String
+  +name : String
+  +email : String
+  +emailVerified : Boolean
+  +role : UserRole
+  +isPremium : Boolean
+}
+
+class Session {
+  +id : String
+  +token : String
+  +expiresAt : DateTime
+}
+
+class SellerApplication {
+  +fullName : String
+  +businessDescription : String
+  +idDocumentUrl : String
+  +status : SellerApplicationStatus
+  +adminNote : String
+}
+
+class Store {
+  +id : Int
+  +name : String
+  +slug : String
+  +template : String
+  +currentStatus : StoreStatus
+  +saleEnabled : Boolean
+  +saleDiscountPercent : Int
+}
+
+class Product {
+  +id : Int
+  +name : String
+  +price : Float
+  +displayPrice : Float
+  +stock : Int
+}
+
+class ProductImage {
+  +id : Int
+  +url : String
+}
+
+class Tag {
+  +id : Int
+  +name : String
+}
+
+class Category {
+  +id : Int
+  +name : String
+}
+
+class Subcategory {
+  +id : Int
+  +name : String
+}
+
+User "1"  --  "0..1" SellerApplication
+User "1"  --  "*"    Session
+User "1"  --  "*"    Store          : owns >
+Store "1" --  "*"    Product
+Product "1" -- "*"   ProductImage
+Product "*" -- "*"   Tag
+Category "1" -- "*"  Subcategory
+Subcategory "1" -- "*" Product
+
+User ..> UserRole
+Store ..> StoreStatus
+SellerApplication ..> SellerApplicationStatus
+
+@enduml
