@@ -174,6 +174,16 @@ check "bibliography de-doubled (no \\input webo)"  absent main.tex '\\input\{web
 check "bibliography title is English"             present main.tex 'title=\{Bibliography\}'
 check "biblio has the stack references"           bash -c 'grep -q "@electronic{nestjs" biblio.bib && grep -q "@electronic{stripe" biblio.bib'
 
+# ----- architecture figures (logos + de-brand) ----------------------------
+section "Architecture figures (v2 with logos)"
+check "Ch.2 uses the logical arch v2"             present chap_02.tex 'arch-3tier-v2'
+check "Ch.2 uses the Docker arch v2"              present chap_02.tex 'arch-docker-v2'
+check "logical arch v2 rendered"                  test -f img/arch-3tier-v2.png
+check "Docker arch v2 rendered"                   test -f img/arch-docker-v2.png
+check "branded arch-docker.png retired"           bash -c '! test -f img/arch-docker.png'
+check "Docker arch v2 source de-branded"          absent diagrams/arch-docker-v2.puml 'cheebo'
+check "no stale ref to old arch PNGs"             bash -c '! grep -rqE "arch-(3tier|docker)\.png" *.tex'
+
 # ----- summary -------------------------------------------------------------
 section "Result"
 printf '  %d passed, %d failed\n\n' "$PASS" "$FAIL"

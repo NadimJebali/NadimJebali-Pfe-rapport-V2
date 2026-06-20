@@ -1,0 +1,79 @@
+@startuml arch-docker-v2
+!pragma layout smetana
+
+!include <logos/react>
+!include <logos/nestjs>
+!include <logos/mariadb>
+!include <logos/docker>
+
+skinparam defaultFontName Helvetica
+skinparam defaultFontSize 12
+skinparam backgroundColor #FFFFFF
+skinparam roundCorner 8
+
+skinparam node {
+  BackgroundColor #DBEAFE
+  BorderColor #1E40AF
+  BorderThickness 2
+  FontStyle bold
+  FontColor #1E40AF
+}
+skinparam component {
+  BackgroundColor #FFFFFF
+  BorderColor #1E40AF
+  BorderThickness 1.5
+  FontColor #1E293B
+}
+skinparam database {
+  BackgroundColor #FEF3C7
+  BorderColor #D97706
+  BorderThickness 2
+}
+skinparam cloud {
+  BackgroundColor #F1F5F9
+  BorderColor #475569
+  BorderThickness 1.5
+}
+skinparam folder {
+  BackgroundColor #F0FDF4
+  BorderColor #16A34A
+  BorderThickness 1.5
+}
+
+cloud "Internet" as Net
+
+node "<$docker> Docker host (DigitalOcean Droplet)" as Host {
+
+  node "Docker bridge network" as Bridge {
+
+    component "caddy\n(TLS reverse proxy)\nimage: caddy:2-alpine\npublishes: 80, 443" as CADDY
+    component "<$react>\nfrontend\n(Nginx unprivileged + React static)\nimage: marketplace-frontend\ninternal: 8080" as FE
+    component "<$nestjs>\nbackend\n(NestJS API)\nimage: marketplace-backend\ninternal: 3000" as BE
+    database "<$mariadb>\ndb\n(MariaDB 11)\ninternal: 3306" as DB
+    component "<img:../img/n8n.png{scale=0.5}>\nn8n\n(Workflow engine)\nport: 5678" as N8N
+    component "n8n-init\n(one-shot seeder)\nimports workflows + creds" as N8NI
+
+  }
+
+  folder "Volumes" {
+    [db_data\n(MariaDB files)]   as VolDB
+    [uploads\n(stores + products)] as VolUp
+    [n8n_data\n(workflows + creds)] as VolN8n
+  }
+}
+
+Net   --> CADDY : :443 HTTPS\n(:80 redirects)
+Net   --> N8N   : :5678 (webhooks)
+
+CADDY --> FE  : :8080 (TLS terminated)
+FE  --> BE  : reverse-proxy /api
+BE  --> DB  : Prisma over TCP
+BE  --> N8N : webhook calls
+
+DB   ..> VolDB  : persist
+BE   ..> VolUp  : read/write uploads
+N8N  ..> VolN8n : persist workflows
+N8NI ..> VolN8n : import + activate\nworkflows & credentials
+N8NI --> N8N    : runs to completion first\n(depends_on)
+
+@enduml
