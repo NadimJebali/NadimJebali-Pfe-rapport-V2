@@ -1,0 +1,107 @@
+@startuml class-release2
+
+skinparam defaultFontName Helvetica
+skinparam defaultFontSize 11
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+
+skinparam class {
+  BackgroundColor #FFFFFF
+  BorderColor #1E40AF
+  BorderThickness 1.5
+  ArrowColor #475569
+  FontColor #1E293B
+}
+skinparam enum {
+  BackgroundColor #EFF6FF
+  BorderColor #1E40AF
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+}
+enum PaymentStatus {
+  UNPAID
+  PAID
+}
+enum VerificationStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+class User {
+  +id : String
+  +role : UserRole
+  +isPremium : Boolean
+  +premiumExpiresAt : DateTime
+}
+
+class Order {
+  +id : Int
+  +status : OrderStatus
+  +paymentStatus : PaymentStatus
+  +total : Float
+  +stripePaymentIntentId : String
+  +createdAt : DateTime
+}
+
+class OrderItem {
+  +id : Int
+  +quantity : Int
+  +unitPrice : Float
+}
+
+class Product {
+  +id : Int
+  +displayPrice : Float
+  +stock : Int
+  +verificationStatus : VerificationStatus
+  +aiReviewed : Boolean
+  +adminReviewed : Boolean
+}
+
+class Store {
+  +id : Int
+  +currentStatus : StoreStatus
+  +aiReviewed : Boolean
+  +adminReviewed : Boolean
+}
+
+class StoreStatusLog {
+  +id : Int
+  +status : StoreStatus
+  +reason : String
+}
+
+class FeaturedStore {
+  +id : Int
+  +position : Int
+}
+class FeaturedProduct {
+  +id : Int
+  +position : Int
+}
+
+class Subcategory {
+  +id : Int
+  +name : String
+}
+
+User "1"  -- "*"    Order
+Order "1" -- "*"    OrderItem
+OrderItem "*" -- "1" Product
+Product "*" -- "1"  Store
+Store "*" -- "1"    User
+Store "1" -- "*"    StoreStatusLog
+Store "1" -- "0..1" FeaturedStore
+Product "1" -- "0..1" FeaturedProduct
+Subcategory "1" -- "*" Product
+
+Order ..> OrderStatus
+Order ..> PaymentStatus
+Product ..> VerificationStatus
+
+@enduml

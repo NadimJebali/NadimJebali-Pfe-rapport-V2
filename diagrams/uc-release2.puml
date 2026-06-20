@@ -1,0 +1,102 @@
+@startuml uc-release2
+
+skinparam defaultFontName Helvetica
+skinparam defaultFontSize 11
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam packageStyle rectangle
+skinparam linetype ortho
+skinparam nodesep 12
+skinparam ranksep 65
+
+skinparam actor {
+  BackgroundColor #FFFFFF
+  BorderColor #1E40AF
+  FontColor #1E293B
+  FontStyle bold
+  FontSize 12
+}
+skinparam usecase {
+  BorderThickness 1.2
+  FontColor #1E293B
+  FontSize 11
+}
+skinparam rectangle {
+  BackgroundColor #F8FAFC
+  BorderColor #1E40AF
+  BorderThickness 2
+  FontColor #1E40AF
+  FontStyle bold
+  FontSize 13
+}
+
+left to right direction
+
+' ── Primary actors (LEFT) ───────────────────────────────────
+actor Customer      as Customer
+actor Seller        as Seller
+actor Administrator as Admin
+
+Customer <|-- Seller
+
+rectangle "Release 2 --- Transactions, Intelligence & Delivery" {
+
+  rectangle "Orders & Payment" #FFFBEB {
+    (Manage cart)            as O1 #FEF3C7
+    (Checkout)               as O2 #FEF3C7
+    (Pay securely)           as O3 #FEF3C7
+    (Consult order history)  as O4 #FEF3C7
+    (View store orders)      as O5 #FEF3C7
+  }
+
+  rectangle "Administration" #FDF2F8 {
+    (Moderate stores & products) as D1 #FCE7F3
+    (Suspend / delete store)     as D2 #FCE7F3
+    (Override AI verdict)        as D3 #FCE7F3
+    (Curate featured content)    as D4 #FCE7F3
+    (Manage categories)          as D5 #FCE7F3
+  }
+
+  rectangle "Intelligence & Premium" #F5F3FF {
+    (Auto-verify store / product) as V1 #EDE9FE
+    (Flag suspicious content)     as V2 #EDE9FE
+    (Query database via AI chat)  as V3 #EDE9FE
+    (AI redesign storefront)      as V4 #EDE9FE
+    (Subscribe to premium)        as P1 #E4DFEC
+    (Unlock premium customisation) as P2 #E4DFEC
+  }
+}
+
+' ── Secondary actors (RIGHT) ────────────────────────────────
+actor "Payment Gateway\n(Stripe)" as PAY  #FEF9C3
+actor "AI Service\n(n8n + LLM)"   as AI   #EDE9FE
+actor "Email Service"             as MAIL #FEF9C3
+
+' ── Associations ────────────────────────────────────────────
+Customer --> O1
+Customer --> O2
+Customer --> O3
+Customer --> O4
+Seller   --> O5
+Seller   --> V4
+Seller   --> P1
+Seller   --> P2
+Admin    --> D1
+Admin    --> D2
+Admin    --> D3
+Admin    --> D4
+Admin    --> D5
+Admin    --> V3
+
+' ── Include / extend / triggers ─────────────────────────────
+O2 .> O3 : <<include>>
+O3 .> MAIL : <<confirmation>>
+O3 --> PAY
+V1 .> V2 : <<extend>>
+V2 .> D3 : <<auto-flag>>
+V1 --> AI
+V3 --> AI
+V4 --> AI
+P1 .> PAY : <<uses>>
+
+@enduml

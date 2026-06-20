@@ -1,0 +1,50 @@
+@startuml act-checkout-payment
+
+skinparam defaultFontName Helvetica
+skinparam defaultFontSize 12
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+
+skinparam activity {
+  BackgroundColor #FEF3C7
+  BorderColor #B45309
+  FontColor #1E293B
+}
+skinparam activityDiamond {
+  BackgroundColor #FFFBEB
+  BorderColor #B45309
+  FontColor #1E293B
+}
+
+start
+:Customer confirms the cart and submits checkout;
+:Server reserves stock and creates the
+PENDING order(s) for the cart;
+:Server computes the grand total
+(prices derived server-side);
+
+if (Grand total > 0?) then (yes)
+  :Convert the TND total to USD minor units;
+  :Open one Stripe PaymentIntent
+  (idempotency key = checkout-<orderIds>);
+  :Stamp the PaymentIntent id on the order(s);
+  :Client confirms the payment with Stripe;
+  :Stripe sends a signed webhook event;
+
+  if (payment_intent.succeeded?) then (yes)
+    :Verify the Stripe signature
+    against the raw body;
+    :Mark order(s) PAID and CONFIRMED;
+    :Send the confirmation email;
+    stop
+  else (failed / canceled)
+    :Mark order(s) failed
+    and release the reserved stock;
+    stop
+  endif
+else (no)
+  :Reject the empty checkout;
+  stop
+endif
+
+@enduml

@@ -108,6 +108,28 @@ check "img/act-create-store.png rendered"         test -f img/act-create-store.p
 check "img/act-ai-redesign.png rendered"          test -f img/act-ai-redesign.png
 check "img/seq-ai-redesign.png rendered"          test -f img/seq-ai-redesign.png
 
+# ----- slice #10: Ch.4 Release 2 overview + Sprint 3 (orders, payment) -----
+section "Slice #10 — Ch.4 Release 2 + Sprint 3"
+check "Ch.4 prefactor smoke stub removed"         absent chap_04.tex 'under construction|smoke test'
+check "Ch.4 has the release label"                present chap_04.tex 'label\{chap:release2\}'
+check "Ch.4 embeds the R2 use-case diagram"       present chap_04.tex 'uc-release2'
+check "Ch.4 embeds the R2 class diagram"          present chap_04.tex 'class-release2'
+check "Ch.4 embeds the Sprint 3 use-case diagram" present chap_04.tex 'uc-sprint3'
+check "Ch.4 embeds the checkout-payment activity" present chap_04.tex 'act-checkout-payment'
+check "Ch.4 reuses the order sequence diagram"    present chap_04.tex 'seq-order'
+check "Ch.4 has the Release 2 backlog table"      present chap_04.tex 'label\{tab:backlog-r2\}'
+check "Ch.4 has a Stripe Payment Design section"  present chap_04.tex 'Stripe Payment Design'
+check "Ch.4 has the PaymentIntent code listing"   present chap_04.tex 'label=\{lst:paymentintent\}'
+check "Ch.4 Stripe text: server-side amount"      present chap_04.tex 'tndToStripeUsdMinor'
+check "Ch.4 Stripe text: idempotency key"         present chap_04.tex 'idempotency'
+check "Ch.4 Stripe text: signature-verified hook" bash -c 'grep -q "signature" chap_04.tex && grep -q "webhook" chap_04.tex'
+check "Ch.4 has >= 4 textual use-case tables"     bash -c '[ "$(grep -c "Use case:" chap_04.tex)" -ge 4 ]'
+check "Ch.4 has >= 5 realisation placeholders"    bash -c '[ "$(grep -c "imagePlaceholder" chap_04.tex)" -ge 5 ]'
+check "img/uc-release2.png rendered"              test -f img/uc-release2.png
+check "img/class-release2.png rendered"           test -f img/class-release2.png
+check "img/uc-sprint3.png rendered"               test -f img/uc-sprint3.png
+check "img/act-checkout-payment.png rendered"     test -f img/act-checkout-payment.png
+
 # ----- summary -------------------------------------------------------------
 section "Result"
 printf '  %d passed, %d failed\n\n' "$PASS" "$FAIL"
