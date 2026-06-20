@@ -1,0 +1,48 @@
+@startuml act-ai-redesign
+
+skinparam defaultFontName Helvetica
+skinparam defaultFontSize 12
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+
+skinparam activity {
+  BackgroundColor #EDE9FE
+  BorderColor #7C3AED
+  FontColor #1E293B
+}
+skinparam activityDiamond {
+  BackgroundColor #FEF3C7
+  BorderColor #7C3AED
+  FontColor #1E293B
+}
+
+start
+:Seller opens the storefront editor;
+:Click "AI Redesign";
+:Enter a natural-language prompt;
+:Backend checks ownership and forwards
+the prompt to the n8n workflow;
+:n8n builds the system prompt and
+calls the LLM;
+:LLM returns a StoreCustomization object;
+:n8n parses and sanitises the JSON
+(validate hex colours, clamp fields);
+
+if (Valid design returned?) then (yes)
+  :Persist and apply the design
+  to the live Craft.js canvas;
+  :Seller reviews the result;
+  if (Keep the design?) then (yes)
+    :Save the customisation;
+    stop
+  else (no)
+    :Refine the prompt or revert;
+    stop
+  endif
+else (no)
+  :Show an error and keep the
+  current design;
+  stop
+endif
+
+@enduml

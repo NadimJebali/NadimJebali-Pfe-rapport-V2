@@ -1,0 +1,79 @@
+@startuml uc-sprint2
+
+skinparam defaultFontName Helvetica
+skinparam defaultFontSize 11
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam packageStyle rectangle
+skinparam linetype ortho
+skinparam nodesep 12
+skinparam ranksep 70
+
+skinparam actor {
+  BackgroundColor #FFFFFF
+  BorderColor #1E40AF
+  FontColor #1E293B
+  FontStyle bold
+  FontSize 12
+}
+skinparam usecase {
+  BorderThickness 1.2
+  FontColor #1E293B
+  FontSize 11
+}
+skinparam rectangle {
+  BackgroundColor #F8FAFC
+  BorderColor #1E40AF
+  BorderThickness 2
+  FontColor #1E40AF
+  FontStyle bold
+  FontSize 13
+}
+
+left to right direction
+
+actor Customer as Customer
+actor Seller   as Seller
+
+Customer <|-- Seller
+
+rectangle "Sprint 2 --- Store & Product Management" {
+
+  rectangle "Store" #F0FDF4 {
+    (Create store)            as S1 #DCFCE7
+    (Edit store profile)      as S2 #DCFCE7
+    (Customise storefront)    as S3 #DCFCE7
+    (Apply preset)            as S4 #DCFCE7
+    (Upload banner)           as S5 #DCFCE7
+    (AI redesign storefront)  as S6 #DCFCE7
+    (Activate store sale)     as S7 #DCFCE7
+    (Operate multiple stores) as S8 #DCFCE7
+  }
+
+  rectangle "Products" #FFFBEB {
+    (Manage products)              as P1 #FEF3C7
+    (Upload product images)        as P2 #FEF3C7
+    (Tag products)                 as P3 #FEF3C7
+    (Browse catalogue by category) as P4 #FEF3C7
+  }
+}
+
+actor "AI Service\n(n8n + LLM)" as AI #EDE9FE
+
+Seller   --> S1
+Seller   --> S2
+Seller   --> S3
+Seller   --> S6
+Seller   --> S7
+Seller   --> S8
+Seller   --> P1
+Customer --> P4
+
+S3 .> S4 : <<include>>
+S3 .> S5 : <<include>>
+S3 .> S6 : <<extend>>
+P1 .> P2 : <<include>>
+P1 .> P3 : <<include>>
+S6 --> AI
+
+@enduml

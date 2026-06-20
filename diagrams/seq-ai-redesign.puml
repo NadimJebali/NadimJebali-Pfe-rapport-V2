@@ -1,0 +1,59 @@
+@startuml seq-ai-redesign
+
+skinparam defaultFontName Helvetica
+skinparam defaultFontSize 12
+skinparam backgroundColor #FFFFFF
+skinparam sequenceArrowThickness 1.2
+skinparam sequenceParticipantBorderThickness 1.5
+
+skinparam sequence {
+  ActorBackgroundColor       #FFFFFF
+  ActorBorderColor           #7C3AED
+  ActorFontColor             #111111
+  ParticipantBackgroundColor #F5F5F5
+  ParticipantBorderColor     #7C3AED
+  ParticipantFontColor       #111111
+  LifeLineBorderColor        #7C3AED
+  ArrowColor                 #7C3AED
+  ArrowFontColor             #111111
+  GroupBackgroundColor       #EDE9FE
+  GroupBorderColor           #7C3AED
+  NoteBackgroundColor        #EDE9FE
+  NoteBorderColor            #7C3AED
+}
+
+actor       "Seller"                        as S
+participant "React SPA"                     as FE
+participant "NestJS API"                    as BE
+participant "Store Module"                  as SM
+participant "n8n Webhook\n(store-redesign)" as N8N
+participant "Groq\n(llama-3.3-70b)"         as LLM
+
+S  -> FE : Click "AI Redesign" in editor toolbar
+FE --> S : Open redesign dialog (prompt input)
+S  -> FE : Enter prompt + confirm
+FE -> BE : POST /store/:id/ai-redesign\n{ prompt, storeName, storeDescription }
+BE -> BE : AuthGuard + ownership check
+BE -> N8N : POST /webhook/store-redesign\n{ prompt, storeName, storeDescription, storeId }
+
+note over N8N, LLM
+  Build Prompt node constructs system instructions
+  enforcing the StoreCustomization JSON schema
+end note
+N8N -> LLM : Chat completion request
+LLM --> N8N : Raw JSON response (StoreCustomization)
+
+note over N8N
+  Parse & Sanitise node:
+  validates hex colours, enforces layout constraints
+end note
+N8N --> BE : 200 { StoreCustomization }
+
+BE -> SM : updateCustomization(storeId, sanitisedDesign)
+SM -> SM : merge with defaults, persist to DB
+SM --> BE : updated StoreCustomization
+BE --> FE : 200 { StoreCustomization }
+FE -> FE : hydrateCustomization() + apply to Craft editor
+FE --> S : Canvas updates with new AI-generated design
+
+@enduml

@@ -1,0 +1,36 @@
+@startuml act-create-store
+
+skinparam defaultFontName Helvetica
+skinparam defaultFontSize 12
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+
+skinparam activity {
+  BackgroundColor #DCFCE7
+  BorderColor #16A34A
+  FontColor #1E293B
+}
+skinparam activityDiamond {
+  BackgroundColor #FEF3C7
+  BorderColor #16A34A
+  FontColor #1E293B
+}
+
+start
+:Seller opens the "create store" form;
+:Enter name, description and logo;
+:Submit;
+:Generate a slug from the store name;
+
+if (Slug already taken?) then (yes)
+  :Append a numeric suffix (-2, -3, ...);
+else (no)
+endif
+
+:Create Store (status = PENDING);
+:Write a StoreStatusLog entry;
+:Queue the store for AI verification;
+:Open the storefront editor with the default preset;
+stop
+
+@enduml

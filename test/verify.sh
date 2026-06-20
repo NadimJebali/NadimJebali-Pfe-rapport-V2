@@ -54,6 +54,10 @@ else
 fi
 # Brand name must not appear in any source either.
 check "zero 'cheebo' in *.tex sources"            bash -c '! grep -riq "cheebo" --include="*.tex" .'
+# pdftotext cannot see text baked into PNGs, so guard the diagram sources
+# and image filenames directly (the only brand vector left in figures).
+check "zero 'cheebo' in diagrams/*.puml"          bash -c '! grep -riq "cheebo" diagrams/'
+check "no img filename contains 'cheebo'"         bash -c '! ls img/ | grep -qi "cheebo"'
 
 # ----- slice #7: prefactor + payment corrections ---------------------------
 section "Slice #7 — prefactor & payment corrections"
@@ -89,6 +93,20 @@ check "img/class-release1.png rendered"           test -f img/class-release1.png
 check "img/uc-sprint1.png rendered"               test -f img/uc-sprint1.png
 check "img/act-registration.png rendered"         test -f img/act-registration.png
 # every \ref in Ch.3 figures/tables actually resolves (no ?? already gated globally)
+
+# ----- slice #9: Ch.3 Sprint 2 + conclusion -------------------------------
+section "Slice #9 — Ch.3 Sprint 2 + conclusion"
+check "Ch.3 has the Sprint 2 section"             present chap_03.tex 'Sprint 2 --- Store'
+check "Ch.3 embeds the Sprint 2 use-case diagram" present chap_03.tex 'uc-sprint2'
+check "Ch.3 embeds the create-store activity"     present chap_03.tex 'act-create-store'
+check "Ch.3 embeds the AI-redesign activity"      present chap_03.tex 'act-ai-redesign'
+check "Ch.3 embeds the AI-redesign sequence"      present chap_03.tex 'seq-ai-redesign'
+check "Ch.3 has >= 8 textual use-case tables"     bash -c '[ "$(grep -c "Use case:" chap_03.tex)" -ge 8 ]'
+check "Ch.3 ends with a Conclusion"               present chap_03.tex 'section\*\{Conclusion\}'
+check "img/uc-sprint2.png rendered"               test -f img/uc-sprint2.png
+check "img/act-create-store.png rendered"         test -f img/act-create-store.png
+check "img/act-ai-redesign.png rendered"          test -f img/act-ai-redesign.png
+check "img/seq-ai-redesign.png rendered"          test -f img/seq-ai-redesign.png
 
 # ----- summary -------------------------------------------------------------
 section "Result"
