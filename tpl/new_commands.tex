@@ -118,6 +118,44 @@
 \usepackage{tabularx}   % auto-width tabular* columns
 \usepackage{makecell}   % \makecell multi-line cells
 
+%====== code listings (inline snippets in chapters 3 & 4) ======%
+% Clean monospaced listings for Dockerfiles, compose, CI workflow,
+% Prisma schema and n8n JSON excerpts. The literate map remaps a few
+% non-ASCII glyphs that pdfLaTeX cannot typeset verbatim.
+\usepackage{listings}
+\definecolor{codeBg}{HTML}{F5F5F5}
+\lstset{
+  basicstyle=\ttfamily\small,
+  backgroundcolor=\color{codeBg},
+  frame=single,
+  rulecolor=\color{gray!45},
+  breaklines=true,
+  tabsize=2,
+  showstringspaces=false,
+  captionpos=b,
+  extendedchars=true,
+  literate=%
+    {✅}{{\ding{52}}}1
+    {❌}{{\ding{56}}}1
+    {─}{{-}}1
+    {—}{{-{}-}}2
+    {…}{{...}}3
+}
+
+%====== realisation screenshot placeholder (chapters 3 & 4) ======%
+% A sized, captioned empty frame standing in for an interface
+% screenshot the author inserts later. Optional arg = box height
+% (default 8cm); mandatory arg = description of the intended image.
+% Built on tcolorbox (already loaded above) — no extra dependency.
+\definecolor{phGray}{HTML}{F5F5F5}
+\newcommand{\imagePlaceholder}[2][8cm]{%
+  \begin{tcolorbox}[
+      colback=phGray, colframe=gray!45, boxrule=0.5pt, arc=2pt,
+      width=\linewidth, height=#1, halign=center, valign=center]
+    \itshape\color{gray}[Screenshot to insert: #2]%
+  \end{tcolorbox}%
+}
+
 %====== colours for the product backlog table (chapter 2) ======%
 \definecolor{tableHeader}{RGB}{31,78,121}
 % MoSCoW priorities
