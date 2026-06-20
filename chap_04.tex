@@ -318,3 +318,203 @@ the running application.
   \caption{Featured-content curation.}
   \label{fig:real-featured}
 \end{figure}
+
+\section{Sprint 4 --- AI Verification \& Premium Tier}
+
+\subsection{Sprint Objective}
+
+Sprint~4 adds the intelligence and monetisation layers. Every new store
+and product is screened automatically by an AI verification pipeline
+before it becomes visible; suspicious content is flagged for the
+administrator, who remains the final authority. Administrators gain a
+natural-language database chat assistant for diagnostics, and sellers can
+subscribe to a premium tier --- reusing the Stripe machinery of Sprint~3
+--- that unlocks the full customisation set and multiple stores. The AI
+capabilities are delivered through three independent n8n workflows
+invoked by the backend over HTTP.
+
+\subsection{Sprint Use-Case Diagram}
+
+Figure~\ref{fig:uc-sprint4} details the sprint's use cases. Automatic
+verification \emph{includes} returning a verdict with a rationale and may
+\emph{extend} into flagging content for the administrator to override;
+subscribing to premium \emph{unlocks} the advanced customisation and
+multiple stores through the Stripe gateway.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\columnwidth,keepaspectratio]{img/uc-sprint4.png}
+  \caption{Sprint~4 use-case diagram (AI verification and premium tier).}
+  \label{fig:uc-sprint4}
+\end{figure}
+
+\subsection{Analysis and Design}
+
+The three central use cases of the sprint are specified textually, then
+the verification and moderation control flows are given as activity
+diagrams and the verification exchange as a sequence diagram.
+
+\subsubsection{Textual Use-Case Descriptions}
+
+\begin{table}[H]
+  \centering
+  \caption{Textual description of the \emph{AI verification} use case.}
+  \label{tab:uc-aiverify}
+  \renewcommand{\arraystretch}{1.25}
+  \begin{tabularx}{\textwidth}{|>{\bfseries}p{3cm}|X|}
+    \hline
+    \rowcolor{tableHeader}
+    \multicolumn{2}{|l|}{\textcolor{white}{\textbf{Use case: AI verification}}} \\
+    \hline
+    Actor & AI Service (n8n + vision LLM); triggered by store or product creation. \\ \hline
+    Objective & Automatically screen every new store and product before it becomes visible. \\ \hline
+    Pre-conditions & A new entity exists with \texttt{aiReviewed = false} and \texttt{verificationStatus = pending}, and its images are uploaded. \\ \hline
+    Post-conditions & \texttt{aiReviewed} becomes \texttt{true} and the verification status is set to \textsc{approved} (auto-published) or the entity is flagged for administrator review; a verdict and rationale are recorded. \\ \hline
+    Nominal scenario & 1.~After image upload, the backend fires the \texttt{ai-verify} webhook with the listing text and image list. \newline 2.~n8n downloads each image and submits it with the text to the vision model. \newline 3.~The per-image verdicts are aggregated, flagging the entity if any image is flagged. \newline 4.~The decision is posted to the \texttt{/ai-review} callback. \newline 5.~The backend publishes clean entities and queues flagged ones for moderation. \\ \hline
+    Alternative scenarios & E1.~The webhook or model fails: the entity stays \textsc{pending} and is surfaced in the administrator's queue for manual review. \\ \hline
+  \end{tabularx}
+\end{table}
+
+\begin{table}[H]
+  \centering
+  \caption{Textual description of the \emph{AI chat query} use case.}
+  \label{tab:uc-aichat}
+  \renewcommand{\arraystretch}{1.25}
+  \begin{tabularx}{\textwidth}{|>{\bfseries}p{3cm}|X|}
+    \hline
+    \rowcolor{tableHeader}
+    \multicolumn{2}{|l|}{\textcolor{white}{\textbf{Use case: AI chat query}}} \\
+    \hline
+    Actor & Administrator; AI Service (n8n + LLM + SQL tool). \\ \hline
+    Objective & Query the database in natural language for diagnostics and insight. \\ \hline
+    Pre-conditions & The administrator is authenticated. \\ \hline
+    Post-conditions & A natural-language answer, derived from a generated SQL query executed read-only against the database, is returned; no data is modified. \\ \hline
+    Nominal scenario & 1.~The administrator types a question in the chat assistant. \newline 2.~The backend forwards it to the n8n chat workflow. \newline 3.~The AI agent translates the question into SQL, executes it against MariaDB through the SQL tool, and formats the result. \newline 4.~The answer is returned to the administrator. \\ \hline
+    Alternative scenarios & A1.~An ambiguous question: the assistant asks for clarification, using its conversation memory for context. \\ \hline
+  \end{tabularx}
+\end{table}
+
+\begin{table}[H]
+  \centering
+  \caption{Textual description of the \emph{Subscribe to premium} use case.}
+  \label{tab:uc-premium}
+  \renewcommand{\arraystretch}{1.25}
+  \begin{tabularx}{\textwidth}{|>{\bfseries}p{3cm}|X|}
+    \hline
+    \rowcolor{tableHeader}
+    \multicolumn{2}{|l|}{\textcolor{white}{\textbf{Use case: Subscribe to premium}}} \\
+    \hline
+    Actor & Seller; Payment Gateway (Stripe, secondary). \\ \hline
+    Objective & Unlock the premium tier: full storefront customisation and multiple stores. \\ \hline
+    Pre-conditions & The user holds the seller role. \\ \hline
+    Post-conditions & After a successful Stripe payment, \texttt{isPremium} becomes \texttt{true} and \texttt{premiumExpiresAt} is set to a future date; premium customisation fields and multi-store operation are unlocked. \\ \hline
+    Nominal scenario & 1.~The seller opens the premium plan. \newline 2.~The seller pays through the same Stripe machinery used at checkout. \newline 3.~On payment success the account is marked premium with an expiry date. \newline 4.~The premium controls unlock. \\ \hline
+    Alternative scenarios & A1.~The subscription expires: premium fields lock for further editing, but the existing premium customisation values are preserved and remain visible to buyers (US27). \\ \hline
+  \end{tabularx}
+\end{table}
+
+\subsubsection{Activity Diagrams}
+
+Figure~\ref{fig:act-ai-verification} models the AI verification pipeline,
+including the per-image screening loop inside the n8n workflow and the
+branch that either publishes a clean entity or routes a flagged one to
+moderation. Figure~\ref{fig:act-moderation} models the administrator's
+content-moderation decision over a flagged entity.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[height=0.84\textheight,keepaspectratio]{img/act-ai-verification.png}
+  \caption{Activity diagram --- AI verification pipeline.}
+  \label{fig:act-ai-verification}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[height=0.6\textheight,keepaspectratio]{img/act-moderation.png}
+  \caption{Activity diagram --- content moderation.}
+  \label{fig:act-moderation}
+\end{figure}
+
+\subsubsection{Sequence Diagram}
+
+Figure~\ref{fig:seq-verify} traces the verification exchange for both
+products and stores: creation with a pending status, image upload, the
+per-image moderation loop against the vision model, the aggregated
+verdict posted to the callback, and the alternative branches of
+automatic approval or administrative override.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\columnwidth,keepaspectratio]{img/seq-verify.png}
+  \caption{Sequence diagram --- AI verification with administrative override.}
+  \label{fig:seq-verify}
+\end{figure}
+
+\subsection{n8n Workflow Design}
+
+The platform's AI features are carried by three independent n8n workflows
+deployed on the same engine, each exposed as an HTTP webhook the backend
+invokes. The \textbf{verification} workflow (Figure~\ref{fig:n8n-verify})
+fans the image list out into one branch per image, downloads each file,
+moderates it against the marketplace rules with a vision model, and posts
+the aggregated verdict back to the callback. The \textbf{database chat}
+workflow (Figure~\ref{fig:n8n-chat}) wraps an AI agent --- with a chat
+model, conversation memory and a SQL execution tool --- that answers an
+administrator's natural-language question by querying the database. The
+\textbf{storefront-redesign} workflow (Figure~\ref{fig:n8n-redesign}),
+already detailed in Sprint~2, builds a prompt, calls the language model,
+and parses and sanitises the returned customisation object.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth,keepaspectratio]{img/n8n-verify.png}
+  \caption{n8n workflow --- AI verification.}
+  \label{fig:n8n-verify}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth,keepaspectratio]{img/n8n-chat.png}
+  \caption{n8n workflow --- database chat assistant.}
+  \label{fig:n8n-chat}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth,keepaspectratio]{img/n8n-redesign.png}
+  \caption{n8n workflow --- AI storefront redesign.}
+  \label{fig:n8n-redesign}
+\end{figure}
+
+\subsection{Premium Tier}
+
+The premium tier is monetised through the same Stripe machinery designed
+in Sprint~3, so no new payment mechanism is introduced. A successful
+payment marks the account premium by setting \texttt{isPremium} and a
+future \texttt{premiumExpiresAt}; premium status is evaluated by
+comparing that expiry against the current time. Premium unlocks the full
+storefront customisation set --- free-form colours, all fonts and radii,
+banner controls and the rest --- and the ability to operate several
+stores. The design deliberately \emph{preserves} a seller's premium
+customisation values after expiry: the stored design remains visible to
+buyers and only the editing of premium fields is locked, so a lapsed
+subscription never degrades a storefront that is already live.
+
+\subsection{Realisation}
+
+The sprint delivers the AI-facing interfaces shown below. Each frame is a
+placeholder for the corresponding screenshot of the running application.
+
+\begin{figure}[H]
+  \centering
+  \imagePlaceholder[6cm]{AI verification panel --- entity verdict, rationale and admin override controls}
+  \caption{AI verification and moderation panel.}
+  \label{fig:real-aiverify}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \imagePlaceholder[6cm]{AI chat assistant --- natural-language database query and formatted answer}
+  \caption{AI database-chat assistant.}
+  \label{fig:real-aichat}
+\end{figure}

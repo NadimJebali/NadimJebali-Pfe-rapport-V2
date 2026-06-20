@@ -1,0 +1,80 @@
+@startuml seq-verify
+
+skinparam defaultFontName Helvetica
+skinparam defaultFontSize 12
+skinparam backgroundColor #FFFFFF
+skinparam sequenceArrowThickness 1.2
+skinparam sequenceParticipantBorderThickness 1.5
+
+skinparam sequence {
+  ActorBackgroundColor       #FFFFFF
+  ActorBorderColor           #1E40AF
+  ActorFontColor             #111111
+  ParticipantBackgroundColor #F5F5F5
+  ParticipantBorderColor     #1E40AF
+  ParticipantFontColor       #111111
+  LifeLineBorderColor        #1E40AF
+  ArrowColor                 #1E40AF
+  ArrowFontColor             #111111
+  GroupBackgroundColor       #EFF6FF
+  GroupBorderColor           #1E40AF
+  NoteBackgroundColor        #F5F5F5
+  NoteBorderColor            #1E40AF
+}
+
+actor       "Seller"                          as S
+participant "React SPA"                       as FE
+participant "NestJS API"                      as BE
+participant "Product / Store Module"          as PM
+database    "MariaDB"                         as DB
+participant "n8n Webhook\n(ai-verify)"        as N8N
+participant "Gemini\n(vision LLM)"            as LLM
+actor       "Administrator"                   as A
+
+note over S, DB
+  The same workflow applies to both product and store creation
+end note
+
+S  -> FE : Create product or store
+FE -> BE : POST /product or POST /store
+BE -> PM : create(dto)
+PM -> DB : INSERT entity\n(aiReviewed=false, verificationStatus=PENDING)
+PM --> BE : entity
+BE --> FE : entity (id)
+
+loop for each selected image
+  FE -> BE : POST /{type}/{id}/image (file)
+  BE -> DB : INSERT image\n(url=/uploads/...)
+end
+
+note over FE, BE
+  Verification is triggered only after the images
+  are uploaded, so the screening sees real files.
+end note
+FE -> BE : POST /{type}/{id}/submit-verification
+BE -> N8N : POST /webhook/ai-verify\n{ id, type, name, description, images[] }
+
+loop for each image
+  N8N -> BE : GET /uploads/... (download image)
+  BE --> N8N : image bytes
+  N8N -> LLM : Moderate image + text\nagainst marketplace rules
+  LLM --> N8N : { decision, reason }
+end
+note over N8N : Flag the entity if ANY image is flagged
+N8N -> BE : PATCH /{type}/{id}/ai-review\n{ decision, reason }
+BE -> PM : aiReview(id, decision)
+PM -> DB : UPDATE entity SET aiReviewed=true,\nverificationStatus=APPROVED|REJECTED
+
+alt Auto-approved
+  BE --> S : Entity becomes visible (verificationStatus=APPROVED)
+else Flagged / borderline
+  BE --> A : Visible in admin moderation queue
+  A -> FE : Open moderation panel
+  FE -> BE : GET /{type}/dashboard?verificationStatus=PENDING
+  A -> FE : Approve / reject
+  FE -> BE : PATCH /{type}/{id}/verify
+  BE -> PM : applyAdminOverride()
+  PM -> DB : UPDATE entity SET adminReviewed=true,\nverificationStatus=APPROVED|REJECTED
+end
+
+@enduml

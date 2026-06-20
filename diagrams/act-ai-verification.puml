@@ -1,0 +1,52 @@
+@startuml act-ai-verification
+
+skinparam defaultFontName Helvetica
+skinparam defaultFontSize 12
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+
+skinparam activity {
+  BackgroundColor #EDE9FE
+  BorderColor #7C3AED
+  FontColor #1E293B
+}
+skinparam activityDiamond {
+  BackgroundColor #FEF3C7
+  BorderColor #7C3AED
+  FontColor #1E293B
+}
+
+start
+:Seller creates a store or product
+(aiReviewed = false, status = PENDING);
+:Seller uploads the images;
+:Backend fires the ai-verify webhook
+with the listing text and image list;
+
+partition "n8n workflow" {
+  :Split the images into one branch each;
+  repeat
+    :Download an image from /uploads;
+    :Submit image + text to the vision LLM;
+    :Receive a per-image verdict;
+  repeat while (more images?) is (yes)
+  -> no;
+  :Aggregate verdicts
+  (flag if ANY image is flagged);
+  :Post the decision to /ai-review;
+}
+
+:Backend sets aiReviewed = true
+and updates the verification status;
+
+if (Flagged or borderline?) then (yes)
+  :Send the entity to the
+  admin moderation queue;
+  stop
+else (no)
+  :Mark APPROVED and publish
+  the entity;
+  stop
+endif
+
+@enduml

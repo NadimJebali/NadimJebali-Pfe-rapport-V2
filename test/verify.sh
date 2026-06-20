@@ -130,6 +130,24 @@ check "img/class-release2.png rendered"           test -f img/class-release2.png
 check "img/uc-sprint3.png rendered"               test -f img/uc-sprint3.png
 check "img/act-checkout-payment.png rendered"     test -f img/act-checkout-payment.png
 
+# ----- slice #11: Ch.4 Sprint 4 (AI verification & premium) ----------------
+section "Slice #11 — Ch.4 Sprint 4 (AI & premium)"
+check "Ch.4 has the Sprint 4 section"             present chap_04.tex 'Sprint 4 --- AI Verification'
+check "Ch.4 embeds the Sprint 4 use-case diagram" present chap_04.tex 'uc-sprint4'
+check "Ch.4 embeds the AI-verification activity"  present chap_04.tex 'act-ai-verification'
+check "Ch.4 embeds the moderation activity"       present chap_04.tex 'act-moderation'
+check "Ch.4 embeds the AI-verify sequence"        present chap_04.tex 'seq-verify'
+check "Ch.4 has an n8n Workflow Design section"   present chap_04.tex 'n8n Workflow Design'
+check "Ch.4 embeds all three n8n screenshots"     bash -c 'grep -q "n8n-verify" chap_04.tex && grep -q "n8n-chat" chap_04.tex && grep -q "n8n-redesign" chap_04.tex'
+check "Ch.4 has a Premium Tier section"           present chap_04.tex 'subsection\{Premium Tier\}'
+check "Ch.4 has >= 7 textual use-case tables"     bash -c '[ "$(grep -c "Use case:" chap_04.tex)" -ge 7 ]'
+check "img/uc-sprint4.png rendered"               test -f img/uc-sprint4.png
+check "img/act-ai-verification.png rendered"      test -f img/act-ai-verification.png
+check "img/act-moderation.png rendered"           test -f img/act-moderation.png
+check "img/seq-verify.png rendered"               test -f img/seq-verify.png
+# de-branded seq-verify source (the reused diagram had cheebo-ai-verify baked in)
+check "seq-verify source de-branded"              absent diagrams/seq-verify.puml 'cheebo'
+
 # ----- summary -------------------------------------------------------------
 section "Result"
 printf '  %d passed, %d failed\n\n' "$PASS" "$FAIL"

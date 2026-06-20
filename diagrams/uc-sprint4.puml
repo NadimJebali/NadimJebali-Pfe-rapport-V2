@@ -1,0 +1,73 @@
+@startuml uc-sprint4
+
+skinparam defaultFontName Helvetica
+skinparam defaultFontSize 11
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam packageStyle rectangle
+skinparam linetype ortho
+skinparam nodesep 12
+skinparam ranksep 70
+
+skinparam actor {
+  BackgroundColor #FFFFFF
+  BorderColor #1E40AF
+  FontColor #1E293B
+  FontStyle bold
+  FontSize 12
+}
+skinparam usecase {
+  BorderThickness 1.2
+  FontColor #1E293B
+  FontSize 11
+}
+skinparam rectangle {
+  BackgroundColor #F8FAFC
+  BorderColor #1E40AF
+  BorderThickness 2
+  FontColor #1E40AF
+  FontStyle bold
+  FontSize 13
+}
+
+left to right direction
+
+actor Seller        as Seller
+actor Administrator as Admin
+
+rectangle "Sprint 4 --- AI Verification & Premium Tier" {
+
+  rectangle "AI Verification" #F5F3FF {
+    (Auto-verify store / product) as V1 #EDE9FE
+    (Return verdict + rationale)  as V2 #EDE9FE
+    (Flag suspicious content)     as V3 #EDE9FE
+    (Override AI verdict)         as V4 #EDE9FE
+    (Query database via AI chat)  as V5 #EDE9FE
+  }
+
+  rectangle "Premium Tier" #F3E8FF {
+    (Subscribe to premium)         as P1 #E4DFEC
+    (Unlock premium customisation) as P2 #E4DFEC
+    (Operate multiple stores)      as P3 #E4DFEC
+  }
+}
+
+actor "AI Service\n(n8n + LLM)"   as AI  #EDE9FE
+actor "Payment Gateway\n(Stripe)" as PAY #FEF9C3
+
+Admin  --> V4
+Admin  --> V5
+Seller --> P1
+Seller --> P2
+Seller --> P3
+
+V1 .> V2 : <<include>>
+V1 .> V3 : <<extend>>
+V3 .> V4 : <<auto-flag>>
+V1 --> AI
+V5 --> AI
+P1 .> PAY : <<uses>>
+P1 .> P2 : <<unlocks>>
+P1 .> P3 : <<unlocks>>
+
+@enduml

@@ -1,0 +1,42 @@
+@startuml act-moderation
+
+skinparam defaultFontName Helvetica
+skinparam defaultFontSize 12
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+
+skinparam activity {
+  BackgroundColor #FCE7F3
+  BorderColor #BE185D
+  FontColor #1E293B
+}
+skinparam activityDiamond {
+  BackgroundColor #FEF3C7
+  BorderColor #BE185D
+  FontColor #1E293B
+}
+
+start
+:Administrator opens the moderation queue;
+:Select a flagged store or product;
+:Review the AI verdict and rationale;
+
+if (Content acceptable?) then (yes)
+  :Approve and override the AI verdict
+  (adminReviewed = true, status = APPROVED);
+  :Entity becomes visible;
+  stop
+else (no)
+  :Reject the entity
+  (adminReviewed = true, status = REJECTED);
+  if (Repeat offender or severe?) then (yes)
+    :Suspend or delete the store;
+    stop
+  else (no)
+    :Keep the entity hidden
+    and notify the seller;
+    stop
+  endif
+endif
+
+@enduml
