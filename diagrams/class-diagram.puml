@@ -1,0 +1,175 @@
+@startuml class-diagram
+
+skinparam defaultFontName Helvetica
+skinparam defaultFontSize 12
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam linetype ortho
+skinparam nodesep 40
+skinparam ranksep 55
+
+skinparam class {
+  AttributeFontColor #1E293B
+  FontColor          #1E293B
+  ArrowColor         #475569
+}
+skinparam enum {
+  BackgroundColor #EFF6FF
+  BorderColor     #1E40AF
+}
+
+' ── Identity / accounts (yellow) ──────────────────────────
+class User <<entity>> #FFF2CC {
+  +id : String
+  +name : String
+  +email : String
+  +emailVerified : Boolean
+  +role : UserRole
+  +isPremium : Boolean
+  +premiumExpiresAt : DateTime
+  +stripeCustomerId : String
+  +stripeSubscriptionId : String
+  +cancelAtPeriodEnd : Boolean
+  --
+  +register() : void
+  +verifyEmail() : void
+  +upgradeToPremium() : void
+}
+
+class SellerApplication <<entity>> #FFF2CC {
+  +id : Int
+  +status : SellerApplicationStatus
+  +businessDescription : String
+  +idDocumentUrl : String
+  --
+  +submit() : void
+  +approve() : void
+  +reject(note : String) : void
+}
+
+' ── Catalogue (green) ─────────────────────────────────────
+class Store <<entity>> #D5E8D4 {
+  +id : Int
+  +name : String
+  +slug : String
+  +description : String
+  +customization : Json
+  +currentStatus : StoreStatus
+  +aiReviewed : Boolean
+  +saleEnabled : Boolean
+  +saleDiscountPercent : Int
+  --
+  +create() : void
+  +suspend(reason : String) : void
+  +applyAIDesign() : void
+  +activateSale(pct : Int) : void
+}
+
+class StoreStatusLog <<entity>> #D5E8D4 {
+  +id : Int
+  +status : StoreStatus
+  +title : String
+  +isResolved : Boolean
+}
+
+class Product <<entity>> #D5E8D4 {
+  +id : Int
+  +name : String
+  +price : Float
+  +displayPrice : Float
+  +stock : Int
+  +aiReviewed : Boolean
+  +adminReviewed : Boolean
+  --
+  +create() : void
+  +computeSalePrice() : Float
+  +verifyByAI() : void
+}
+
+class ProductImage <<entity>> #D5E8D4 {
+  +id : Int
+  +url : String
+}
+
+class ProductTag <<entity>> #D5E8D4 {
+  +id : Int
+  +name : String
+}
+
+class Category <<entity>> #DAE8FC {
+  +id : Int
+  +name : String
+}
+
+class Subcategory <<entity>> #DAE8FC {
+  +id : Int
+  +name : String
+}
+
+' ── Orders (pink) ─────────────────────────────────────────
+class Order <<entity>> #F8CECC {
+  +id : Int
+  +status : OrderStatus
+  +totalAmount : Float
+  +streetAddress : String
+  --
+  +create() : void
+  +sendConfirmation() : void
+}
+
+class OrderItems <<entity>> #F8CECC {
+  +id : Int
+  +quantity : Int
+  +unitPrice : Float
+  +subtotal : Float
+}
+
+' ── Enumerations ──────────────────────────────────────────
+enum UserRole {
+  CUSTOMER
+  SELLER
+  ADMIN
+}
+enum StoreStatus {
+  PENDING
+  ACTIVE
+  SUSPENDED
+  DELETED
+}
+enum VerificationStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+' ── Associations ──────────────────────────────────────────
+User "1" -- "0..1" SellerApplication : applies as >
+User "1" -- "0..*" Store             : owns >
+User "1" -- "0..*" Order             : places >
+
+Store "1" -- "0..*" StoreStatusLog   : audits >
+Store "1" -- "0..*" Product          : contains >
+Store "1" -- "0..*" Order            : receives >
+
+Category "1"    -- "0..*" Subcategory : groups >
+Subcategory "1" -- "0..*" Product     : classifies >
+Product "1"     -- "0..*" ProductImage : has >
+Product "1"     -- "0..*" OrderItems   : ordered as >
+Order "1"       -- "1..*" OrderItems   : contains >
+Product "*"     -- "0..*" ProductTag   : tagged >
+
+' ── Type dependencies on enumerations ─────────────────────
+User ..> UserRole
+Store ..> StoreStatus
+StoreStatusLog ..> StoreStatus
+Product ..> VerificationStatus
+Order ..> OrderStatus
+
+@enduml

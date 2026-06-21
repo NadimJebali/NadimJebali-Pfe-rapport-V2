@@ -1,0 +1,70 @@
+@startuml seq-premium-subscription
+
+skinparam defaultFontName Helvetica
+skinparam defaultFontSize 12
+skinparam backgroundColor #FFFFFF
+skinparam sequenceArrowThickness 1.2
+skinparam sequenceParticipantBorderThickness 1.5
+
+skinparam sequence {
+  ActorBackgroundColor       #FFFFFF
+  ActorBorderColor           #1E40AF
+  ActorFontColor             #111111
+  ParticipantBackgroundColor #F5F5F5
+  ParticipantBorderColor     #1E40AF
+  ParticipantFontColor       #111111
+  LifeLineBorderColor        #1E40AF
+  ArrowColor                 #1E40AF
+  ArrowFontColor             #111111
+  GroupBackgroundColor       #EFF6FF
+  GroupBorderColor           #1E40AF
+  NoteBackgroundColor        #F5F5F5
+  NoteBorderColor            #1E40AF
+}
+
+actor       "Seller"                 as S
+participant "React SPA"              as FE
+participant "NestJS API"             as BE
+database    "MariaDB"                as DB
+participant "Stripe\n(Checkout + Portal)" as ST
+
+== Subscribe ==
+
+S  -> FE : Open upgrade page, click Subscribe
+FE -> BE : POST /payments/premium/checkout
+note over BE : Endpoint role-gated to SELLER
+alt No Stripe customer yet
+  BE -> ST : customers.create(email)
+  ST --> BE : customer id
+  BE -> DB : UPDATE user SET stripeCustomerId
+end
+BE -> ST : checkout.sessions.create\n(mode=subscription, price)
+ST --> BE : session.url
+BE --> FE : { url }
+FE -> ST : Redirect to hosted Checkout
+S  -> ST : Enter card and confirm
+ST --> S  : Redirect to /upgrade-success
+
+== Entitlement (webhook-driven) ==
+
+ST -> BE : POST /payments/webhook\ncustomer.subscription.created (signed)
+note over BE : Verify Stripe signature\nagainst the raw body
+BE -> DB : UPDATE user SET isPremium=true,\npremiumExpiresAt=current_period_end,\nstripeSubscriptionId, cancelAtPeriodEnd
+note over ST, DB : Each renewal fires customer.subscription.updated\nand advances premiumExpiresAt
+
+== Manage / cancel ==
+
+S  -> FE : Manage subscription
+FE -> BE : POST /payments/premium/portal
+BE -> ST : billingPortal.sessions.create
+ST --> BE : portal url
+BE --> FE : { url }
+FE -> ST : Redirect to Customer Portal
+S  -> ST : Cancel at period end
+ST -> BE : customer.subscription.updated\n(cancel_at_period_end=true)
+BE -> DB : UPDATE user SET cancelAtPeriodEnd=true
+note over BE : Premium kept until the paid period ends
+ST -> BE : customer.subscription.deleted\n(at period end)
+BE -> DB : UPDATE user SET isPremium=false,\nstripeSubscriptionId=null
+
+@enduml

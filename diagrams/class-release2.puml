@@ -39,6 +39,9 @@ class User {
   +role : UserRole
   +isPremium : Boolean
   +premiumExpiresAt : DateTime
+  +stripeCustomerId : String
+  +stripeSubscriptionId : String
+  +cancelAtPeriodEnd : Boolean
 }
 
 class Order {

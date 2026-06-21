@@ -360,9 +360,12 @@ Sprint~4 adds the intelligence and monetisation layers. Every new store
 and product is screened automatically by an AI verification pipeline
 before it becomes visible; suspicious content is flagged for the
 administrator, who remains the final authority. Administrators gain a
-natural-language database chat assistant for diagnostics, and sellers can
-subscribe to a premium tier --- reusing the Stripe machinery of Sprint~3
---- that unlocks the full customisation set and multiple stores. The AI
+natural-language database chat assistant for diagnostics, and sellers
+--- and only sellers --- can take out a \emph{recurring monthly} premium
+subscription through Stripe Checkout, managed afterwards through the Stripe
+Customer Portal, that unlocks the full customisation set and multiple
+stores; this is a new payment mechanism, distinct from the one-time charge
+of Sprint~3. The AI
 capabilities are delivered through three independent n8n workflows
 invoked by the backend over HTTP. Finally, the sprint rounds out the user
 experience with an appearance option: a light and a dimmed dark theme,
@@ -376,7 +379,8 @@ Figure~\ref{fig:uc-sprint4} details the sprint's use cases. Automatic
 verification \emph{includes} returning a verdict with a rationale and may
 \emph{extend} into flagging content for the administrator to override;
 subscribing to premium \emph{unlocks} the advanced customisation and
-multiple stores through the Stripe gateway.
+multiple stores through the Stripe gateway, and the subscription is
+afterwards managed through that same gateway.
 
 \begin{figure}[H]
   \centering
@@ -433,20 +437,20 @@ diagrams and the verification exchange as a sequence diagram.
 
 \begin{table}[H]
   \centering
-  \caption{Textual description of the \emph{Subscribe to premium} use case.}
+  \caption{Textual description of the \emph{Subscribe to / manage premium subscription} use case.}
   \label{tab:uc-premium}
   \renewcommand{\arraystretch}{1.25}
   \begin{tabularx}{\textwidth}{|>{\bfseries}p{3cm}|X|}
     \hline
     \rowcolor{tableHeader}
-    \multicolumn{2}{|l|}{\textcolor{white}{\textbf{Use case: Subscribe to premium}}} \\
+    \multicolumn{2}{|l|}{\textcolor{white}{\textbf{Use case: Subscribe to / manage premium subscription}}} \\
     \hline
     Actor & Seller; Payment Gateway (Stripe, secondary). \\ \hline
-    Objective & Unlock the premium tier: full storefront customisation and multiple stores. \\ \hline
+    Objective & Take out and manage a recurring monthly premium subscription that unlocks full storefront customisation and multiple stores. \\ \hline
     Pre-conditions & The user holds the seller role. \\ \hline
-    Post-conditions & After a successful Stripe payment, \texttt{isPremium} becomes \texttt{true} and \texttt{premiumExpiresAt} is set to a future date; premium customisation fields and multi-store operation are unlocked. \\ \hline
-    Nominal scenario & 1.~The seller opens the premium plan. \newline 2.~The seller pays through the same Stripe machinery used at checkout. \newline 3.~On payment success the account is marked premium with an expiry date. \newline 4.~The premium controls unlock. \\ \hline
-    Alternative scenarios & A1.~The subscription expires: premium fields lock for further editing, but the existing premium customisation values are preserved and remain visible to buyers (US27). \\ \hline
+    Post-conditions & Once Stripe confirms the subscription, \texttt{isPremium} becomes \texttt{true} and \texttt{premiumExpiresAt} is set to the current billing period end; the entitlement renews automatically, and premium customisation and multi-store operation are unlocked. \\ \hline
+    Nominal scenario & 1.~The seller opens the upgrade page and starts the subscription. \newline 2.~The backend opens a Stripe Checkout session in subscription mode and redirects the seller to the hosted page. \newline 3.~The seller pays on Stripe. \newline 4.~On a signature-verified \texttt{customer.subscription.created} webhook the account is marked premium until the current period end. \newline 5.~Each renewal fires \texttt{customer.subscription.updated} and advances the expiry. \newline 6.~The seller later manages the subscription --- cancel, update card, download invoices --- through the Stripe Customer Portal. \\ \hline
+    Alternative scenarios & A1.~Cancellation through the portal is \emph{cancel-at-period-end}: premium is kept until the paid period ends, then a \texttt{customer.subscription.deleted} webhook revokes it. \newline A2.~A non-seller is redirected to the become-a-seller flow. \newline A3.~An administrator grants premium manually --- a comp account with no Stripe subscription. \newline A4.~After expiry the premium customisation values are preserved and stay visible to buyers; only further editing of premium fields is locked (US27). \\ \hline
   \end{tabularx}
 \end{table}
 
@@ -544,17 +548,57 @@ and parses and sanitises the returned customisation object.
 
 \subsection{Premium Tier}
 
-The premium tier is monetised through the same Stripe machinery designed
-in Sprint~3, so no new payment mechanism is introduced. A successful
-payment marks the account premium by setting \texttt{isPremium} and a
-future \texttt{premiumExpiresAt}; premium status is evaluated by
-comparing that expiry against the current time. Premium unlocks the full
-storefront customisation set --- free-form colours, all fonts and radii,
-banner controls and the rest --- and the ability to operate several
-stores. The design deliberately \emph{preserves} a seller's premium
-customisation values after expiry: the stored design remains visible to
-buyers and only the editing of premium fields is locked, so a lapsed
-subscription never degrades a storefront that is already live.
+Unlike the one-time checkout of Sprint~3, the premium tier is a
+\emph{recurring monthly subscription}, and it therefore introduces two
+Stripe mechanisms beyond that sprint's single PaymentIntent:
+\textbf{Stripe Checkout in subscription mode} for sign-up and the
+\textbf{Stripe Customer Portal} for self-service management. A seller
+starts the flow from the upgrade page; the backend creates --- or reuses
+--- a Stripe \emph{customer} for the account, stamps its identifier on
+\texttt{stripeCustomerId}, and opens a hosted Checkout session in
+subscription mode for the configured monthly price. Everything afterwards
+--- cancelling, updating the card, downloading invoices --- is delegated
+to the hosted Customer Portal rather than rebuilt in-house.
+
+The tier is \textbf{sellers-only}: the \texttt{premium/checkout} endpoint
+is role-gated to the seller role, a non-seller is routed instead to the
+become-a-seller flow, and administrators keep a \textbf{manual grant} comp
+path that marks an account premium without any Stripe subscription.
+
+Entitlement is \textbf{webhook-driven}. The subscription lifecycle events
+--- \texttt{customer.subscription.created}, \texttt{...updated} and
+\texttt{...deleted} --- arrive through the \emph{same} signature-verified
+\texttt{/payments/webhook} introduced in Sprint~3. A created or updated
+subscription sets \texttt{isPremium} and stamps \texttt{premiumExpiresAt}
+with the current period end, so each successful renewal simply advances
+the expiry; a scheduled cancellation is recorded in
+\texttt{cancelAtPeriodEnd} without revoking access, so premium is kept
+until the paid period actually ends; a deleted subscription revokes
+premium and detaches the subscription id. To carry this, the
+\texttt{User} entity gains \texttt{stripeCustomerId},
+\texttt{stripeSubscriptionId} and \texttt{cancelAtPeriodEnd} alongside the
+existing \texttt{isPremium} and \texttt{premiumExpiresAt}
+(Figure~\ref{fig:class-release2}); the premium-status read returned to the
+client now also exposes \texttt{cancelAtPeriodEnd} and a
+\texttt{manageable} flag that tells a real subscriber --- who can open the
+portal --- apart from an administrator comp grant.
+
+Premium unlocks the full storefront customisation set --- free-form
+colours, all fonts and radii, banner controls and the rest --- and the
+ability to operate several stores. As before, the design deliberately
+\emph{preserves} a seller's premium customisation values after expiry: the
+stored design remains visible to buyers and only the editing of premium
+fields is locked, so a lapsed subscription never degrades a storefront
+that is already live (US27). Figure~\ref{fig:seq-premium-subscription}
+traces the subscription exchange from checkout through the webhook-driven
+entitlement update.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\columnwidth,keepaspectratio]{img/seq-premium-subscription.png}
+  \caption{Sequence diagram --- premium subscription checkout and webhook-driven entitlement.}
+  \label{fig:seq-premium-subscription}
+\end{figure}
 
 \subsection{Realisation}
 
@@ -577,15 +621,30 @@ placeholder for the corresponding screenshot of the running application.
 
 \begin{figure}[H]
   \centering
+  \imagePlaceholder[6cm]{Upgrade page --- the premium plan with the subscribe call to action, and, for an active subscriber, the manage-subscription controls (cancel at period end, update card, invoices)}
+  \caption{Premium upgrade and subscription-management page.}
+  \label{fig:real-upgrade}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
   \imagePlaceholder[6cm]{Appearance --- the same page in the light theme and in the dimmed dark theme, with the theme switch open in the navigation bar}
   \caption{Light and dimmed-dark application themes.}
   \label{fig:real-theme}
 \end{figure}
 
+Across both themes the application carries a deliberate visual identity,
+applied entirely through CSS design tokens: a \textbf{warm-coral} brand
+accent in the light theme, a dimmed dark theme for low-light use, and
+\textbf{Inter} as the interface typeface. Centralising colour, typography
+and radius as tokens lets every component re-theme instantly and keeps the
+brand consistent across the application chrome, while seller storefronts
+intentionally retain their own chosen palette.
+
 \section{Tests \& Validation}
 \label{sec:tests}
 
-Quality is enforced by an automated suite of \textbf{479 tests} that runs
+Quality is enforced by an automated suite of \textbf{504 tests} that runs
 on every push and gates every deployment.
 
 \subsection{Testing Strategy and Tooling}
@@ -617,20 +676,20 @@ layers.
   \begin{minipage}{0.85\textwidth}
   \centering
   \texttt{\begin{tabular}{c}
-    \textbf{Integration (90 tests)} \\
+    \textbf{Integration (83 tests)} \\
     \footnotesize Nest app + ValidationPipe + supertest + global guard \\
     \footnotesize controllers across the modules; deny-by-default guard wiring \\[4pt]
     \hline\\[-6pt]
-    \textbf{Service unit tests (221 tests)} \\
+    \textbf{Service unit tests (236 tests)} \\
     \footnotesize Real service code, mocked Prisma \\
-    \footnotesize Product, Store, Order, Payment, User, Settings, Notification, \ldots \\[4pt]
+    \footnotesize Product, Store, Order, Payment, Subscription, User, Notification, \ldots \\[4pt]
     \hline\\[-6pt]
-    \textbf{Pure-logic + frontend (168 tests)} \\
+    \textbf{Pure-logic + frontend (185 tests)} \\
     \footnotesize No I/O, no framework wiring \\
     \footnotesize \texttt{validate-env}, \texttt{tndToStripeUsdMinor}, guards; stores, hooks, components \\
   \end{tabular}}
   \end{minipage}
-  \caption{Test pyramid --- 479 tests across backend (Jest, 346) and frontend (Vitest, 133).}
+  \caption{Test pyramid --- 504 tests across backend (Jest, 362) and frontend (Vitest, 142).}
   \label{fig:test-pyramid}
 \end{figure}
 
@@ -816,7 +875,7 @@ verification pipeline with administrative override, the database chat
 assistant, the premium tier built on the same payment machinery, a light
 and dimmed-dark theming option, and the
 testing and DevOps that bring the platform to production: a layered suite
-of 479 tests, containerised services behind a TLS-terminating proxy,
+of 504 tests, containerised services behind a TLS-terminating proxy,
 infrastructure described with Terraform, and a GitHub Actions pipeline
 that tests, builds and deploys on every push to \texttt{main}. The
 marketplace planned in the first two chapters is now fully realised,

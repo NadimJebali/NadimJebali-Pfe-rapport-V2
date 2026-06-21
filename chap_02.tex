@@ -194,11 +194,13 @@ creation is automatically \emph{verified by AI}.
 
 Figure~\ref{fig:class} presents the static domain model. A single
 \texttt{User} entity carries the customer, seller and administrator
-roles; a Seller owns one or more \texttt{Store} entities, each holding
-\texttt{Product} entities that are organised by \texttt{Category} and
-\texttt{Tag}; orders are modelled by an \texttt{Order} aggregate and its
-\texttt{OrderItem} lines, allowing a single checkout to span several
-stores.
+roles, together with the premium-subscription and Stripe billing
+attributes (\texttt{isPremium}, \texttt{premiumExpiresAt} and the Stripe
+customer and subscription identifiers); a Seller owns one or more
+\texttt{Store} entities, each holding \texttt{Product} entities that are
+organised by \texttt{Category} and \texttt{Tag}; orders are modelled by an
+\texttt{Order} aggregate and its \texttt{OrderItem} lines, allowing a
+single checkout to span several stores.
 
 \begin{figure}[H]
   \centering

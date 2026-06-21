@@ -48,6 +48,7 @@ rectangle "Sprint 4 --- AI Verification & Premium Tier" {
 
   rectangle "Premium Tier" #F3E8FF {
     (Subscribe to premium)         as P1 #E4DFEC
+    (Manage subscription)          as P4 #E4DFEC
     (Unlock premium customisation) as P2 #E4DFEC
     (Operate multiple stores)      as P3 #E4DFEC
   }
@@ -63,6 +64,7 @@ actor "Payment Gateway\n(Stripe)" as PAY #FEF9C3
 Admin  --> V4
 Admin  --> V5
 Seller --> P1
+Seller --> P4
 Seller --> P2
 Seller --> P3
 User   --> T1
@@ -73,6 +75,7 @@ V3 .> V4 : <<auto-flag>>
 V1 --> AI
 V5 --> AI
 P1 .> PAY : <<uses>>
+P4 .> PAY : <<uses>>
 P1 .> P2 : <<unlocks>>
 P1 .> P3 : <<unlocks>>
 
