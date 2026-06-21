@@ -158,8 +158,6 @@ supervisor during the requirements review.
 
 \begin{table}[H]
   \centering
-  \caption{Non-functional requirements}
-  \label{tab:nfr}
   \begin{tabularx}{\textwidth}{|l|X|}
     \hline
     \rowcolor{tableHeader}
@@ -173,6 +171,8 @@ supervisor during the requirements review.
     Maintainability  & The codebase is split into bounded NestJS modules, the schema is versioned through Prisma migrations, and the infrastructure is reproducible through Terraform. \\ \hline
     Observability    & Application logs are emitted to \texttt{stdout} and aggregated by Docker; the chat assistant offers a queryable view of the database for diagnostics. \\ \hline
   \end{tabularx}
+  \caption{Non-functional requirements}
+  \label{tab:nfr}
 \end{table}
 
 \section{Global Use-Case Diagram}
@@ -230,8 +230,6 @@ Each user story carries a \textbf{MoSCoW} priority and a
 
 \begin{table}[H]
   \centering
-  \caption{MoSCoW priority and complexity legend}
-  \label{tab:moscow}
   \begin{tabularx}{\textwidth}{lllX}
     \toprule
     \multicolumn{4}{c}{\textbf{MoSCoW Priority}} \\
@@ -249,6 +247,8 @@ Each user story carries a \textbf{MoSCoW} priority and a
     \cellcolor{complexVHigh}\textbf{5} & Very complex & & High effort, advanced technical challenge. \\
     \bottomrule
   \end{tabularx}
+  \caption{MoSCoW priority and complexity legend}
+  \label{tab:moscow}
 \end{table}
 
 \subsection{Product Backlog}
@@ -261,8 +261,6 @@ the estimated complexity.
 
 \setlength{\extrarowheight}{3pt}
 \begin{longtable}{|>{\centering\arraybackslash\small}p{2.2cm}|>{\centering\arraybackslash\small}p{0.9cm}|>{\small}p{7.4cm}|>{\centering\arraybackslash\small}p{1.3cm}|>{\centering\arraybackslash\small}p{0.6cm}|}
-  \caption{Product backlog --- user stories with MoSCoW priority and complexity}
-  \label{tab:backlog}\\
   \hline
   \rowcolor{tableHeader}
   \textcolor{white}{\textbf{Feature}} & \textcolor{white}{\textbf{ID}} &
@@ -278,6 +276,7 @@ the estimated complexity.
   \hline \multicolumn{5}{r|}{\small\textit{Continued on next page}}\\
   \endfoot
   \hline
+  \caption{Product backlog --- user stories with MoSCoW priority and complexity}\label{tab:backlog}\\
   \endlastfoot
 
   \cellcolor{featAuth}\makecell[c]{\textbf{F1}\\\small Authentication}
@@ -363,8 +362,6 @@ goal and user stories.
 
 \begin{table}[H]
   \centering
-  \caption{Sprint planning across the two releases}
-  \label{tab:sprints}
   \begin{tabularx}{\textwidth}{|l|l|X|>{\centering\arraybackslash}p{2.9cm}|}
     \hline
     \rowcolor{tableHeader}
@@ -382,6 +379,8 @@ goal and user stories.
       & Sprint 4 & AI verification, premium tier, theming and DevOps & US22--US33, US35, US40 \\
     \hline
   \end{tabularx}
+  \caption{Sprint planning across the two releases}
+  \label{tab:sprints}
 \end{table}
 
 \section{Gantt Diagram}
@@ -444,8 +443,6 @@ each service.
 
 \begin{table}[H]
   \centering
-  \caption{AI models used per service}
-  \label{tab:aimodels}
   \begin{tabularx}{\textwidth}{|l|X|}
     \hline
     \rowcolor{tableHeader}
@@ -455,6 +452,8 @@ each service.
     AI storefront redesign         & Groq~\cite{groq} \texttt{llama-3.3-70b-versatile} generating the storefront customisation \\ \hline
     Database chat assistant        & Hosted LLM translating natural-language questions into safe database queries \\ \hline
   \end{tabularx}
+  \caption{AI models used per service}
+  \label{tab:aimodels}
 \end{table}
 
 \subsection{Tools, Frameworks and Languages}
@@ -468,8 +467,6 @@ frameworks and libraries.
 
 \begin{table}[H]
   \centering
-  \caption{Tools used throughout the project}
-  \label{tab:tools}
   \begin{tabular}{|>{\centering\arraybackslash}m{1.4cm}|l|m{8.2cm}|}
     \hline
     \rowcolor{tableHeader}
@@ -484,12 +481,12 @@ frameworks and libraries.
     \includegraphics[height=0.8cm]{img/postman.png}   & Postman~\cite{postman}     & Manual testing and documentation of the REST endpoints. \\ \hline
     \includegraphics[height=0.8cm]{img/pnpm.png}      & pnpm~\cite{pnpm}           & Fast, disk-efficient package manager for the monorepo. \\ \hline
   \end{tabular}
+  \caption{Tools used throughout the project}
+  \label{tab:tools}
 \end{table}
 
 \begin{table}[H]
   \centering
-  \caption{Frameworks and languages}
-  \label{tab:frameworks}
   \begin{tabularx}{\textwidth}{|l|X|}
     \hline
     \rowcolor{tableHeader}
@@ -504,6 +501,8 @@ frameworks and libraries.
     Terraform     & Declarative provisioning of the cloud infrastructure. \\ \hline
     n8n           & Workflow engine hosting the AI orchestration. \\ \hline
   \end{tabularx}
+  \caption{Frameworks and languages}
+  \label{tab:frameworks}
 \end{table}
 
 \subsection{Database}

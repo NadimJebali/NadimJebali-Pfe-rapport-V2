@@ -73,8 +73,6 @@ Table~\ref{tab:backlog-r2}.
 
 \begin{table}[H]
   \centering
-  \caption{Release~2 backlog --- user stories grouped by sprint and feature.}
-  \label{tab:backlog-r2}
   \renewcommand{\arraystretch}{1.2}
   \begin{tabularx}{\textwidth}{|l|l|X|c|}
     \hline
@@ -91,6 +89,8 @@ Table~\ref{tab:backlog-r2}.
                               & CI/CD \& Deployment     & US28--US33       & 13 \\ \hline
     \multicolumn{3}{|r|}{\textbf{Release~2 total}} & \textbf{49} \\ \hline
   \end{tabularx}
+  \caption{Release~2 backlog --- user stories grouped by sprint and feature.}
+  \label{tab:backlog-r2}
 \end{table}
 
 \section{Sprint 3 --- Orders, Payment \& Administration}
@@ -135,8 +135,6 @@ is then described in its own section.
 
 \begin{table}[H]
   \centering
-  \caption{Textual description of the \emph{Checkout} use case.}
-  \label{tab:uc-checkout}
   \renewcommand{\arraystretch}{1.25}
   \begin{tabularx}{\textwidth}{|>{\bfseries}p{3cm}|X|}
     \hline
@@ -150,12 +148,12 @@ is then described in its own section.
     Nominal scenario & 1.~The customer opens the checkout page. \newline 2.~The customer reviews the items, quantities and shipping form. \newline 3.~The customer confirms. \newline 4.~The server prices each line server-side (using the sale price when a sale is active), reserves stock, and creates one order spanning all stores with its order items. \newline 5.~The payment step opens. \\ \hline
     Alternative scenarios & A1.~Insufficient stock on a line: the line is flagged and checkout halts. \newline A2.~Unverified email: checkout is blocked until verification. \\ \hline
   \end{tabularx}
+  \caption{Textual description of the \emph{Checkout} use case.}
+  \label{tab:uc-checkout}
 \end{table}
 
 \begin{table}[H]
   \centering
-  \caption{Textual description of the \emph{Pay securely} use case.}
-  \label{tab:uc-pay}
   \renewcommand{\arraystretch}{1.25}
   \begin{tabularx}{\textwidth}{|>{\bfseries}p{3cm}|X|}
     \hline
@@ -169,12 +167,12 @@ is then described in its own section.
     Nominal scenario & 1.~The server computes the grand total and converts it from TND to USD minor units. \newline 2.~The server opens one PaymentIntent for the total with an idempotency key and stamps its id on the order. \newline 3.~The client confirms the payment with Stripe. \newline 4.~Stripe sends a signed webhook; the backend verifies the signature against the raw body. \newline 5.~On \texttt{payment\_intent.succeeded} the order becomes \textsc{paid} and \textsc{confirmed} and the confirmation email is sent. \\ \hline
     Alternative scenarios & E1.~Payment fails or is canceled: the order is marked failed and the reserved stock is released (idempotently). \newline E2.~Lost webhook: a periodic reconciliation sweep retrieves the intent from Stripe and settles or restocks the order. \\ \hline
   \end{tabularx}
+  \caption{Textual description of the \emph{Pay securely} use case.}
+  \label{tab:uc-pay}
 \end{table}
 
 \begin{table}[H]
   \centering
-  \caption{Textual description of the \emph{Manage profile} use case.}
-  \label{tab:uc-profile}
   \renewcommand{\arraystretch}{1.25}
   \begin{tabularx}{\textwidth}{|>{\bfseries}p{3cm}|X|}
     \hline
@@ -188,12 +186,12 @@ is then described in its own section.
     Nominal scenario & 1.~The user opens their account page (a customer through the tabbed account page, a seller through the dashboard). \newline 2.~The user edits the name, phone or avatar and saves; the server accepts only those fields. \newline 3.~The user optionally changes the password by supplying the current and a new one. \newline 4.~The user opens the purchase-history view to consult past orders, paginated. \\ \hline
     Alternative scenarios & A1.~A privileged field is submitted: the server ignores it, so a user can never self-grant a role or premium status. \newline E1.~Invalid input (e.g.\ a too-short new password or a mismatched confirmation): validation rejects the change with a message. \\ \hline
   \end{tabularx}
+  \caption{Textual description of the \emph{Manage profile} use case.}
+  \label{tab:uc-profile}
 \end{table}
 
 \begin{table}[H]
   \centering
-  \caption{Textual description of the \emph{Suspend store} use case.}
-  \label{tab:uc-suspend}
   \renewcommand{\arraystretch}{1.25}
   \begin{tabularx}{\textwidth}{|>{\bfseries}p{3cm}|X|}
     \hline
@@ -207,12 +205,12 @@ is then described in its own section.
     Nominal scenario & 1.~The administrator opens the store moderation panel. \newline 2.~The administrator selects a store and inspects it. \newline 3.~The administrator chooses suspend or delete, optionally with a reason. \newline 4.~The system updates the status, writes a \texttt{StoreStatusLog} entry, and on delete cascades to the store's products. \\ \hline
     Alternative scenarios & A1.~Reactivate a suspended store: \texttt{currentStatus} returns to \textsc{active}. \\ \hline
   \end{tabularx}
+  \caption{Textual description of the \emph{Suspend store} use case.}
+  \label{tab:uc-suspend}
 \end{table}
 
 \begin{table}[H]
   \centering
-  \caption{Textual description of the \emph{Override AI verdict} use case.}
-  \label{tab:uc-override}
   \renewcommand{\arraystretch}{1.25}
   \begin{tabularx}{\textwidth}{|>{\bfseries}p{3cm}|X|}
     \hline
@@ -226,6 +224,8 @@ is then described in its own section.
     Nominal scenario & 1.~The administrator opens the moderation panel. \newline 2.~The administrator reviews the AI verdict and rationale on the flagged entity. \newline 3.~The administrator approves or rejects, overriding the AI. \newline 4.~The system sets \texttt{adminReviewed} and updates the verification status; the administrator's decision is final. \\ \hline
     Alternative scenarios & A1.~The administrator agrees with the AI: no override is needed and the AI verdict stands. \\ \hline
   \end{tabularx}
+  \caption{Textual description of the \emph{Override AI verdict} use case.}
+  \label{tab:uc-override}
 \end{table}
 
 \subsubsection{Activity Diagram}
@@ -399,8 +399,6 @@ diagrams and the verification exchange as a sequence diagram.
 
 \begin{table}[H]
   \centering
-  \caption{Textual description of the \emph{AI verification} use case.}
-  \label{tab:uc-aiverify}
   \renewcommand{\arraystretch}{1.25}
   \begin{tabularx}{\textwidth}{|>{\bfseries}p{3cm}|X|}
     \hline
@@ -414,12 +412,12 @@ diagrams and the verification exchange as a sequence diagram.
     Nominal scenario & 1.~After image upload, the backend fires the \texttt{ai-verify} webhook with the listing text and image list. \newline 2.~n8n downloads each image and submits it with the text to the vision model. \newline 3.~The per-image verdicts are aggregated, flagging the entity if any image is flagged. \newline 4.~The decision is posted to the \texttt{/ai-review} callback. \newline 5.~The backend publishes clean entities and queues flagged ones for moderation. \\ \hline
     Alternative scenarios & E1.~The webhook or model fails: the entity stays \textsc{pending} and is surfaced in the administrator's queue for manual review. \\ \hline
   \end{tabularx}
+  \caption{Textual description of the \emph{AI verification} use case.}
+  \label{tab:uc-aiverify}
 \end{table}
 
 \begin{table}[H]
   \centering
-  \caption{Textual description of the \emph{AI chat query} use case.}
-  \label{tab:uc-aichat}
   \renewcommand{\arraystretch}{1.25}
   \begin{tabularx}{\textwidth}{|>{\bfseries}p{3cm}|X|}
     \hline
@@ -433,12 +431,12 @@ diagrams and the verification exchange as a sequence diagram.
     Nominal scenario & 1.~The administrator types a question in the chat assistant. \newline 2.~The backend forwards it to the n8n chat workflow. \newline 3.~The AI agent translates the question into SQL, executes it against MariaDB through the SQL tool, and formats the result. \newline 4.~The answer is returned to the administrator. \\ \hline
     Alternative scenarios & A1.~An ambiguous question: the assistant asks for clarification, using its conversation memory for context. \\ \hline
   \end{tabularx}
+  \caption{Textual description of the \emph{AI chat query} use case.}
+  \label{tab:uc-aichat}
 \end{table}
 
 \begin{table}[H]
   \centering
-  \caption{Textual description of the \emph{Subscribe to / manage premium subscription} use case.}
-  \label{tab:uc-premium}
   \renewcommand{\arraystretch}{1.25}
   \begin{tabularx}{\textwidth}{|>{\bfseries}p{3cm}|X|}
     \hline
@@ -452,12 +450,12 @@ diagrams and the verification exchange as a sequence diagram.
     Nominal scenario & 1.~The seller opens the upgrade page and starts the subscription. \newline 2.~The backend opens a Stripe Checkout session in subscription mode and redirects the seller to the hosted page. \newline 3.~The seller pays on Stripe. \newline 4.~On a signature-verified \texttt{customer.subscription.created} webhook the account is marked premium until the current period end. \newline 5.~Each renewal fires \texttt{customer.subscription.updated} and advances the expiry. \newline 6.~The seller later manages the subscription --- cancel, update card, download invoices --- through the Stripe Customer Portal. \\ \hline
     Alternative scenarios & A1.~Cancellation through the portal is \emph{cancel-at-period-end}: premium is kept until the paid period ends, then a \texttt{customer.subscription.deleted} webhook revokes it. \newline A2.~A non-seller is redirected to the become-a-seller flow. \newline A3.~An administrator grants premium manually --- a comp account with no Stripe subscription. \newline A4.~After expiry the premium customisation values are preserved and stay visible to buyers; only further editing of premium fields is locked (US27). \\ \hline
   \end{tabularx}
+  \caption{Textual description of the \emph{Subscribe to / manage premium subscription} use case.}
+  \label{tab:uc-premium}
 \end{table}
 
 \begin{table}[H]
   \centering
-  \caption{Textual description of the \emph{Switch theme} use case.}
-  \label{tab:uc-theme}
   \renewcommand{\arraystretch}{1.25}
   \begin{tabularx}{\textwidth}{|>{\bfseries}p{3cm}|X|}
     \hline
@@ -471,6 +469,8 @@ diagrams and the verification exchange as a sequence diagram.
     Nominal scenario & 1.~The user opens the theme switch and picks light, dark or system. \newline 2.~The interface re-themes at once through CSS design tokens, with no page reload. \newline 3.~The preference is stored locally and restored on the next visit before the first paint, so there is no flash of the wrong theme. \\ \hline
     Alternative scenarios & A1.~The user picks \emph{system}: the interface follows the OS light/dark setting and updates live when that setting changes. \newline A2.~A seller storefront keeps its own seller-chosen palette and is intentionally not overridden by the application theme. \\ \hline
   \end{tabularx}
+  \caption{Textual description of the \emph{Switch theme} use case.}
+  \label{tab:uc-theme}
 \end{table}
 
 \subsubsection{Activity Diagrams}

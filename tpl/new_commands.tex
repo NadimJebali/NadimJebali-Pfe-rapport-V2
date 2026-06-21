@@ -203,4 +203,6 @@
 % With the English language selected above, override the table
 % label to English. (Figures already use "Figure", identical in
 % English.) Done here, after caption is loaded by the class.
-\captionsetup[table]{name=Table}
+% Table titles sit *below* the table (the \caption is emitted after the
+% tabular in each table float); position=bottom applies the matching skip.
+\captionsetup[table]{name=Table,position=bottom}
