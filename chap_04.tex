@@ -66,7 +66,8 @@ trail and the featured-content entities.
 
 The release backlog draws the remaining user stories from the product
 backlog of Section~\ref{chap:requirements} --- including the payment
-story US36 --- and allocates them to the two sprints, as summarised in
+story US36 and the account-management stories US38--US39 --- and
+allocates them to the two sprints, as summarised in
 Table~\ref{tab:backlog-r2}.
 
 \begin{table}[H]
@@ -80,12 +81,13 @@ Table~\ref{tab:backlog-r2}.
     \textcolor{white}{\textbf{Sprint}} & \textcolor{white}{\textbf{Feature}} &
     \textcolor{white}{\textbf{User stories}} & \textcolor{white}{\textbf{Pts}} \\
     \hline
-    \multirow{2}{*}{Sprint 3} & Order System \& Payment & US14--US17, US36 & 11 \\ \cline{2-4}
+    \multirow{3}{*}{Sprint 3} & Order System \& Payment & US14--US17, US36 & 11 \\ \cline{2-4}
+                              & Account Management      & US38, US39       & 3 \\ \cline{2-4}
                               & Administration          & US19--US21       & 4 \\ \hline
     \multirow{3}{*}{Sprint 4} & AI Verification         & US22--US24, US35 & 8 \\ \cline{2-4}
                               & Premium Tier            & US25--US27       & 8 \\ \cline{2-4}
                               & CI/CD \& Deployment     & US28--US33       & 13 \\ \hline
-    \multicolumn{3}{|r|}{\textbf{Release~2 total}} & \textbf{44} \\ \hline
+    \multicolumn{3}{|r|}{\textbf{Release~2 total}} & \textbf{47} \\ \hline
   \end{tabularx}
 \end{table}
 
@@ -97,8 +99,11 @@ Sprint~3 makes the marketplace transactable and governable. By the end of
 the sprint a customer can build a cart, check out across several stores
 in a single order, and pay securely through Stripe, receiving a
 confirmation email; a seller can see the orders that include their
-products; and an administrator can moderate stores and products, suspend
-or delete a store, curate featured content and manage the category tree.
+products; every signed-in user can manage their own account --- viewing
+and editing their profile, changing their password and reviewing their
+purchase history --- and an administrator can moderate stores and
+products, suspend or delete a store, curate featured content and manage
+the category tree.
 The payment flow is the centrepiece: amounts are computed server-side,
 charged through a single Stripe~\cite{stripe} PaymentIntent, and confirmed
 asynchronously by a signature-verified webhook.
@@ -119,7 +124,7 @@ gateway and the confirmation email; suspending a store is an
 
 \subsection{Analysis and Design}
 
-The four central use cases of the sprint are specified textually, then
+The five central use cases of the sprint are specified textually, then
 the checkout-and-payment control flow is given as an activity diagram and
 the order placement as a sequence diagram. The Stripe payment mechanism
 is then described in its own section.
@@ -161,6 +166,25 @@ is then described in its own section.
     Post-conditions & A Stripe PaymentIntent is opened for the server-computed total; on a signature-verified success webhook the order is marked \textsc{paid} and \textsc{confirmed} and a confirmation email is sent; on failure the reserved stock is released. \\ \hline
     Nominal scenario & 1.~The server computes the grand total and converts it from TND to USD minor units. \newline 2.~The server opens one PaymentIntent for the total with an idempotency key and stamps its id on the order. \newline 3.~The client confirms the payment with Stripe. \newline 4.~Stripe sends a signed webhook; the backend verifies the signature against the raw body. \newline 5.~On \texttt{payment\_intent.succeeded} the order becomes \textsc{paid} and \textsc{confirmed} and the confirmation email is sent. \\ \hline
     Alternative scenarios & E1.~Payment fails or is canceled: the order is marked failed and the reserved stock is released (idempotently). \newline E2.~Lost webhook: a periodic reconciliation sweep retrieves the intent from Stripe and settles or restocks the order. \\ \hline
+  \end{tabularx}
+\end{table}
+
+\begin{table}[H]
+  \centering
+  \caption{Textual description of the \emph{Manage profile} use case.}
+  \label{tab:uc-profile}
+  \renewcommand{\arraystretch}{1.25}
+  \begin{tabularx}{\textwidth}{|>{\bfseries}p{3cm}|X|}
+    \hline
+    \rowcolor{tableHeader}
+    \multicolumn{2}{|l|}{\textcolor{white}{\textbf{Use case: Manage profile}}} \\
+    \hline
+    Actor & Any authenticated user (Customer, Seller or Administrator). \\ \hline
+    Objective & View and update one's own account: display name, phone and avatar, change the password, and review the purchase history. \\ \hline
+    Pre-conditions & The user is signed in. \\ \hline
+    Post-conditions & The editable fields (name, phone, avatar) are updated; a password change revokes the other sessions; privileged fields (role, premium status, email) are never altered through this surface. \\ \hline
+    Nominal scenario & 1.~The user opens their account page (a customer through the tabbed account page, a seller through the dashboard). \newline 2.~The user edits the name, phone or avatar and saves; the server accepts only those fields. \newline 3.~The user optionally changes the password by supplying the current and a new one. \newline 4.~The user opens the purchase-history view to consult past orders, paginated. \\ \hline
+    Alternative scenarios & A1.~A privileged field is submitted: the server ignores it, so a user can never self-grant a role or premium status. \newline E1.~Invalid input (e.g.\ a too-short new password or a mismatched confirmation): validation rejects the change with a message. \\ \hline
   \end{tabularx}
 \end{table}
 
@@ -289,6 +313,13 @@ the running application.
   \imagePlaceholder[6cm]{Checkout page --- multi-store cart summary, shipping form and Stripe payment element}
   \caption{Checkout page with Stripe payment.}
   \label{fig:real-checkout}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \imagePlaceholder[6cm]{Account page --- profile view/edit (name, phone, avatar), change-password form and the paginated purchase history}
+  \caption{User account and profile page.}
+  \label{fig:real-profile}
 \end{figure}
 
 \begin{figure}[H]
@@ -522,7 +553,7 @@ placeholder for the corresponding screenshot of the running application.
 \section{Tests \& Validation}
 \label{sec:tests}
 
-Quality is enforced by an automated suite of \textbf{445 tests} that runs
+Quality is enforced by an automated suite of \textbf{473 tests} that runs
 on every push and gates every deployment.
 
 \subsection{Testing Strategy and Tooling}
@@ -554,20 +585,20 @@ layers.
   \begin{minipage}{0.85\textwidth}
   \centering
   \texttt{\begin{tabular}{c}
-    \textbf{Integration (83 tests)} \\
+    \textbf{Integration (90 tests)} \\
     \footnotesize Nest app + ValidationPipe + supertest + global guard \\
     \footnotesize controllers across the modules; deny-by-default guard wiring \\[4pt]
     \hline\\[-6pt]
-    \textbf{Service unit tests (219 tests)} \\
+    \textbf{Service unit tests (221 tests)} \\
     \footnotesize Real service code, mocked Prisma \\
     \footnotesize Product, Store, Order, Payment, User, Settings, Notification, \ldots \\[4pt]
     \hline\\[-6pt]
-    \textbf{Pure-logic + frontend (143 tests)} \\
+    \textbf{Pure-logic + frontend (162 tests)} \\
     \footnotesize No I/O, no framework wiring \\
     \footnotesize \texttt{validate-env}, \texttt{tndToStripeUsdMinor}, guards; stores, hooks, components \\
   \end{tabular}}
   \end{minipage}
-  \caption{Test pyramid --- 445 tests across backend (Jest, 337) and frontend (Vitest, 108).}
+  \caption{Test pyramid --- 473 tests across backend (Jest, 346) and frontend (Vitest, 127).}
   \label{fig:test-pyramid}
 \end{figure}
 
@@ -742,13 +773,15 @@ requirements of Section~\ref{chap:requirements}.
 This chapter delivered Release~2 and, with it, a complete product.
 Sprint~3 made the marketplace transactable --- a multi-store cart and
 checkout, the server-authoritative Stripe payment flow confirmed by a
-signature-verified webhook, and the administration tooling to moderate
-stores and products, curate featured content and manage categories.
+signature-verified webhook, the self-service account management that lets
+every user edit their profile, change their password and review their
+purchase history, and the administration tooling to moderate stores and
+products, curate featured content and manage categories.
 Sprint~4 added the intelligence and delivery layers --- the automated AI
 verification pipeline with administrative override, the database chat
 assistant, the premium tier built on the same payment machinery, and the
 testing and DevOps that bring the platform to production: a layered suite
-of 445 tests, containerised services behind a TLS-terminating proxy,
+of 473 tests, containerised services behind a TLS-terminating proxy,
 infrastructure described with Terraform, and a GitHub Actions pipeline
 that tests, builds and deploys on every push to \texttt{main}. The
 marketplace planned in the first two chapters is now fully realised,

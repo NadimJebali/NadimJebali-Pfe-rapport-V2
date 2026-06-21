@@ -44,8 +44,12 @@ rectangle "Sprint 3 --- Orders, Payment & Administration" {
     (Manage cart)           as O1 #FEF3C7
     (Checkout)              as O2 #FEF3C7
     (Pay securely)          as O3 #FEF3C7
-    (Consult order history) as O4 #FEF3C7
     (View store orders)     as O5 #FEF3C7
+  }
+
+  rectangle "Account Management" #EFF6FF {
+    (Manage profile)        as AC1 #DBEAFE
+    (Consult order history) as O4 #DBEAFE
   }
 
   rectangle "Administration" #FDF2F8 {
@@ -63,6 +67,7 @@ actor "Email Service"             as MAIL #FEF9C3
 Customer --> O1
 Customer --> O2
 Customer --> O4
+Customer --> AC1
 Seller   --> O5
 Admin    --> D1
 Admin    --> D2

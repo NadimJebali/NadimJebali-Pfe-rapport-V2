@@ -48,6 +48,7 @@ rectangle "Release 1 --- Foundations & Core Marketplace" {
     (Verify email)                 as A2 #DBEAFE
     (Log in)                       as A3 #DBEAFE
     (Log out)                      as A4 #DBEAFE
+    (Reset password)               as A5 #DBEAFE
   }
 
   rectangle "Browsing" #FFFBEB {
@@ -79,6 +80,7 @@ actor "Email Service" as MAIL #FEF9C3
 
 ' ── Associations ────────────────────────────────────────────
 Visitor  --> A1
+Visitor  --> A5
 Visitor  --> B1
 Visitor  --> B2
 Visitor  --> B3
@@ -103,5 +105,6 @@ S5 .> S7 : <<include>>
 B4 .> D1 : <<triggers>>
 D1 .> D2 : <<include>>
 A2 --> MAIL
+A5 --> MAIL
 
 @enduml

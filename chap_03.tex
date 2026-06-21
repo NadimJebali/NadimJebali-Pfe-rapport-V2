@@ -68,7 +68,7 @@ which the two sprints operate.
 
 \section{Release~1 Backlog}
 
-The release backlog draws fifteen user stories from the product backlog
+The release backlog draws sixteen user stories from the product backlog
 of Section~\ref{chap:requirements} and allocates them to the two
 sprints, as summarised in Table~\ref{tab:backlog-r1}. Story points reuse
 the complexity estimates of the product backlog.
@@ -84,11 +84,11 @@ the complexity estimates of the product backlog.
     \textcolor{white}{\textbf{Sprint}} & \textcolor{white}{\textbf{Feature}} &
     \textcolor{white}{\textbf{User stories}} & \textcolor{white}{\textbf{Pts}} \\
     \hline
-    \multirow{2}{*}{Sprint 1} & Authentication      & US01, US02, US03, US04 & 6 \\ \cline{2-4}
+    \multirow{2}{*}{Sprint 1} & Authentication      & US01--US04, US37       & 8 \\ \cline{2-4}
                               & Administration      & US18                   & 2 \\ \hline
     \multirow{2}{*}{Sprint 2} & Store Management    & US05--US09, US34       & 15 \\ \cline{2-4}
                               & Product Management  & US10, US11, US12, US13 & 6 \\ \hline
-    \multicolumn{3}{|r|}{\textbf{Release~1 total}} & \textbf{29} \\ \hline
+    \multicolumn{3}{|r|}{\textbf{Release~1 total}} & \textbf{31} \\ \hline
   \end{tabularx}
 \end{table}
 
@@ -99,9 +99,10 @@ the complexity estimates of the product backlog.
 Sprint~1 delivers the identity layer of the marketplace and the loop
 that turns a customer into a seller. By the end of the sprint a visitor
 can create an account secured by email verification, sign in and out
-through database-backed sessions, and submit a seller application; an
-administrator can review that application and, on approval, promote the
-account to the seller role. Authentication is provided by the
+through database-backed sessions, recover access through an email-based
+password reset, and submit a seller application; an administrator can
+review that application and, on approval, promote the account to the
+seller role. Authentication is provided by the
 \textbf{Better-Auth} library, integrated into the NestJS backend through
 a thin adapter; it ships email/password credentials, email verification,
 database-persisted sessions and cookie transport, so that no
@@ -125,7 +126,7 @@ approval, a rejection or a request for more information.
 
 \subsection{Analysis and Design}
 
-The four central use cases of the sprint are specified textually below,
+The five central use cases of the sprint are specified textually below,
 then the registration control flow is given as an activity diagram and
 the authentication exchange as a sequence diagram.
 
@@ -166,6 +167,25 @@ the authentication exchange as a sequence diagram.
     Post-conditions & A database-backed session token is issued in an HTTP-only cookie; the user is redirected to their dashboard. \\ \hline
     Nominal scenario & 1.~The user opens the sign-in page. \newline 2.~The user enters their email and password. \newline 3.~Better-Auth validates the credentials against the \texttt{User} table. \newline 4.~A session row is created and the session cookie is set. \newline 5.~The user is redirected to their dashboard. \\ \hline
     Alternative scenarios & A1.~Invalid credentials: a generic error is shown without revealing which field failed. \newline A2.~Unverified email: sign-in succeeds but store creation and ordering remain blocked until the email is verified. \\ \hline
+  \end{tabularx}
+\end{table}
+
+\begin{table}[H]
+  \centering
+  \caption{Textual description of the \emph{Reset password} use case.}
+  \label{tab:uc-reset}
+  \renewcommand{\arraystretch}{1.25}
+  \begin{tabularx}{\textwidth}{|>{\bfseries}p{3cm}|X|}
+    \hline
+    \rowcolor{tableHeader}
+    \multicolumn{2}{|l|}{\textcolor{white}{\textbf{Use case: Reset password}}} \\
+    \hline
+    Actor & Registered user who has forgotten their password (unauthenticated); Email Service (secondary). \\ \hline
+    Objective & Regain access to the account by setting a new password through an emailed link. \\ \hline
+    Pre-conditions & The user cannot sign in and has access to the email address on the account. \\ \hline
+    Post-conditions & A one-time, time-limited reset token is generated and emailed; once it is consumed the password is replaced and every existing session for that account is revoked. \\ \hline
+    Nominal scenario & 1.~The user opens the ``forgot password'' page from the sign-in screen and enters their email. \newline 2.~Better-Auth generates a one-time token and the system emails a reset link. \newline 3.~The user opens the link and enters a new password with confirmation. \newline 4.~Better-Auth validates the token, replaces the password and revokes all other sessions. \newline 5.~The user is returned to the sign-in page to log in with the new password. \\ \hline
+    Alternative scenarios & A1.~Unknown email: the same generic confirmation is shown, so the request never reveals whether an account exists. \newline E1.~Expired or invalid token: the reset is refused and the user is invited to request a new link. \\ \hline
   \end{tabularx}
 \end{table}
 
@@ -266,6 +286,13 @@ screenshot of the running application.
   \imagePlaceholder[6cm]{Login page --- credentials form and session redirect}
   \caption{Login page.}
   \label{fig:real-login}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \imagePlaceholder[5cm]{Password-reset flow --- ``forgot password'' request page and the new-password page reached from the emailed link}
+  \caption{Password-reset pages.}
+  \label{fig:real-reset}
 \end{figure}
 
 \begin{figure}[H]
@@ -483,8 +510,9 @@ application.
 
 This chapter delivered Release~1, the foundations of the marketplace.
 Sprint~1 established the identity layer --- registration with email
-verification, database-backed sessions and role-based access --- together
-with the seller-onboarding loop of application and administrative review.
+verification, database-backed sessions, email-based password reset and
+role-based access --- together with the seller-onboarding loop of
+application and administrative review.
 Sprint~2 turned approved sellers into active merchants with store
 creation, the seven-section storefront editor, AI-assisted redesign,
 product management and store-wide sales, while opening catalogue browsing

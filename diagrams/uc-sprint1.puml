@@ -43,6 +43,7 @@ rectangle "Sprint 1 --- Authentication & Seller Onboarding" {
   (Verify email)           as A2 #DBEAFE
   (Log in)                 as A3 #DBEAFE
   (Log out)                as A4 #DBEAFE
+  (Reset password)         as A6 #DBEAFE
   (Apply to become seller) as A5 #FEF3C7
   (Review application)     as D1 #FCE7F3
   (Approve)                as D2 #FCE7F3
@@ -53,6 +54,7 @@ rectangle "Sprint 1 --- Authentication & Seller Onboarding" {
 actor "Email Service" as MAIL #FEF9C3
 
 Visitor  --> A1
+Visitor  --> A6
 Customer --> A3
 Customer --> A4
 Customer --> A5
@@ -64,5 +66,6 @@ D1 .> D2 : <<extend>>
 D1 .> D3 : <<extend>>
 D1 .> D4 : <<extend>>
 A2 --> MAIL
+A6 --> MAIL : <<reset link>>
 
 @enduml

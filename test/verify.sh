@@ -73,7 +73,8 @@ check "a code listing present in a chapter"       bash -c 'grep -Elq "lstlisting
 check "Ch.1 out-of-scope drops payment"           bash -c '! grep -A3 "Out of scope" chap_01.tex | grep -qi "payment"'
 # Ch.2 backlog gains a payment user story (US36) and the counts stay consistent.
 check "Ch.2 backlog has payment story US36"       present chap_02.tex 'US36 &.*pay'
-check "Ch.2 analysis summary count = 36"          present chap_02.tex '36 user stories'
+check "Ch.2 analysis summary count = 39"          present chap_02.tex '39 user stories'
+check "Ch.2 no stale 36-user-stories count"       absent chap_02.tex '36 user stories'
 check "Ch.2 Sprint 3 row includes US36"           bash -c 'grep -q "Sprint 3.*US36" chap_02.tex'
 
 # ----- slice #8: Ch.3 Release 1 overview + backlog + Sprint 1 --------------
@@ -152,7 +153,8 @@ check "seq-verify source de-branded"              absent diagrams/seq-verify.pum
 section "Slice #12 — Tests, DevOps & Ch.4 conclusion"
 check "Ch.4 has a Tests & Validation section"     present chap_04.tex 'section\{Tests'
 check "Ch.4 has the test-pyramid figure"          present chap_04.tex 'label\{fig:test-pyramid\}'
-check "Ch.4 documents the 445-test suite"         present chap_04.tex '445'
+check "Ch.4 documents the 473-test suite"         present chap_04.tex '473'
+check "Ch.4 no stale 445-test count"              absent chap_04.tex '445'
 check "Ch.4 has a DevOps & Deployment section"    present chap_04.tex 'DevOps'
 check "Ch.4 has the Dockerfile listing"           present chap_04.tex 'label=\{lst:dockerfile\}'
 check "Ch.4 has the docker-compose listing"       present chap_04.tex 'label=\{lst:compose\}'
@@ -161,6 +163,35 @@ check "Ch.4 covers Terraform IaC"                 present chap_04.tex 'Terraform
 check "Ch.4 covers GitHub Actions CI/CD"          present chap_04.tex 'GitHub Actions'
 check "Ch.4 covers Caddy TLS termination"         present chap_04.tex 'Caddy'
 check "Ch.4 ends with a Conclusion"               present chap_04.tex 'section\*\{Conclusion\}'
+
+# ----- slice #13: profile + password-reset fold-in ------------------------
+section "Slice #13 — profile & password-reset fold-in"
+# Product backlog gains the three new stories and a 9th feature.
+check "Ch.2 backlog has reset story US37"          present chap_02.tex 'US37 &.*reset'
+check "Ch.2 backlog has profile story US38"        present chap_02.tex 'US38 &.*profile'
+check "Ch.2 backlog has purchase-history US39"     present chap_02.tex 'US39 &'
+check "Ch.2 backlog has a 9th feature (F9)"        present chap_02.tex 'textbf\{F9\}'
+check "Ch.2 summary now says 9 features"           present chap_02.tex '9 features'
+check "Ch.2 Sprint 1 plan includes US37"           bash -c 'grep -q "Sprint 1.*US37" chap_02.tex'
+check "Ch.2 Sprint 3 plan includes US38"           bash -c 'grep -q "Sprint 3.*US38" chap_02.tex'
+# Ch.3 Sprint 1 gains the password-reset use case.
+check "Ch.3 R1 backlog Sprint 1 includes US37"     present chap_03.tex 'US01--US04, US37'
+check "Ch.3 R1 total is now 31"                    present chap_03.tex 'Release~1 total.*textbf\{31\}'
+check "Ch.3 has a Reset password use case"         present chap_03.tex 'Use case: Reset password'
+check "Ch.3 has a reset realisation placeholder"   bash -c 'grep -iq "reset" chap_03.tex'
+check "uc-sprint1 source has Reset password"       present diagrams/uc-sprint1.puml 'Reset password'
+check "uc-release1 source has Reset password"      present diagrams/uc-release1.puml 'Reset password'
+# Ch.4 Sprint 3 gains the Account Management feature.
+check "Ch.4 R2 backlog has Account Management"     present chap_04.tex 'Account Management'
+check "Ch.4 R2 backlog Sprint 3 includes US38"     bash -c 'grep -q "US38" chap_04.tex'
+check "Ch.4 R2 total is now 47"                    present chap_04.tex 'Release~2 total.*textbf\{47\}'
+check "Ch.4 has a Manage profile use case"         present chap_04.tex 'Use case: Manage profile'
+check "Ch.4 has a profile realisation placeholder" bash -c 'grep -iq "profile" chap_04.tex'
+check "uc-sprint3 source has Manage profile"       present diagrams/uc-sprint3.puml 'Manage profile'
+check "uc-release2 source has Manage profile"      present diagrams/uc-release2.puml 'Manage profile'
+# Test totals updated consistently (473 = backend 346 + frontend 127).
+check "Ch.4 test pyramid backend count = 346"      present chap_04.tex '346'
+check "Ch.4 test pyramid frontend count = 127"     present chap_04.tex '127'
 
 # ----- back-matter & polish -----------------------------------------------
 section "Back-matter & polish"
