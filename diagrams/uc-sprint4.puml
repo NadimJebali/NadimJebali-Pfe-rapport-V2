@@ -32,6 +32,7 @@ skinparam rectangle {
 
 left to right direction
 
+actor User          as User
 actor Seller        as Seller
 actor Administrator as Admin
 
@@ -50,6 +51,10 @@ rectangle "Sprint 4 --- AI Verification & Premium Tier" {
     (Unlock premium customisation) as P2 #E4DFEC
     (Operate multiple stores)      as P3 #E4DFEC
   }
+
+  rectangle "Appearance" #F1F5F9 {
+    (Switch theme)                 as T1 #E2E8F0
+  }
 }
 
 actor "AI Service\n(n8n + LLM)"   as AI  #EDE9FE
@@ -60,6 +65,7 @@ Admin  --> V5
 Seller --> P1
 Seller --> P2
 Seller --> P3
+User   --> T1
 
 V1 .> V2 : <<include>>
 V1 .> V3 : <<extend>>

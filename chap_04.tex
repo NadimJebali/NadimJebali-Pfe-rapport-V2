@@ -25,7 +25,8 @@ stores in a single order, and pay through Stripe, while administrators
 moderate stores and products, curate featured content and manage
 categories. Sprint~4 adds the intelligence and delivery layers: automated
 AI verification of new stores and products, the AI database-chat
-assistant, the premium subscription tier, and the test suite and
+assistant, the premium subscription tier, a light/dark theming option,
+and the test suite and
 deployment pipeline. As before, the architecture and technology stack of
 Section~\ref{chap:requirements} are not repeated; this release
 instantiates them for the transactional, intelligence and delivery
@@ -66,8 +67,8 @@ trail and the featured-content entities.
 
 The release backlog draws the remaining user stories from the product
 backlog of Section~\ref{chap:requirements} --- including the payment
-story US36 and the account-management stories US38--US39 --- and
-allocates them to the two sprints, as summarised in
+story US36, the account-management stories US38--US39 and the theming
+story US40 --- and allocates them to the two sprints, as summarised in
 Table~\ref{tab:backlog-r2}.
 
 \begin{table}[H]
@@ -84,10 +85,11 @@ Table~\ref{tab:backlog-r2}.
     \multirow{3}{*}{Sprint 3} & Order System \& Payment & US14--US17, US36 & 11 \\ \cline{2-4}
                               & Account Management      & US38, US39       & 3 \\ \cline{2-4}
                               & Administration          & US19--US21       & 4 \\ \hline
-    \multirow{3}{*}{Sprint 4} & AI Verification         & US22--US24, US35 & 8 \\ \cline{2-4}
+    \multirow{4}{*}{Sprint 4} & AI Verification         & US22--US24, US35 & 8 \\ \cline{2-4}
                               & Premium Tier            & US25--US27       & 8 \\ \cline{2-4}
+                              & Appearance \& Theming   & US40             & 2 \\ \cline{2-4}
                               & CI/CD \& Deployment     & US28--US33       & 13 \\ \hline
-    \multicolumn{3}{|r|}{\textbf{Release~2 total}} & \textbf{47} \\ \hline
+    \multicolumn{3}{|r|}{\textbf{Release~2 total}} & \textbf{49} \\ \hline
   \end{tabularx}
 \end{table}
 
@@ -362,7 +364,11 @@ natural-language database chat assistant for diagnostics, and sellers can
 subscribe to a premium tier --- reusing the Stripe machinery of Sprint~3
 --- that unlocks the full customisation set and multiple stores. The AI
 capabilities are delivered through three independent n8n workflows
-invoked by the backend over HTTP.
+invoked by the backend over HTTP. Finally, the sprint rounds out the user
+experience with an appearance option: a light and a dimmed dark theme,
+chosen explicitly or following the operating-system preference and
+applied consistently across the application chrome through CSS design
+tokens.
 
 \subsection{Sprint Use-Case Diagram}
 
@@ -381,7 +387,7 @@ multiple stores through the Stripe gateway.
 
 \subsection{Analysis and Design}
 
-The three central use cases of the sprint are specified textually, then
+The four central use cases of the sprint are specified textually, then
 the verification and moderation control flows are given as activity
 diagrams and the verification exchange as a sequence diagram.
 
@@ -441,6 +447,25 @@ diagrams and the verification exchange as a sequence diagram.
     Post-conditions & After a successful Stripe payment, \texttt{isPremium} becomes \texttt{true} and \texttt{premiumExpiresAt} is set to a future date; premium customisation fields and multi-store operation are unlocked. \\ \hline
     Nominal scenario & 1.~The seller opens the premium plan. \newline 2.~The seller pays through the same Stripe machinery used at checkout. \newline 3.~On payment success the account is marked premium with an expiry date. \newline 4.~The premium controls unlock. \\ \hline
     Alternative scenarios & A1.~The subscription expires: premium fields lock for further editing, but the existing premium customisation values are preserved and remain visible to buyers (US27). \\ \hline
+  \end{tabularx}
+\end{table}
+
+\begin{table}[H]
+  \centering
+  \caption{Textual description of the \emph{Switch theme} use case.}
+  \label{tab:uc-theme}
+  \renewcommand{\arraystretch}{1.25}
+  \begin{tabularx}{\textwidth}{|>{\bfseries}p{3cm}|X|}
+    \hline
+    \rowcolor{tableHeader}
+    \multicolumn{2}{|l|}{\textcolor{white}{\textbf{Use case: Switch theme}}} \\
+    \hline
+    Actor & Any user, whether authenticated or not. \\ \hline
+    Objective & Choose how the application is rendered: a light theme, a dimmed dark theme, or automatically following the operating-system preference. \\ \hline
+    Pre-conditions & None; the theme switch is reachable from any page through the navigation chrome. \\ \hline
+    Post-conditions & The interface re-themes immediately and the choice is persisted on the device, so it is re-applied before first paint on later visits. \\ \hline
+    Nominal scenario & 1.~The user opens the theme switch and picks light, dark or system. \newline 2.~The interface re-themes at once through CSS design tokens, with no page reload. \newline 3.~The preference is stored locally and restored on the next visit before the first paint, so there is no flash of the wrong theme. \\ \hline
+    Alternative scenarios & A1.~The user picks \emph{system}: the interface follows the OS light/dark setting and updates live when that setting changes. \newline A2.~A seller storefront keeps its own seller-chosen palette and is intentionally not overridden by the application theme. \\ \hline
   \end{tabularx}
 \end{table}
 
@@ -533,7 +558,7 @@ subscription never degrades a storefront that is already live.
 
 \subsection{Realisation}
 
-The sprint delivers the AI-facing interfaces shown below. Each frame is a
+The sprint delivers the interfaces shown below. Each frame is a
 placeholder for the corresponding screenshot of the running application.
 
 \begin{figure}[H]
@@ -550,10 +575,17 @@ placeholder for the corresponding screenshot of the running application.
   \label{fig:real-aichat}
 \end{figure}
 
+\begin{figure}[H]
+  \centering
+  \imagePlaceholder[6cm]{Appearance --- the same page in the light theme and in the dimmed dark theme, with the theme switch open in the navigation bar}
+  \caption{Light and dimmed-dark application themes.}
+  \label{fig:real-theme}
+\end{figure}
+
 \section{Tests \& Validation}
 \label{sec:tests}
 
-Quality is enforced by an automated suite of \textbf{473 tests} that runs
+Quality is enforced by an automated suite of \textbf{479 tests} that runs
 on every push and gates every deployment.
 
 \subsection{Testing Strategy and Tooling}
@@ -593,12 +625,12 @@ layers.
     \footnotesize Real service code, mocked Prisma \\
     \footnotesize Product, Store, Order, Payment, User, Settings, Notification, \ldots \\[4pt]
     \hline\\[-6pt]
-    \textbf{Pure-logic + frontend (162 tests)} \\
+    \textbf{Pure-logic + frontend (168 tests)} \\
     \footnotesize No I/O, no framework wiring \\
     \footnotesize \texttt{validate-env}, \texttt{tndToStripeUsdMinor}, guards; stores, hooks, components \\
   \end{tabular}}
   \end{minipage}
-  \caption{Test pyramid --- 473 tests across backend (Jest, 346) and frontend (Vitest, 127).}
+  \caption{Test pyramid --- 479 tests across backend (Jest, 346) and frontend (Vitest, 133).}
   \label{fig:test-pyramid}
 \end{figure}
 
@@ -617,9 +649,11 @@ authorisation wiring admits exactly the intended routes.
 \subsection{Frontend Tests}
 
 The frontend tests cover the Zustand stores, the custom hooks and the
-React components, mounting them in a jsdom environment and asserting on
-accessible, user-visible output. Together with the backend suite they
-give the layered coverage summarised in the pyramid above.
+React components --- including the theme switch and the centralised
+status-badge helper introduced with the light/dark theming --- mounting
+them in a jsdom environment and asserting on accessible, user-visible
+output. Together with the backend suite they give the layered coverage
+summarised in the pyramid above.
 
 \subsection{Code Coverage and Continuous Integration}
 
@@ -779,9 +813,10 @@ purchase history, and the administration tooling to moderate stores and
 products, curate featured content and manage categories.
 Sprint~4 added the intelligence and delivery layers --- the automated AI
 verification pipeline with administrative override, the database chat
-assistant, the premium tier built on the same payment machinery, and the
+assistant, the premium tier built on the same payment machinery, a light
+and dimmed-dark theming option, and the
 testing and DevOps that bring the platform to production: a layered suite
-of 473 tests, containerised services behind a TLS-terminating proxy,
+of 479 tests, containerised services behind a TLS-terminating proxy,
 infrastructure described with Terraform, and a GitHub Actions pipeline
 that tests, builds and deploys on every push to \texttt{main}. The
 marketplace planned in the first two chapters is now fully realised,
