@@ -141,6 +141,26 @@ the React frontend.
         administrative review.
 \end{enumerate}
 
+\paragraph{Product Suggestions.}
+\begin{enumerate}[label=\textbf{FR-PS\arabic*.},leftmargin=*,itemsep=1pt]
+  \item On a product page, the system shall present cross-store
+        suggestions --- a cheaper ``same item'' offer when one exists and
+        a set of substitute alternatives --- distinct from the tag-based
+        recommendations of the landing page.
+  \item Suggestions shall be generated live for each product view by an
+        n8n workflow (a hosted large-language model with a read-only
+        database tool returning structured product identifiers), so that a
+        newly listed product is eligible immediately, with no precomputed
+        data to go stale.
+  \item The backend shall validate every suggested identifier at serve
+        time --- approved, not banned, available, in stock and never the
+        viewed product, with a ``better deal'' kept only when genuinely
+        cheaper --- and shall fall back to a deterministic catalogue query
+        (same category, ranked by product-name similarity and tag overlap)
+        on any workflow error, timeout or empty result, so the section is
+        never empty.
+\end{enumerate}
+
 \paragraph{Featured Content Curation.}
 \begin{enumerate}[label=\textbf{FR-C\arabic*.},leftmargin=*,itemsep=1pt]
   \item The Administrator shall mark any store or product as
@@ -299,6 +319,7 @@ the estimated complexity.
   \cellcolor{featProduct}~ & US11 & As a seller, I want to upload multiple product images so that customers can see my products clearly. & \cellcolor{moscowMust}\textbf{Must} & \cellcolor{complexMed}\textbf{2} \\\hline
   \cellcolor{featProduct}~ & US12 & As a seller, I want to assign tags to products so that the recommendation engine can surface them. & \cellcolor{moscowShould}\textbf{Should} & \cellcolor{complexLow}\textbf{1} \\\hline
   \cellcolor{featProduct}~ & US13 & As a customer, I want to browse products by category so that I can discover relevant items. & \cellcolor{moscowMust}\textbf{Must} & \cellcolor{complexLow}\textbf{1} \\\hline
+  \cellcolor{featProduct}~ & US41 & As a customer, I want to see on a product page a cheaper offer for the same item and relevant alternatives across stores so that I can compare and avoid overpaying. & \cellcolor{moscowCould}\textbf{Could} & \cellcolor{complexHigh}\textbf{3} \\\hline
 
   \cellcolor{featOrder}\makecell[c]{\textbf{F4}\\\small Order\\System}
   & US14 & As a customer, I want to add products to a cart so that I can purchase multiple items at once. & \cellcolor{moscowMust}\textbf{Must} & \cellcolor{complexMed}\textbf{2} \\\hline
@@ -376,7 +397,7 @@ goal and user stories.
     \multirow{2}{*}{\textbf{Release 2}}
       & Sprint 3 & Orders, payment, account and administration & US14--US17, US19--US21, US36, US38, US39 \\
     \cline{2-4}
-      & Sprint 4 & AI verification, premium tier, theming and DevOps & US22--US33, US35, US40 \\
+      & Sprint 4 & AI verification, product suggestions, premium tier, theming and DevOps & US22--US33, US35, US40, US41 \\
     \hline
   \end{tabularx}
   \caption{Sprint planning across the two releases}
@@ -451,6 +472,7 @@ each service.
     Store and product verification & Multimodal LLM (Google Gemini~\cite{gemini}) screening images and listing text \\ \hline
     AI storefront redesign         & Groq~\cite{groq} \texttt{llama-3.3-70b-versatile} generating the storefront customisation \\ \hline
     Database chat assistant        & Hosted LLM translating natural-language questions into safe database queries \\ \hline
+    Product suggestions            & Hosted LLM (Google Gemini~\cite{gemini} / Groq~\cite{groq}) reasoning over the catalogue through a read-only SQL tool, returning structured product ids \\ \hline
   \end{tabularx}
   \caption{AI models used per service}
   \label{tab:aimodels}

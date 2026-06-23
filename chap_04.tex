@@ -25,9 +25,9 @@ stores in a single order, and pay through Stripe, while administrators
 moderate stores and products, curate featured content and manage
 categories. Sprint~4 adds the intelligence and delivery layers: automated
 AI verification of new stores and products, the AI database-chat
-assistant, the premium subscription tier, a light/dark theming option,
-and the test suite and
-deployment pipeline. As before, the architecture and technology stack of
+assistant, live cross-store product suggestions on the product page, the
+premium subscription tier, a light/dark theming option, and the test suite
+and deployment pipeline. As before, the architecture and technology stack of
 Section~\ref{chap:requirements} are not repeated; this release
 instantiates them for the transactional, intelligence and delivery
 features.
@@ -83,11 +83,12 @@ Table~\ref{tab:backlog-r2}.
     \multirow{3}{*}{Sprint 3} & Order System \& Payment & US14--US17, US36 & 11 \\ \cline{2-4}
                               & Account Management      & US38, US39       & 3 \\ \cline{2-4}
                               & Administration          & US19--US21       & 4 \\ \hline
-    \multirow{4}{*}{Sprint 4} & AI Verification         & US22--US24, US35 & 8 \\ \cline{2-4}
+    \multirow{5}{*}{Sprint 4} & AI Verification         & US22--US24, US35 & 8 \\ \cline{2-4}
+                              & Product Suggestions     & US41             & 3 \\ \cline{2-4}
                               & Premium Tier            & US25--US27       & 8 \\ \cline{2-4}
                               & Appearance \& Theming   & US40             & 2 \\ \cline{2-4}
                               & CI/CD \& Deployment     & US28--US33       & 13 \\ \hline
-    \multicolumn{3}{|r|}{\textbf{Release~2 total}} & \textbf{49} \\ \hline
+    \multicolumn{3}{|r|}{\textbf{Release~2 total}} & \textbf{52} \\ \hline
   \end{tabularx}
   \caption{Release~2 backlog --- user stories grouped by sprint and feature.}
   \label{tab:backlog-r2}
@@ -360,13 +361,15 @@ Sprint~4 adds the intelligence and monetisation layers. Every new store
 and product is screened automatically by an AI verification pipeline
 before it becomes visible; suspicious content is flagged for the
 administrator, who remains the final authority. Administrators gain a
-natural-language database chat assistant for diagnostics, and sellers
+natural-language database chat assistant for diagnostics; buyers see live
+cross-store product suggestions --- a cheaper same-item offer and relevant
+alternatives --- on every product page; and sellers
 --- and only sellers --- can take out a \emph{recurring monthly} premium
 subscription through Stripe Checkout, managed afterwards through the Stripe
 Customer Portal, that unlocks the full customisation set and multiple
 stores; this is a new payment mechanism, distinct from the one-time charge
 of Sprint~3. The AI
-capabilities are delivered through three independent n8n workflows
+capabilities are delivered through four independent n8n workflows
 invoked by the backend over HTTP. Finally, the sprint rounds out the user
 experience with an appearance option: a light and a dimmed dark theme,
 chosen explicitly or following the operating-system preference and
@@ -391,9 +394,10 @@ afterwards managed through that same gateway.
 
 \subsection{Analysis and Design}
 
-The four central use cases of the sprint are specified textually, then
+The five central use cases of the sprint are specified textually, then
 the verification and moderation control flows are given as activity
-diagrams and the verification exchange as a sequence diagram.
+diagrams, and the verification and product-suggestion exchanges as
+sequence diagrams.
 
 \subsubsection{Textual Use-Case Descriptions}
 
@@ -473,6 +477,25 @@ diagrams and the verification exchange as a sequence diagram.
   \label{tab:uc-theme}
 \end{table}
 
+\begin{table}[H]
+  \centering
+  \renewcommand{\arraystretch}{1.25}
+  \begin{tabularx}{\textwidth}{|>{\bfseries}p{3cm}|X|}
+    \hline
+    \rowcolor{tableHeader}
+    \multicolumn{2}{|l|}{\textcolor{white}{\textbf{Use case: View product suggestions}}} \\
+    \hline
+    Actor & Customer (visitor or authenticated); AI suggestion service (secondary). \\ \hline
+    Objective & On a product page, surface a cheaper same-item offer and relevant alternatives drawn from across the marketplace. \\ \hline
+    Pre-conditions & The viewed product exists and is publicly visible. \\ \hline
+    Post-conditions & The page shows a validated ``same item, cheaper'' offer (or none) and a list of eligible alternatives; only approved, available, in-stock products other than the viewed one are ever shown. \\ \hline
+    Nominal scenario & 1.~The customer opens a product page. \newline 2.~The frontend requests suggestions for that product on its own asynchronous query, so the page paints immediately. \newline 3.~The backend calls the suggestion workflow, which reasons over the catalogue and returns candidate ids. \newline 4.~The backend hydrates and validates the ids, dropping ineligible ones and keeping the better deal only if genuinely cheaper. \newline 5.~The validated suggestions render in their own section once ready. \\ \hline
+    Alternative scenarios & E1.~The workflow errors, times out or returns nothing usable: the backend falls back to a deterministic catalogue query (same category, ranked by name similarity and tag overlap), so the section is never empty on a transient failure. \newline A1.~Nothing qualifies even from the fallback: the section stays empty rather than showing irrelevant items. \\ \hline
+  \end{tabularx}
+  \caption{Textual description of the \emph{View product suggestions} use case.}
+  \label{tab:uc-suggestions}
+\end{table}
+
 \subsubsection{Activity Diagrams}
 
 Figure~\ref{fig:act-ai-verification} models the AI verification pipeline,
@@ -512,7 +535,7 @@ automatic approval or administrative override.
 
 \subsection{n8n Workflow Design}
 
-The platform's AI features are carried by three independent n8n workflows
+The platform's AI features are carried by four independent n8n workflows
 deployed on the same engine, each exposed as an HTTP webhook the backend
 invokes. The \textbf{verification} workflow (Figure~\ref{fig:n8n-verify})
 fans the image list out into one branch per image, downloads each file,
@@ -523,7 +546,13 @@ model, conversation memory and a SQL execution tool --- that answers an
 administrator's natural-language question by querying the database. The
 \textbf{storefront-redesign} workflow (Figure~\ref{fig:n8n-redesign}),
 already detailed in Sprint~2, builds a prompt, calls the language model,
-and parses and sanitises the returned customisation object.
+and parses and sanitises the returned customisation object. The
+\textbf{suggestion} workflow (Figure~\ref{fig:n8n-suggest}) takes a viewed
+product, reasons over the catalogue through a read-only SQL tool, and
+returns --- through a structured-output parser that enforces a
+\texttt{\{betterDeal, alternatives\}} shape --- the identifiers of a
+cheaper same item and a few substitute alternatives, which the backend
+validates before serving (detailed below).
 
 \begin{figure}[H]
   \centering
@@ -544,6 +573,53 @@ and parses and sanitises the returned customisation object.
   \includegraphics[width=\textwidth,keepaspectratio]{img/n8n-redesign.png}
   \caption{n8n workflow --- AI storefront redesign.}
   \label{fig:n8n-redesign}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \imagePlaceholder[6cm]{n8n suggestion workflow --- webhook, an LLM with a read-only SQL tool, a structured-output parser returning the better-deal and alternative product ids, and the response node}
+  \caption{n8n workflow --- product suggestions.}
+  \label{fig:n8n-suggest}
+\end{figure}
+
+\subsection{Product Suggestions}
+
+On every product page the platform surfaces two tiers of cross-store
+suggestion --- a Tier~1 ``same item, cheaper'' offer and a Tier~2 set of
+substitute \emph{alternatives} --- distinct from the tag-based
+landing-page recommendations. They are produced \textbf{live, on each
+product view} rather than precomputed: an initial design that stored a
+vector embedding per product and compared them in-app was deliberately
+dropped in favour of the live workflow, so a newly listed product is
+eligible immediately and no stored data can go stale. The frontend
+requests them on a separate asynchronous query, so the product page paints
+at once and only the suggestion section waits.
+
+The endpoint \texttt{GET /product/:id/suggestions} calls the suggestion
+workflow (Figure~\ref{fig:n8n-suggest}) with the viewed product, bounded by
+a timeout, and receives a structured \texttt{\{betterDeal, alternatives\}}
+list of product ids. Because that output originates from a language model,
+it crosses a trust boundary and is \textbf{validated deterministically at
+serve time}: every id is hydrated and dropped unless it is approved, not
+banned, available, in stock and different from the viewed product, and the
+better deal is kept only when its price is genuinely below the viewed one.
+
+On any workflow error, timeout, or empty or malformed response the backend
+falls back to a \textbf{deterministic catalogue query}: eligible products
+in the same category, ranked by a similarity score that weighs shared
+product-name tokens most, then shared tags, then the same sub-category,
+with popularity breaking ties. The fallback guarantees the section is
+never empty on a transient failure, while the live workflow --- when
+available --- adds semantic reasoning over the product name and
+description that a rigid query cannot. Figure~\ref{fig:seq-suggestions}
+traces the request from the product page through the workflow call,
+serve-time validation, and the fallback.
+
+\begin{figure}[H]
+  \centering
+  \imagePlaceholder[6cm]{Sequence diagram --- the product page requests suggestions; the backend calls the workflow, validates and hydrates the returned ids, and falls back to the deterministic catalogue query on any failure}
+  \caption{Sequence diagram --- product-suggestions request, serve-time validation and fallback.}
+  \label{fig:seq-suggestions}
 \end{figure}
 
 \subsection{Premium Tier}
@@ -621,6 +697,13 @@ placeholder for the corresponding screenshot of the running application.
 
 \begin{figure}[H]
   \centering
+  \imagePlaceholder[6cm]{Product page --- the ``Same item, cheaper'' offer and the ``Alternatives'' row across stores, with the brief loading state shown while the live suggestions are fetched}
+  \caption{Cross-store product suggestions on the product page.}
+  \label{fig:real-suggestions}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
   \imagePlaceholder[6cm]{Upgrade page --- the premium plan with the subscribe call to action, and, for an active subscriber, the manage-subscription controls (cancel at period end, update card, invoices)}
   \caption{Premium upgrade and subscription-management page.}
   \label{fig:real-upgrade}
@@ -644,7 +727,7 @@ intentionally retain their own chosen palette.
 \section{Tests \& Validation}
 \label{sec:tests}
 
-Quality is enforced by an automated suite of \textbf{504 tests} that runs
+Quality is enforced by an automated suite of \textbf{538 tests} that runs
 on every push and gates every deployment.
 
 \subsection{Testing Strategy and Tooling}
@@ -676,20 +759,20 @@ layers.
   \begin{minipage}{0.85\textwidth}
   \centering
   \texttt{\begin{tabular}{c}
-    \textbf{Integration (83 tests)} \\
+    \textbf{Integration (85 tests)} \\
     \footnotesize Nest app + ValidationPipe + supertest + global guard \\
     \footnotesize controllers across the modules; deny-by-default guard wiring \\[4pt]
     \hline\\[-6pt]
-    \textbf{Service unit tests (236 tests)} \\
+    \textbf{Service unit tests (253 tests)} \\
     \footnotesize Real service code, mocked Prisma \\
     \footnotesize Product, Store, Order, Payment, Subscription, User, Notification, \ldots \\[4pt]
     \hline\\[-6pt]
-    \textbf{Pure-logic + frontend (185 tests)} \\
+    \textbf{Pure-logic + frontend (200 tests)} \\
     \footnotesize No I/O, no framework wiring \\
     \footnotesize \texttt{validate-env}, \texttt{tndToStripeUsdMinor}, guards; stores, hooks, components \\
   \end{tabular}}
   \end{minipage}
-  \caption{Test pyramid --- 504 tests across backend (Jest, 362) and frontend (Vitest, 142).}
+  \caption{Test pyramid --- 538 tests across backend (Jest, 391) and frontend (Vitest, 147).}
   \label{fig:test-pyramid}
 \end{figure}
 
@@ -700,9 +783,14 @@ the real service under test through the NestJS \texttt{TestingModule},
 which lets each test drive arbitrary return values and assert on the
 exact arguments passed to Prisma --- validating business rules such as
 ownership enforcement, the server-side payment-amount derivation and the
-stale-checkout reconciliation. Integration tests boot the Nest
-application with its validation pipe and global guard and drive real
-controllers through supertest, confirming that the deny-by-default
+stale-checkout reconciliation. The product-suggestions logic is covered
+the same way: the serve-time validation and hydration, the deterministic
+fallback ranking and the structured-output parsing are unit-tested against
+mocked workflow responses, and the endpoint is exercised with the
+suggestion webhook mocked so the happy path, the eligibility drops and the
+fallback are all asserted without any network call. Integration tests boot
+the Nest application with its validation pipe and global guard and drive
+real controllers through supertest, confirming that the deny-by-default
 authorisation wiring admits exactly the intended routes.
 
 \subsection{Frontend Tests}
@@ -875,7 +963,7 @@ verification pipeline with administrative override, the database chat
 assistant, the premium tier built on the same payment machinery, a light
 and dimmed-dark theming option, and the
 testing and DevOps that bring the platform to production: a layered suite
-of 504 tests, containerised services behind a TLS-terminating proxy,
+of 538 tests, containerised services behind a TLS-terminating proxy,
 infrastructure described with Terraform, and a GitHub Actions pipeline
 that tests, builds and deploys on every push to \texttt{main}. The
 marketplace planned in the first two chapters is now fully realised,
