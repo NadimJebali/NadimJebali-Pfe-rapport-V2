@@ -19,12 +19,12 @@ engineering services across a broad spectrum of modern computing
 fields. The company positions itself as a partner that translates a
 client's vision into a working system, summarised by its own statement:
 \textit{``From web and mobile apps to AI systems, IoT, embedded
-engineering, and 3D solutions --- we build the technology that powers
+engineering, and 3D solutions, we build the technology that powers
 your vision.''}
 
 This breadth allows the company to take a project from initial concept
 through to deployment without external dependencies, and to combine
-disciplines that are usually siloed --- for example, integrating
+disciplines that are usually siloed, for example, integrating
 artificial intelligence into conventional web platforms, or interfacing
 embedded devices with cloud services. Its portfolio reflects this
 versatility:
@@ -61,14 +61,14 @@ professional supervisor who follows the work throughout.
 The company's vision rests on three principles:
 
 \begin{itemize}[leftmargin=*,itemsep=2pt]
-  \item \textbf{Engineering excellence} --- a working culture built on
+  \item \textbf{Engineering excellence}, a working culture built on
         code review, iterative delivery and frequent stakeholder
         feedback, so that quality is continuous rather than verified
         only at the end.
-  \item \textbf{Cross-disciplinary innovation} --- combining fields
+  \item \textbf{Cross-disciplinary innovation}, combining fields
         that are usually separated, such as embedding artificial
         intelligence into ordinary web and mobile products.
-  \item \textbf{End-to-end ownership} --- delivering a project from
+  \item \textbf{End-to-end ownership}, delivering a project from
         concept to production, including the modern DevOps practices
         that keep a system maintainable beyond its first release.
 \end{itemize}
@@ -118,14 +118,14 @@ Accordingly, three categories of target users were identified at the
 scoping stage:
 
 \begin{itemize}[leftmargin=*,itemsep=4pt]
-  \item \textbf{Customer} --- an end-user who browses the catalogue,
+  \item \textbf{Customer}, an end-user who browses the catalogue,
         places orders and tracks deliveries, expecting a fast,
         mobile-friendly experience with reliable search.
-  \item \textbf{Seller} --- a small or medium merchant who creates a
+  \item \textbf{Seller}, a small or medium merchant who creates a
         store, manages a product catalogue and fulfils orders,
         expecting low onboarding friction and protection against
         unfair competition from low-quality listings.
-  \item \textbf{Administrator} --- the platform operator who reviews
+  \item \textbf{Administrator}, the platform operator who reviews
         seller applications, moderates flagged content, curates
         featured stores, and intervenes when a store violates the
         marketplace rules.
@@ -155,9 +155,9 @@ platforms were studied:
 
 From the study above, four gaps emerged:
 
-\begin{enumerate}[label=\textbf{L\arabic*.},leftmargin=*,itemsep=2pt]
+\begin{itemize}[leftmargin=*,itemsep=2pt]
   \item \textbf{No AI-assisted moderation.} On existing platforms,
-        store and product verification are entirely manual --- slow,
+        store and product verification are entirely manual, slow,
         inconsistent, and impractical at scale.
   \item \textbf{Heavyweight seller onboarding.} Pan-regional players
         require contractual paperwork unsuitable for small merchants.
@@ -167,7 +167,7 @@ From the study above, four gaps emerged:
   \item \textbf{Outdated technical foundations.} Several platforms still
         rely on monolithic stacks without modern CI/CD or
         infrastructure-as-code, making evolution costly.
-\end{enumerate}
+\end{itemize}
 
 Table~\ref{tab:competitors} summarises the comparison along the five
 criteria that drove the design of the proposed solution. A check mark
@@ -176,6 +176,8 @@ criteria that drove the design of the proposed solution. A check mark
 
 \begin{table}[H]
   \centering
+  \caption{Comparative analysis of competing platforms}
+  \label{tab:competitors}
   \begin{tabular}{lccc}
     \toprule
     \textbf{Criterion}     & \textbf{Jumia} & \textbf{Tayara} & \textbf{Proposed Solution} \\
@@ -187,8 +189,6 @@ criteria that drove the design of the proposed solution. A check mark
     Lightweight onboarding & \ding{55} & \ding{51} & \ding{51} \\
     \bottomrule
   \end{tabular}
-  \caption{Comparative analysis of competing platforms}
-  \label{tab:competitors}
 \end{table}
 
 \subsection{Proposed Solution}
@@ -207,7 +207,7 @@ and delivered through a GitHub Actions CI/CD pipeline.
 Seven differentiators set the platform apart from the solutions
 surveyed above:
 
-\begin{enumerate}[label=\textbf{D\arabic*.},leftmargin=*,itemsep=2pt]
+\begin{itemize}[leftmargin=*,itemsep=2pt]
   \item \textbf{AI verification of stores and products} via an n8n
         workflow that calls a hosted large-language model and writes
         back a review flag together with a textual rationale.
@@ -220,7 +220,7 @@ surveyed above:
   \item \textbf{Conversational data access} via a database-aware
         chatbot built on n8n, allowing administrators to query the
         platform in natural language.
-  \item \textbf{AI-assisted storefront redesign} --- sellers can
+  \item \textbf{AI-assisted storefront redesign}, sellers can
         regenerate their entire store visual identity from a
         natural-language prompt, powered by an n8n workflow and a hosted
         large-language model.
@@ -228,10 +228,10 @@ surveyed above:
         discount automatically across product cards, store listings and
         search results, applying the discounted price at checkout
         without per-product editing.
-  \item \textbf{Modern DevOps foundations} --- a pnpm monorepo, Docker
-        Compose, Terraform on DigitalOcean and GitHub Actions CI/CD ---
+  \item \textbf{Modern DevOps foundations}, a pnpm monorepo, Docker
+        Compose, Terraform on DigitalOcean and GitHub Actions CI/CD, 
         demonstrating production-grade engineering practices end to end.
-\end{enumerate}
+\end{itemize}
 
 The scope was agreed with the professional supervisor and bounded to
 keep the deliverables clear:
@@ -256,8 +256,8 @@ hosting; multi-currency support; and a full-text search engine.
 
 Every software project requires a methodological framework to organise
 work, manage priorities and guarantee the delivery of a quality
-product. This section justifies the choice of an agile method ---
-\textbf{Scrum} --- and presents its process, roles, events and
+product. This section justifies the choice of an agile method, 
+\textbf{Scrum}, and presents its process, roles, events and
 artefacts.
 
 \subsection{Classical vs Agile Approaches}
@@ -265,8 +265,8 @@ artefacts.
 Two major families of methods have historically competed: the
 \textbf{classical} (predictive) approach and the \textbf{agile}
 (adaptive) approach. The classical \emph{Waterfall} model divides the
-project into strictly sequential phases --- requirements, design,
-development, testing, delivery --- each fully validated before the next
+project into strictly sequential phases, requirements, design,
+development, testing, delivery, each fully validated before the next
 begins. It suits projects whose requirements are stable and known in
 advance, but it shows its limits as soon as the context evolves:
 requirements are frozen at launch, the client sees a working product
@@ -284,19 +284,22 @@ from the first iterations, and risks are identified and addressed early.
 \subsection{Main Types of Agile Methodologies}
 
 Several frameworks implement the agile principles, each with a different
-emphasis:
+emphasis, as summarised in Table~\ref{tab:agile}.
 
-\begin{itemize}[leftmargin=*,itemsep=2pt]
-  \item \textbf{Scrum} --- organises work into time-boxed
-        \emph{sprints} around three accountabilities and a small set of
-        events; the most widely adopted agile framework.
-  \item \textbf{Kanban} --- visualises the flow of work on a board and
-        limits work-in-progress, favouring continuous flow over fixed
-        iterations.
-  \item \textbf{Extreme Programming (XP)} --- focuses on engineering
-        practices such as pair programming, test-driven development and
-        continuous integration.
-\end{itemize}
+\begin{table}[H]
+  \centering
+  \caption{Main types of agile methodologies}
+  \label{tab:agile}
+  \begin{tabularx}{\textwidth}{|l|X|}
+    \hline
+    \rowcolor{tableHeader}
+    \textcolor{white}{\textbf{Framework}} & \textcolor{white}{\textbf{Emphasis}} \\
+    \hline
+    Scrum & Organises work into time-boxed \emph{sprints} around three accountabilities and a small set of events; the most widely adopted agile framework. \\ \hline
+    Kanban & Visualises the flow of work on a board and limits work-in-progress, favouring continuous flow over fixed iterations. \\ \hline
+    Extreme Programming (XP) & Focuses on engineering practices such as pair programming, test-driven development and continuous integration. \\ \hline
+  \end{tabularx}
+\end{table}
 
 \subsection{Why Scrum?}
 
@@ -305,8 +308,8 @@ framework for delivering a substantial product in successive,
 demonstrable increments while keeping requirements open to change. Its
 sprint rhythm gives the project a regular cadence of planning and
 review, its backlog provides a single prioritised source of truth for
-the work, and its review events give the professional supervisor ---
-acting as the stakeholder --- frequent opportunities to steer the
+the work, and its review events give the professional supervisor, 
+acting as the stakeholder, frequent opportunities to steer the
 product. These properties fit a project whose scope was expected to
 evolve through the internship.
 
@@ -327,52 +330,52 @@ Figure~\ref{fig:scrum} illustrates this cycle.
   \label{fig:scrum}
 \end{figure}
 
-\subsection{Scrum Roles}
+\subsubsection{Scrum Roles}
 
 Scrum defines three accountabilities, mapped to the present project as
 follows:
 
 \begin{itemize}[leftmargin=*,itemsep=4pt]
-  \item \textbf{Product Owner} --- owns the product vision and
+  \item \textbf{Product Owner}, owns the product vision and
         prioritises the backlog. This role was held by the professional
         supervisor, \textbf{Mr.\ Mohammed Aziz Chibani} (NeuralBey),
         who also provided architectural guidance.
-  \item \textbf{Scrum Master} --- ensures the framework is applied and
+  \item \textbf{Scrum Master}, ensures the framework is applied and
         removes impediments. In a single-developer context, this role
         was assumed by the student.
-  \item \textbf{Development Team} --- builds the increment. The entire
-        technical realisation --- analysis, design, implementation,
-        testing and deployment --- was carried out by the student,
+  \item \textbf{Development Team}, builds the increment. The entire
+        technical realisation, analysis, design, implementation,
+        testing and deployment, was carried out by the student,
         \textbf{Nadim Jebali}.
 \end{itemize}
 
-\subsection{Scrum Events}
+\subsubsection{Scrum Events}
 
 The work was punctuated by Scrum's events:
 
 \begin{itemize}[leftmargin=*,itemsep=2pt]
-  \item \textbf{Sprint Planning} --- selecting, at the start of each
+  \item \textbf{Sprint Planning}, selecting, at the start of each
         sprint, the backlog items to be delivered.
-  \item \textbf{Daily Scrum} --- a short daily checkpoint to track
+  \item \textbf{Daily Scrum}, a short daily checkpoint to track
         progress and surface impediments.
-  \item \textbf{Sprint Review} --- demonstrating the increment to the
+  \item \textbf{Sprint Review}, demonstrating the increment to the
         Product Owner and gathering feedback.
-  \item \textbf{Sprint Retrospective} --- reflecting on the process to
+  \item \textbf{Sprint Retrospective}, reflecting on the process to
         improve the next sprint.
 \end{itemize}
 
-\subsection{Scrum Artefacts}
+\subsubsection{Scrum Artefacts}
 
 Three artefacts ensured transparency of the work:
 
 \begin{itemize}[leftmargin=*,itemsep=2pt]
-  \item \textbf{Product Backlog} --- a prioritised list of all expected
+  \item \textbf{Product Backlog}, a prioritised list of all expected
         functionalities, maintained as user stories with MoSCoW
         priorities and complexity estimates (detailed in
         Chapter~\ref{chap:requirements}).
-  \item \textbf{Sprint Backlog} --- the subset of backlog items
+  \item \textbf{Sprint Backlog}, the subset of backlog items
         committed to the current sprint.
-  \item \textbf{Increment} --- a working, demonstrable version of the
+  \item \textbf{Increment}, a working, demonstrable version of the
         product delivered at the end of each sprint.
 \end{itemize}
 
@@ -389,13 +392,20 @@ and \emph{sequence} and \emph{activity diagrams} depict dynamic
 behaviour. The next chapter uses these diagrams to formalise the
 requirements and the design of the platform.
 
+\begin{figure}[H]
+  \centering
+  \includegraphics[height=2.6cm,keepaspectratio]{img/uml-logo.png}
+  \caption{The Unified Modeling Language (UML) logo}
+  \label{fig:uml-logo}
+\end{figure}
+
 \section*{Conclusion}
 
 This chapter established the foundations of the project. It introduced
 NeuralBey, the host organisation, and the business motivation behind
 building a modern Tunisian multi-vendor marketplace. A study of existing
-platforms revealed four gaps --- absent AI moderation, heavyweight
-onboarding, weak admin tooling and outdated technical foundations ---
+platforms revealed four gaps, absent AI moderation, heavyweight
+onboarding, weak admin tooling and outdated technical foundations, 
 that the proposed solution directly addresses through its key
 differentiators and bounded scope. Finally, the Scrum methodology and
 the UML modelling language that frame the rest of the work were

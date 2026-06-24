@@ -3,21 +3,17 @@
 
 \section*{Introduction}
 
-This chapter presents the second release, \textit{Transactions,
-Intelligence \& Delivery}, which turns the populated marketplace of
-Release~1 into a transacting, self-moderating and deployable product. It
-opens with a release overview --- a release-scoped use-case diagram and
-the subset of the domain model touched by the release --- followed by
-the release backlog. It then presents the two sprints of the release at
-the same depth as Chapter~\ref{chap:release1}. \textbf{Sprint~3 (Orders,
-Payment \& Administration)} delivers the cart, the multi-store checkout,
-the Stripe payment flow and the administration tooling; \textbf{Sprint~4
-(AI Verification \& Premium)} delivers the automated AI pipeline, the
-premium tier, and --- folded into the same sprint --- the testing and
-the DevOps and deployment that bring the platform to production. The
-present chapter details Sprint~3 first.
+This chapter covers Release~2, \textit{Transactions, Intelligence \&
+Delivery}, which turns the populated marketplace into a transacting,
+self-moderating and deployable product. After a release overview,
+use-case diagram, domain model and backlog, it presents the release's
+two sprints: \textbf{Sprint~3 (Orders, Payment \& Administration)}
+delivers the cart, multi-store checkout, Stripe payment and
+administration tooling; \textbf{Sprint~4 (AI Verification \& Premium)}
+adds the AI verification pipeline, the premium tier, and the testing and
+deployment that bring the platform to production.
 
-\section{Release Overview}
+\section{Release 2 Overview}
 
 Release~2 completes the marketplace over two sprints. Sprint~3 makes the
 catalogue transactable: customers fill a cart, check out across multiple
@@ -32,7 +28,7 @@ Section~\ref{chap:requirements} are not repeated; this release
 instantiates them for the transactional, intelligence and delivery
 features.
 
-\subsection{Release Use-Case Diagram}
+\subsection{Release 2 Use-Case Diagram}
 
 Figure~\ref{fig:uc-release2} scopes the use cases delivered by
 Release~2. Customers gain the cart, checkout and payment; sellers gain
@@ -48,7 +44,7 @@ as secondary actors.
   \label{fig:uc-release2}
 \end{figure}
 
-\subsection{Release Domain Model}
+\subsection{Release 2 Domain Model}
 
 Figure~\ref{fig:class-release2} shows the slice of the domain model
 exercised by Release~2: the \texttt{Order} and its \texttt{OrderItem}s,
@@ -66,52 +62,53 @@ trail and the featured-content entities.
 \section{Release~2 Backlog}
 
 The release backlog draws the remaining user stories from the product
-backlog of Section~\ref{chap:requirements} --- including the payment
+backlog of Section~\ref{chap:requirements}, including the payment
 story US36, the account-management stories US38--US39 and the theming
-story US40 --- and allocates them to the two sprints, as summarised in
+story US40, and allocates them to the two sprints, as summarised in
 Table~\ref{tab:backlog-r2}.
 
 \begin{table}[H]
   \centering
+  \caption{Release~2 backlog, user stories grouped by sprint and feature.}
+  \label{tab:backlog-r2}
+  \footnotesize
   \renewcommand{\arraystretch}{1.2}
-  \begin{tabularx}{\textwidth}{|l|l|X|c|}
+  \begin{tabularx}{\textwidth}{|l|l|X|>{\centering\arraybackslash}p{1.9cm}|}
     \hline
     \rowcolor{tableHeader}
     \textcolor{white}{\textbf{Sprint}} & \textcolor{white}{\textbf{Feature}} &
-    \textcolor{white}{\textbf{User stories}} & \textcolor{white}{\textbf{Pts}} \\
+    \textcolor{white}{\textbf{User stories}} & \textcolor{white}{\textbf{Est. time}} \\
     \hline
-    \multirow{3}{*}{Sprint 3} & Order System \& Payment & US14--US17, US36 & 11 \\ \cline{2-4}
-                              & Account Management      & US38, US39       & 3 \\ \cline{2-4}
-                              & Administration          & US19--US21       & 4 \\ \hline
-    \multirow{5}{*}{Sprint 4} & AI Verification         & US22--US24, US35 & 8 \\ \cline{2-4}
-                              & Product Suggestions     & US41             & 3 \\ \cline{2-4}
-                              & Premium Tier            & US25--US27       & 8 \\ \cline{2-4}
-                              & Appearance \& Theming   & US40             & 2 \\ \cline{2-4}
-                              & CI/CD \& Deployment     & US28--US33       & 13 \\ \hline
-    \multicolumn{3}{|r|}{\textbf{Release~2 total}} & \textbf{52} \\ \hline
+    \multirow{3}{*}{Sprint 3} & Order System \& Payment & US14 shopping cart, US15 multi-store checkout, US16 order-confirmation email, US17 seller order view, US36 secure card payment & \multirow{3}{*}{\textasciitilde1.5 months} \\ \cline{2-3}
+                              & Account Management      & US38 profile management, US39 purchase history & \\ \cline{2-3}
+                              & Administration          & US19 store suspension/deletion, US20 featured-content curation, US21 category management & \\ \hline
+    \multirow{5}{*}{Sprint 4} & AI Verification         & US22 AI store/product verification, US23 AI verdict override, US24 verified badge, US35 AI storefront redesign & \multirow{5}{*}{\textasciitilde1.5 months} \\ \cline{2-3}
+                              & Product Suggestions     & US41 cross-store product suggestions & \\ \cline{2-3}
+                              & Premium Tier            & US25 premium subscription, US26 premium customisation controls, US27 premium preservation on expiry & \\ \cline{2-3}
+                              & Appearance \& Theming   & US40 light/dark theming & \\ \cline{2-3}
+                              & CI/CD \& Deployment     & US28 service containerisation, US29 CI image builds, US30 Terraform provisioning, US31 SSH deployment, US32 CI-managed secrets, US33 DNS automation & \\ \hline
+    \multicolumn{3}{|r|}{\textbf{Release~2 total}} & \textbf{\textasciitilde3 months} \\ \hline
   \end{tabularx}
-  \caption{Release~2 backlog --- user stories grouped by sprint and feature.}
-  \label{tab:backlog-r2}
 \end{table}
 
-\section{Sprint 3 --- Orders, Payment \& Administration}
+\section{Sprint 3, Orders, Payment \& Administration}
 
-\subsection{Sprint Objective}
+\subsection{Sprint 3 Objective}
 
 Sprint~3 makes the marketplace transactable and governable. By the end of
 the sprint a customer can build a cart, check out across several stores
 in a single order, and pay securely through Stripe, receiving a
 confirmation email; a seller can see the orders that include their
-products; every signed-in user can manage their own account --- viewing
+products; every signed-in user can manage their own account, viewing
 and editing their profile, changing their password and reviewing their
-purchase history --- and an administrator can moderate stores and
+purchase history, and an administrator can moderate stores and
 products, suspend or delete a store, curate featured content and manage
 the category tree.
 The payment flow is the centrepiece: amounts are computed server-side,
 charged through a single Stripe~\cite{stripe} PaymentIntent, and confirmed
 asynchronously by a signature-verified webhook.
 
-\subsection{Sprint Use-Case Diagram}
+\subsection{Sprint 3 Use-Case Diagram}
 
 Figure~\ref{fig:uc-sprint3} details the sprint's use cases. Checkout
 \emph{includes} the secure payment, which in turn drives the Stripe
@@ -136,6 +133,8 @@ is then described in its own section.
 
 \begin{table}[H]
   \centering
+  \caption{Textual description of the \emph{Checkout} use case.}
+  \label{tab:uc-checkout}
   \renewcommand{\arraystretch}{1.25}
   \begin{tabularx}{\textwidth}{|>{\bfseries}p{3cm}|X|}
     \hline
@@ -149,12 +148,12 @@ is then described in its own section.
     Nominal scenario & 1.~The customer opens the checkout page. \newline 2.~The customer reviews the items, quantities and shipping form. \newline 3.~The customer confirms. \newline 4.~The server prices each line server-side (using the sale price when a sale is active), reserves stock, and creates one order spanning all stores with its order items. \newline 5.~The payment step opens. \\ \hline
     Alternative scenarios & A1.~Insufficient stock on a line: the line is flagged and checkout halts. \newline A2.~Unverified email: checkout is blocked until verification. \\ \hline
   \end{tabularx}
-  \caption{Textual description of the \emph{Checkout} use case.}
-  \label{tab:uc-checkout}
 \end{table}
 
 \begin{table}[H]
   \centering
+  \caption{Textual description of the \emph{Pay securely} use case.}
+  \label{tab:uc-pay}
   \renewcommand{\arraystretch}{1.25}
   \begin{tabularx}{\textwidth}{|>{\bfseries}p{3cm}|X|}
     \hline
@@ -168,12 +167,12 @@ is then described in its own section.
     Nominal scenario & 1.~The server computes the grand total and converts it from TND to USD minor units. \newline 2.~The server opens one PaymentIntent for the total with an idempotency key and stamps its id on the order. \newline 3.~The client confirms the payment with Stripe. \newline 4.~Stripe sends a signed webhook; the backend verifies the signature against the raw body. \newline 5.~On \texttt{payment\_intent.succeeded} the order becomes \textsc{paid} and \textsc{confirmed} and the confirmation email is sent. \\ \hline
     Alternative scenarios & E1.~Payment fails or is canceled: the order is marked failed and the reserved stock is released (idempotently). \newline E2.~Lost webhook: a periodic reconciliation sweep retrieves the intent from Stripe and settles or restocks the order. \\ \hline
   \end{tabularx}
-  \caption{Textual description of the \emph{Pay securely} use case.}
-  \label{tab:uc-pay}
 \end{table}
 
 \begin{table}[H]
   \centering
+  \caption{Textual description of the \emph{Manage profile} use case.}
+  \label{tab:uc-profile}
   \renewcommand{\arraystretch}{1.25}
   \begin{tabularx}{\textwidth}{|>{\bfseries}p{3cm}|X|}
     \hline
@@ -187,12 +186,12 @@ is then described in its own section.
     Nominal scenario & 1.~The user opens their account page (a customer through the tabbed account page, a seller through the dashboard). \newline 2.~The user edits the name, phone or avatar and saves; the server accepts only those fields. \newline 3.~The user optionally changes the password by supplying the current and a new one. \newline 4.~The user opens the purchase-history view to consult past orders, paginated. \\ \hline
     Alternative scenarios & A1.~A privileged field is submitted: the server ignores it, so a user can never self-grant a role or premium status. \newline E1.~Invalid input (e.g.\ a too-short new password or a mismatched confirmation): validation rejects the change with a message. \\ \hline
   \end{tabularx}
-  \caption{Textual description of the \emph{Manage profile} use case.}
-  \label{tab:uc-profile}
 \end{table}
 
 \begin{table}[H]
   \centering
+  \caption{Textual description of the \emph{Suspend store} use case.}
+  \label{tab:uc-suspend}
   \renewcommand{\arraystretch}{1.25}
   \begin{tabularx}{\textwidth}{|>{\bfseries}p{3cm}|X|}
     \hline
@@ -206,12 +205,12 @@ is then described in its own section.
     Nominal scenario & 1.~The administrator opens the store moderation panel. \newline 2.~The administrator selects a store and inspects it. \newline 3.~The administrator chooses suspend or delete, optionally with a reason. \newline 4.~The system updates the status, writes a \texttt{StoreStatusLog} entry, and on delete cascades to the store's products. \\ \hline
     Alternative scenarios & A1.~Reactivate a suspended store: \texttt{currentStatus} returns to \textsc{active}. \\ \hline
   \end{tabularx}
-  \caption{Textual description of the \emph{Suspend store} use case.}
-  \label{tab:uc-suspend}
 \end{table}
 
 \begin{table}[H]
   \centering
+  \caption{Textual description of the \emph{Override AI verdict} use case.}
+  \label{tab:uc-override}
   \renewcommand{\arraystretch}{1.25}
   \begin{tabularx}{\textwidth}{|>{\bfseries}p{3cm}|X|}
     \hline
@@ -225,8 +224,6 @@ is then described in its own section.
     Nominal scenario & 1.~The administrator opens the moderation panel. \newline 2.~The administrator reviews the AI verdict and rationale on the flagged entity. \newline 3.~The administrator approves or rejects, overriding the AI. \newline 4.~The system sets \texttt{adminReviewed} and updates the verification status; the administrator's decision is final. \\ \hline
     Alternative scenarios & A1.~The administrator agrees with the AI: no override is needed and the AI verdict stands. \\ \hline
   \end{tabularx}
-  \caption{Textual description of the \emph{Override AI verdict} use case.}
-  \label{tab:uc-override}
 \end{table}
 
 \subsubsection{Activity Diagram}
@@ -240,7 +237,7 @@ success or back to released stock on failure.
 \begin{figure}[H]
   \centering
   \includegraphics[height=0.82\textheight,keepaspectratio]{img/act-checkout-payment.png}
-  \caption{Activity diagram --- multi-store checkout and Stripe payment.}
+  \caption{Activity diagram, multi-store checkout and Stripe payment.}
   \label{fig:act-checkout-payment}
 \end{figure}
 
@@ -253,7 +250,7 @@ the single multi-store order and its items.
 \begin{figure}[H]
   \centering
   \includegraphics[width=\columnwidth,keepaspectratio]{img/seq-order.png}
-  \caption{Sequence diagram --- multi-store order placement.}
+  \caption{Sequence diagram, multi-store order placement.}
   \label{fig:seq-order}
 \end{figure}
 
@@ -267,7 +264,7 @@ from the server-side prices. Stripe accounts cannot settle in Tunisian
 dinar, so the dinar total is converted to United States dollar minor
 units through a configurable rate (\texttt{TND\_TO\_USD\_RATE}) while the
 interface continues to display dinar. A single PaymentIntent is then
-opened for the whole cart --- even when it spans several stores --- with
+opened for the whole cart, even when it spans several stores, with
 an \textbf{idempotency key} derived from the order identifiers, so that a
 retried request never creates a duplicate charge. The PaymentIntent
 identifier is stamped on the order(s) for later reconciliation.
@@ -292,7 +289,7 @@ await orderService.setPaymentIntent(orderIds, intent.id);
 \end{lstlisting}
 
 Confirmation is asynchronous. Stripe calls an \textbf{unauthenticated}
-\texttt{POST /payments/webhook} endpoint --- it is deliberately public,
+\texttt{POST /payments/webhook} endpoint, it is deliberately public,
 because the caller is Stripe rather than a logged-in user. Trust is
 established not by a session but by \textbf{verifying the Stripe
 signature against the raw request body}; an unverifiable payload is
@@ -313,58 +310,58 @@ the running application.
 
 \begin{figure}[H]
   \centering
-  \imagePlaceholder[6cm]{Checkout page --- multi-store cart summary, shipping form and Stripe payment element}
+  \imagePlaceholder[6cm]{Checkout page, multi-store cart summary, shipping form and Stripe payment element}
   \caption{Checkout page with Stripe payment.}
   \label{fig:real-checkout}
 \end{figure}
 
 \begin{figure}[H]
   \centering
-  \imagePlaceholder[6cm]{Account page --- profile view/edit (name, phone, avatar), change-password form and the paginated purchase history}
+  \imagePlaceholder[6cm]{Account page, profile view/edit (name, phone, avatar), change-password form and the paginated purchase history}
   \caption{User account and profile page.}
   \label{fig:real-profile}
 \end{figure}
 
 \begin{figure}[H]
   \centering
-  \imagePlaceholder[6cm]{Administrator dashboard --- marketplace metrics and navigation}
+  \imagePlaceholder[6cm]{Administrator dashboard, marketplace metrics and navigation}
   \caption{Administrator dashboard.}
   \label{fig:real-admindash}
 \end{figure}
 
 \begin{figure}[H]
   \centering
-  \imagePlaceholder[6cm]{Moderation panel --- stores and products with suspend / delete and verdict-override actions}
+  \imagePlaceholder[6cm]{Moderation panel, stores and products with suspend / delete and verdict-override actions}
   \caption{Store and product moderation panel.}
   \label{fig:real-moderation}
 \end{figure}
 
 \begin{figure}[H]
   \centering
-  \imagePlaceholder[5cm]{Category management --- category and sub-category tree}
+  \imagePlaceholder[5cm]{Category management, category and sub-category tree}
   \caption{Category management.}
   \label{fig:real-categories}
 \end{figure}
 
 \begin{figure}[H]
   \centering
-  \imagePlaceholder[5cm]{Featured-content curation --- selecting featured stores and products for the landing page}
+  \imagePlaceholder[5cm]{Featured-content curation, selecting featured stores and products for the landing page}
   \caption{Featured-content curation.}
   \label{fig:real-featured}
 \end{figure}
 
-\section{Sprint 4 --- AI Verification \& Premium Tier}
+\section{Sprint 4, AI Verification \& Premium Tier}
 
-\subsection{Sprint Objective}
+\subsection{Sprint 4 Objective}
 
 Sprint~4 adds the intelligence and monetisation layers. Every new store
 and product is screened automatically by an AI verification pipeline
 before it becomes visible; suspicious content is flagged for the
 administrator, who remains the final authority. Administrators gain a
 natural-language database chat assistant for diagnostics; buyers see live
-cross-store product suggestions --- a cheaper same-item offer and relevant
-alternatives --- on every product page; and sellers
---- and only sellers --- can take out a \emph{recurring monthly} premium
+cross-store product suggestions, a cheaper same-item offer and relevant
+alternatives, on every product page; and sellers
+, and only sellers, can take out a \emph{recurring monthly} premium
 subscription through Stripe Checkout, managed afterwards through the Stripe
 Customer Portal, that unlocks the full customisation set and multiple
 stores; this is a new payment mechanism, distinct from the one-time charge
@@ -376,7 +373,7 @@ chosen explicitly or following the operating-system preference and
 applied consistently across the application chrome through CSS design
 tokens.
 
-\subsection{Sprint Use-Case Diagram}
+\subsection{Sprint 4 Use-Case Diagram}
 
 Figure~\ref{fig:uc-sprint4} details the sprint's use cases. Automatic
 verification \emph{includes} returning a verdict with a rationale and may
@@ -403,6 +400,8 @@ sequence diagrams.
 
 \begin{table}[H]
   \centering
+  \caption{Textual description of the \emph{AI verification} use case.}
+  \label{tab:uc-aiverify}
   \renewcommand{\arraystretch}{1.25}
   \begin{tabularx}{\textwidth}{|>{\bfseries}p{3cm}|X|}
     \hline
@@ -416,12 +415,12 @@ sequence diagrams.
     Nominal scenario & 1.~After image upload, the backend fires the \texttt{ai-verify} webhook with the listing text and image list. \newline 2.~n8n downloads each image and submits it with the text to the vision model. \newline 3.~The per-image verdicts are aggregated, flagging the entity if any image is flagged. \newline 4.~The decision is posted to the \texttt{/ai-review} callback. \newline 5.~The backend publishes clean entities and queues flagged ones for moderation. \\ \hline
     Alternative scenarios & E1.~The webhook or model fails: the entity stays \textsc{pending} and is surfaced in the administrator's queue for manual review. \\ \hline
   \end{tabularx}
-  \caption{Textual description of the \emph{AI verification} use case.}
-  \label{tab:uc-aiverify}
 \end{table}
 
 \begin{table}[H]
   \centering
+  \caption{Textual description of the \emph{AI chat query} use case.}
+  \label{tab:uc-aichat}
   \renewcommand{\arraystretch}{1.25}
   \begin{tabularx}{\textwidth}{|>{\bfseries}p{3cm}|X|}
     \hline
@@ -435,12 +434,12 @@ sequence diagrams.
     Nominal scenario & 1.~The administrator types a question in the chat assistant. \newline 2.~The backend forwards it to the n8n chat workflow. \newline 3.~The AI agent translates the question into SQL, executes it against MariaDB through the SQL tool, and formats the result. \newline 4.~The answer is returned to the administrator. \\ \hline
     Alternative scenarios & A1.~An ambiguous question: the assistant asks for clarification, using its conversation memory for context. \\ \hline
   \end{tabularx}
-  \caption{Textual description of the \emph{AI chat query} use case.}
-  \label{tab:uc-aichat}
 \end{table}
 
 \begin{table}[H]
   \centering
+  \caption{Textual description of the \emph{Subscribe to / manage premium subscription} use case.}
+  \label{tab:uc-premium}
   \renewcommand{\arraystretch}{1.25}
   \begin{tabularx}{\textwidth}{|>{\bfseries}p{3cm}|X|}
     \hline
@@ -451,15 +450,15 @@ sequence diagrams.
     Objective & Take out and manage a recurring monthly premium subscription that unlocks full storefront customisation and multiple stores. \\ \hline
     Pre-conditions & The user holds the seller role. \\ \hline
     Post-conditions & Once Stripe confirms the subscription, \texttt{isPremium} becomes \texttt{true} and \texttt{premiumExpiresAt} is set to the current billing period end; the entitlement renews automatically, and premium customisation and multi-store operation are unlocked. \\ \hline
-    Nominal scenario & 1.~The seller opens the upgrade page and starts the subscription. \newline 2.~The backend opens a Stripe Checkout session in subscription mode and redirects the seller to the hosted page. \newline 3.~The seller pays on Stripe. \newline 4.~On a signature-verified \texttt{customer.subscription.created} webhook the account is marked premium until the current period end. \newline 5.~Each renewal fires \texttt{customer.subscription.updated} and advances the expiry. \newline 6.~The seller later manages the subscription --- cancel, update card, download invoices --- through the Stripe Customer Portal. \\ \hline
-    Alternative scenarios & A1.~Cancellation through the portal is \emph{cancel-at-period-end}: premium is kept until the paid period ends, then a \texttt{customer.subscription.deleted} webhook revokes it. \newline A2.~A non-seller is redirected to the become-a-seller flow. \newline A3.~An administrator grants premium manually --- a comp account with no Stripe subscription. \newline A4.~After expiry the premium customisation values are preserved and stay visible to buyers; only further editing of premium fields is locked (US27). \\ \hline
+    Nominal scenario & 1.~The seller opens the upgrade page and starts the subscription. \newline 2.~The backend opens a Stripe Checkout session in subscription mode and redirects the seller to the hosted page. \newline 3.~The seller pays on Stripe. \newline 4.~On a signature-verified \texttt{customer.subscription.created} webhook the account is marked premium until the current period end. \newline 5.~Each renewal fires \texttt{customer.subscription.updated} and advances the expiry. \newline 6.~The seller later manages the subscription, cancel, update card, download invoices, through the Stripe Customer Portal. \\ \hline
+    Alternative scenarios & A1.~Cancellation through the portal is \emph{cancel-at-period-end}: premium is kept until the paid period ends, then a \texttt{customer.subscription.deleted} webhook revokes it. \newline A2.~A non-seller is redirected to the become-a-seller flow. \newline A3.~An administrator grants premium manually, a comp account with no Stripe subscription. \newline A4.~After expiry the premium customisation values are preserved and stay visible to buyers; only further editing of premium fields is locked (US27). \\ \hline
   \end{tabularx}
-  \caption{Textual description of the \emph{Subscribe to / manage premium subscription} use case.}
-  \label{tab:uc-premium}
 \end{table}
 
 \begin{table}[H]
   \centering
+  \caption{Textual description of the \emph{Switch theme} use case.}
+  \label{tab:uc-theme}
   \renewcommand{\arraystretch}{1.25}
   \begin{tabularx}{\textwidth}{|>{\bfseries}p{3cm}|X|}
     \hline
@@ -473,12 +472,12 @@ sequence diagrams.
     Nominal scenario & 1.~The user opens the theme switch and picks light, dark or system. \newline 2.~The interface re-themes at once through CSS design tokens, with no page reload. \newline 3.~The preference is stored locally and restored on the next visit before the first paint, so there is no flash of the wrong theme. \\ \hline
     Alternative scenarios & A1.~The user picks \emph{system}: the interface follows the OS light/dark setting and updates live when that setting changes. \newline A2.~A seller storefront keeps its own seller-chosen palette and is intentionally not overridden by the application theme. \\ \hline
   \end{tabularx}
-  \caption{Textual description of the \emph{Switch theme} use case.}
-  \label{tab:uc-theme}
 \end{table}
 
 \begin{table}[H]
   \centering
+  \caption{Textual description of the \emph{View product suggestions} use case.}
+  \label{tab:uc-suggestions}
   \renewcommand{\arraystretch}{1.25}
   \begin{tabularx}{\textwidth}{|>{\bfseries}p{3cm}|X|}
     \hline
@@ -492,8 +491,6 @@ sequence diagrams.
     Nominal scenario & 1.~The customer opens a product page. \newline 2.~The frontend requests suggestions for that product on its own asynchronous query, so the page paints immediately. \newline 3.~The backend calls the suggestion workflow, which reasons over the catalogue and returns candidate ids. \newline 4.~The backend hydrates and validates the ids, dropping ineligible ones and keeping the better deal only if genuinely cheaper. \newline 5.~The validated suggestions render in their own section once ready. \\ \hline
     Alternative scenarios & E1.~The workflow errors, times out or returns nothing usable: the backend falls back to a deterministic catalogue query (same category, ranked by name similarity and tag overlap), so the section is never empty on a transient failure. \newline A1.~Nothing qualifies even from the fallback: the section stays empty rather than showing irrelevant items. \\ \hline
   \end{tabularx}
-  \caption{Textual description of the \emph{View product suggestions} use case.}
-  \label{tab:uc-suggestions}
 \end{table}
 
 \subsubsection{Activity Diagrams}
@@ -507,14 +504,14 @@ content-moderation decision over a flagged entity.
 \begin{figure}[H]
   \centering
   \includegraphics[height=0.84\textheight,keepaspectratio]{img/act-ai-verification.png}
-  \caption{Activity diagram --- AI verification pipeline.}
+  \caption{Activity diagram, AI verification pipeline.}
   \label{fig:act-ai-verification}
 \end{figure}
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=\columnwidth,keepaspectratio]{img/act-moderation.png}
-  \caption{Activity diagram --- content moderation.}
+  \caption{Activity diagram, content moderation.}
   \label{fig:act-moderation}
 \end{figure}
 
@@ -529,7 +526,7 @@ automatic approval or administrative override.
 \begin{figure}[H]
   \centering
   \includegraphics[width=\columnwidth,keepaspectratio]{img/seq-verify.png}
-  \caption{Sequence diagram --- AI verification with administrative override.}
+  \caption{Sequence diagram, AI verification with administrative override.}
   \label{fig:seq-verify}
 \end{figure}
 
@@ -541,52 +538,52 @@ invokes. The \textbf{verification} workflow (Figure~\ref{fig:n8n-verify})
 fans the image list out into one branch per image, downloads each file,
 moderates it against the marketplace rules with a vision model, and posts
 the aggregated verdict back to the callback. The \textbf{database chat}
-workflow (Figure~\ref{fig:n8n-chat}) wraps an AI agent --- with a chat
-model, conversation memory and a SQL execution tool --- that answers an
+workflow (Figure~\ref{fig:n8n-chat}) wraps an AI agent, with a chat
+model, conversation memory and a SQL execution tool, that answers an
 administrator's natural-language question by querying the database. The
 \textbf{storefront-redesign} workflow (Figure~\ref{fig:n8n-redesign}),
 already detailed in Sprint~2, builds a prompt, calls the language model,
 and parses and sanitises the returned customisation object. The
 \textbf{suggestion} workflow (Figure~\ref{fig:n8n-suggest}) takes a viewed
 product, reasons over the catalogue through a read-only SQL tool, and
-returns --- through a structured-output parser that enforces a
-\texttt{\{betterDeal, alternatives\}} shape --- the identifiers of a
+returns, through a structured-output parser that enforces a
+\texttt{\{betterDeal, alternatives\}} shape, the identifiers of a
 cheaper same item and a few substitute alternatives, which the backend
 validates before serving (detailed below).
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth,keepaspectratio]{img/n8n-verify.png}
-  \caption{n8n workflow --- AI verification.}
+  \caption{n8n workflow, AI verification.}
   \label{fig:n8n-verify}
 \end{figure}
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth,keepaspectratio]{img/n8n-chat.png}
-  \caption{n8n workflow --- database chat assistant.}
+  \caption{n8n workflow, database chat assistant.}
   \label{fig:n8n-chat}
 \end{figure}
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth,keepaspectratio]{img/n8n-redesign.png}
-  \caption{n8n workflow --- AI storefront redesign.}
+  \caption{n8n workflow, AI storefront redesign.}
   \label{fig:n8n-redesign}
 \end{figure}
 
 \begin{figure}[H]
   \centering
-  \imagePlaceholder[6cm]{n8n suggestion workflow --- webhook, an LLM with a read-only SQL tool, a structured-output parser returning the better-deal and alternative product ids, and the response node}
-  \caption{n8n workflow --- product suggestions.}
+  \includegraphics[width=\textwidth,keepaspectratio]{img/n8n-product-suggestions.png}
+  \caption{n8n workflow, product suggestions.}
   \label{fig:n8n-suggest}
 \end{figure}
 
 \subsection{Product Suggestions}
 
 On every product page the platform surfaces two tiers of cross-store
-suggestion --- a Tier~1 ``same item, cheaper'' offer and a Tier~2 set of
-substitute \emph{alternatives} --- distinct from the tag-based
+suggestion, a Tier~1 ``same item, cheaper'' offer and a Tier~2 set of
+substitute \emph{alternatives}, distinct from the tag-based
 landing-page recommendations. They are produced \textbf{live, on each
 product view} rather than precomputed: an initial design that stored a
 vector embedding per product and compared them in-app was deliberately
@@ -609,16 +606,16 @@ falls back to a \textbf{deterministic catalogue query}: eligible products
 in the same category, ranked by a similarity score that weighs shared
 product-name tokens most, then shared tags, then the same sub-category,
 with popularity breaking ties. The fallback guarantees the section is
-never empty on a transient failure, while the live workflow --- when
-available --- adds semantic reasoning over the product name and
+never empty on a transient failure, while the live workflow, when
+available, adds semantic reasoning over the product name and
 description that a rigid query cannot. Figure~\ref{fig:seq-suggestions}
 traces the request from the product page through the workflow call,
 serve-time validation, and the fallback.
 
 \begin{figure}[H]
   \centering
-  \imagePlaceholder[6cm]{Sequence diagram --- the product page requests suggestions; the backend calls the workflow, validates and hydrates the returned ids, and falls back to the deterministic catalogue query on any failure}
-  \caption{Sequence diagram --- product-suggestions request, serve-time validation and fallback.}
+  \imagePlaceholder[6cm]{Sequence diagram, the product page requests suggestions; the backend calls the workflow, validates and hydrates the returned ids, and falls back to the deterministic catalogue query on any failure}
+  \caption{Sequence diagram, product-suggestions request, serve-time validation and fallback.}
   \label{fig:seq-suggestions}
 \end{figure}
 
@@ -629,11 +626,11 @@ Unlike the one-time checkout of Sprint~3, the premium tier is a
 Stripe mechanisms beyond that sprint's single PaymentIntent:
 \textbf{Stripe Checkout in subscription mode} for sign-up and the
 \textbf{Stripe Customer Portal} for self-service management. A seller
-starts the flow from the upgrade page; the backend creates --- or reuses
---- a Stripe \emph{customer} for the account, stamps its identifier on
+starts the flow from the upgrade page; the backend creates, or reuses
+, a Stripe \emph{customer} for the account, stamps its identifier on
 \texttt{stripeCustomerId}, and opens a hosted Checkout session in
 subscription mode for the configured monthly price. Everything afterwards
---- cancelling, updating the card, downloading invoices --- is delegated
+, cancelling, updating the card, downloading invoices, is delegated
 to the hosted Customer Portal rather than rebuilt in-house.
 
 The tier is \textbf{sellers-only}: the \texttt{premium/checkout} endpoint
@@ -642,8 +639,8 @@ become-a-seller flow, and administrators keep a \textbf{manual grant} comp
 path that marks an account premium without any Stripe subscription.
 
 Entitlement is \textbf{webhook-driven}. The subscription lifecycle events
---- \texttt{customer.subscription.created}, \texttt{...updated} and
-\texttt{...deleted} --- arrive through the \emph{same} signature-verified
+, \texttt{customer.subscription.created}, \texttt{...updated} and
+\texttt{...deleted}, arrive through the \emph{same} signature-verified
 \texttt{/payments/webhook} introduced in Sprint~3. A created or updated
 subscription sets \texttt{isPremium} and stamps \texttt{premiumExpiresAt}
 with the current period end, so each successful renewal simply advances
@@ -656,11 +653,11 @@ premium and detaches the subscription id. To carry this, the
 existing \texttt{isPremium} and \texttt{premiumExpiresAt}
 (Figure~\ref{fig:class-release2}); the premium-status read returned to the
 client now also exposes \texttt{cancelAtPeriodEnd} and a
-\texttt{manageable} flag that tells a real subscriber --- who can open the
-portal --- apart from an administrator comp grant.
+\texttt{manageable} flag that tells a real subscriber, who can open the
+portal, apart from an administrator comp grant.
 
-Premium unlocks the full storefront customisation set --- free-form
-colours, all fonts and radii, banner controls and the rest --- and the
+Premium unlocks the full storefront customisation set, free-form
+colours, all fonts and radii, banner controls and the rest, and the
 ability to operate several stores. As before, the design deliberately
 \emph{preserves} a seller's premium customisation values after expiry: the
 stored design remains visible to buyers and only the editing of premium
@@ -672,7 +669,7 @@ entitlement update.
 \begin{figure}[H]
   \centering
   \includegraphics[width=\columnwidth,keepaspectratio]{img/seq-premium-subscription.png}
-  \caption{Sequence diagram --- premium subscription checkout and webhook-driven entitlement.}
+  \caption{Sequence diagram, premium subscription checkout and webhook-driven entitlement.}
   \label{fig:seq-premium-subscription}
 \end{figure}
 
@@ -683,35 +680,35 @@ placeholder for the corresponding screenshot of the running application.
 
 \begin{figure}[H]
   \centering
-  \imagePlaceholder[6cm]{AI verification panel --- entity verdict, rationale and admin override controls}
+  \imagePlaceholder[6cm]{AI verification panel, entity verdict, rationale and admin override controls}
   \caption{AI verification and moderation panel.}
   \label{fig:real-aiverify}
 \end{figure}
 
 \begin{figure}[H]
   \centering
-  \imagePlaceholder[6cm]{AI chat assistant --- natural-language database query and formatted answer}
+  \imagePlaceholder[6cm]{AI chat assistant, natural-language database query and formatted answer}
   \caption{AI database-chat assistant.}
   \label{fig:real-aichat}
 \end{figure}
 
 \begin{figure}[H]
   \centering
-  \imagePlaceholder[6cm]{Product page --- the ``Same item, cheaper'' offer and the ``Alternatives'' row across stores, with the brief loading state shown while the live suggestions are fetched}
+  \imagePlaceholder[6cm]{Product page, the ``Same item, cheaper'' offer and the ``Alternatives'' row across stores, with the brief loading state shown while the live suggestions are fetched}
   \caption{Cross-store product suggestions on the product page.}
   \label{fig:real-suggestions}
 \end{figure}
 
 \begin{figure}[H]
   \centering
-  \imagePlaceholder[6cm]{Upgrade page --- the premium plan with the subscribe call to action, and, for an active subscriber, the manage-subscription controls (cancel at period end, update card, invoices)}
+  \imagePlaceholder[6cm]{Upgrade page, the premium plan with the subscribe call to action, and, for an active subscriber, the manage-subscription controls (cancel at period end, update card, invoices)}
   \caption{Premium upgrade and subscription-management page.}
   \label{fig:real-upgrade}
 \end{figure}
 
 \begin{figure}[H]
   \centering
-  \imagePlaceholder[6cm]{Appearance --- the same page in the light theme and in the dimmed dark theme, with the theme switch open in the navigation bar}
+  \imagePlaceholder[6cm]{Appearance, the same page in the light theme and in the dimmed dark theme, with the theme switch open in the navigation bar}
   \caption{Light and dimmed-dark application themes.}
   \label{fig:real-theme}
 \end{figure}
@@ -739,9 +736,9 @@ notification service, the SMTP mailer and the authentication guards are
 replaced with deterministic mocks. The frontend is tested with
 \textbf{Vitest}~\cite{vitest} and React Testing Library with \texttt{jest-dom}, which
 mount components, query the DOM by accessible role and text, and assert
-on the rendered output. Good tests here verify observable behaviour ---
+on the rendered output. Good tests here verify observable behaviour, 
 the result of a service call, the response of an endpoint, the rendered
-state of a component --- rather than internal implementation details, so
+state of a component, rather than internal implementation details, so
 they survive refactoring.
 
 \subsection{Test Pyramid}
@@ -772,7 +769,7 @@ layers.
     \footnotesize \texttt{validate-env}, \texttt{tndToStripeUsdMinor}, guards; stores, hooks, components \\
   \end{tabular}}
   \end{minipage}
-  \caption{Test pyramid --- 538 tests across backend (Jest, 391) and frontend (Vitest, 147).}
+  \caption{Test pyramid, 538 tests across backend (Jest, 391) and frontend (Vitest, 147).}
   \label{fig:test-pyramid}
 \end{figure}
 
@@ -781,7 +778,7 @@ layers.
 Backend unit tests inject an in-memory mock of the Prisma service into
 the real service under test through the NestJS \texttt{TestingModule},
 which lets each test drive arbitrary return values and assert on the
-exact arguments passed to Prisma --- validating business rules such as
+exact arguments passed to Prisma, validating business rules such as
 ownership enforcement, the server-side payment-amount derivation and the
 stale-checkout reconciliation. The product-suggestions logic is covered
 the same way: the serve-time validation and hydration, the deterministic
@@ -796,8 +793,8 @@ authorisation wiring admits exactly the intended routes.
 \subsection{Frontend Tests}
 
 The frontend tests cover the Zustand stores, the custom hooks and the
-React components --- including the theme switch and the centralised
-status-badge helper introduced with the light/dark theming --- mounting
+React components, including the theme switch and the centralised
+status-badge helper introduced with the light/dark theming, mounting
 them in a jsdom environment and asserting on accessible, user-visible
 output. Together with the backend suite they give the layered coverage
 summarised in the pyramid above.
@@ -812,7 +809,7 @@ Figure~\ref{fig:real-ci} stands in for the CI run and coverage summary.
 
 \begin{figure}[H]
   \centering
-  \imagePlaceholder[5cm]{Continuous-integration run --- test and coverage summary for backend and frontend}
+  \imagePlaceholder[5cm]{Continuous-integration run, test and coverage summary for backend and frontend}
   \caption{Continuous-integration test and coverage summary.}
   \label{fig:real-ci}
 \end{figure}
@@ -862,7 +859,7 @@ initialiser that imports the version-controlled workflows), and a
 renewed Let's Encrypt certificates and adds the HTTP security headers.
 Listing~\ref{lst:compose} shows the backend and proxy service blocks.
 
-\begin{lstlisting}[caption={Docker Compose --- backend and reverse-proxy services (excerpt).},label={lst:compose}]
+\begin{lstlisting}[caption={Docker Compose backend and reverse-proxy services (excerpt).},label={lst:compose}]
 services:
   backend:
     image: registry/marketplace-backend:${IMAGE_TAG:-latest}
@@ -938,33 +935,15 @@ jobs:
         run: ssh $HOST "docker compose pull && docker compose up -d"
 \end{lstlisting}
 
-\subsection{Production Environment}
-
-In production the public entry point is the Caddy proxy, which terminates
-HTTPS and forwards traffic to the frontend container; the frontend serves
-the single-page application and proxies the API calls to the backend; the
-backend talks to the MariaDB database and to the n8n engine that carries
-the AI workflows. All services run under Docker Compose with restart
-policies on a single DigitalOcean droplet, giving the simple,
-reproducible and observable deployment targeted by the non-functional
-requirements of Section~\ref{chap:requirements}.
-
 \section*{Conclusion}
 
-This chapter delivered Release~2 and, with it, a complete product.
-Sprint~3 made the marketplace transactable --- a multi-store cart and
-checkout, the server-authoritative Stripe payment flow confirmed by a
-signature-verified webhook, the self-service account management that lets
-every user edit their profile, change their password and review their
-purchase history, and the administration tooling to moderate stores and
-products, curate featured content and manage categories.
-Sprint~4 added the intelligence and delivery layers --- the automated AI
-verification pipeline with administrative override, the database chat
-assistant, the premium tier built on the same payment machinery, a light
-and dimmed-dark theming option, and the
-testing and DevOps that bring the platform to production: a layered suite
-of 538 tests, containerised services behind a TLS-terminating proxy,
-infrastructure described with Terraform, and a GitHub Actions pipeline
-that tests, builds and deploys on every push to \texttt{main}. The
+Release~2 completed the product. Sprint~3 made the marketplace
+transactable, a multi-store cart and checkout, a server-authoritative
+Stripe flow confirmed by a signed webhook, self-service account
+management, and administration and moderation tooling. Sprint~4 added the
+intelligence and delivery layers, automated AI verification with
+administrative override, the database chat assistant, the premium tier,
+light and dimmed-dark theming, a 538-test suite, and a containerised,
+Terraform-provisioned deployment driven by a GitHub Actions pipeline. The
 marketplace planned in the first two chapters is now fully realised,
 validated and deployable.

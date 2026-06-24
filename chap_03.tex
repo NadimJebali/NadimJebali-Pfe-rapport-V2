@@ -3,22 +3,14 @@
 
 \section*{Introduction}
 
-This chapter opens the realisation of the platform. It covers the first
-release, \textit{Foundations \& Core Marketplace}, which establishes the
-identity layer, the seller-onboarding loop and the core selling
-capabilities on which every later feature depends. The chapter begins
-with a release overview --- a release-scoped use-case diagram and the
-subset of the domain model touched by the release --- followed by the
-release backlog. It then presents the two sprints of the release. The
-present chapter details \textbf{Sprint~1 (Authentication \& Seller
-Onboarding)}; \textbf{Sprint~2 (Store \& Product Management)} and the
-chapter conclusion follow. Each sprint is described at a uniform depth:
-its objective, its use-case diagram, an analysis-and-design section
-(textual use-case descriptions, activity diagrams and sequence
-diagrams), and a realisation section illustrating the delivered
-interfaces.
+This chapter covers Release~1, \textit{Foundations \& Core Marketplace},
+which establishes the identity layer, the seller-onboarding loop and the
+core selling capabilities the rest of the platform builds on. After a
+release overview, use-case diagram, domain model and backlog, it
+presents the release's two sprints: \textbf{Sprint~1 (Authentication \&
+Seller Onboarding)} and \textbf{Sprint~2 (Store \& Product Management)}.
 
-\section{Release Overview}
+\section{Release 1 Overview}
 
 Release~1 delivers the marketplace skeleton over two sprints. Sprint~1
 builds authentication and the seller-onboarding loop, so that a visitor
@@ -31,7 +23,7 @@ technology stack that frame this realisation were established in
 Section~\ref{chap:requirements} and are not repeated here; this release
 instantiates them for the foundational features.
 
-\subsection{Release Use-Case Diagram}
+\subsection{Release 1 Use-Case Diagram}
 
 Figure~\ref{fig:uc-release1} scopes the use cases delivered by
 Release~1 around its four actors. A \textit{Visitor} can register and
@@ -49,7 +41,7 @@ AI verification and the premium tier, which belong to Release~2.
   \label{fig:uc-release1}
 \end{figure}
 
-\subsection{Release Domain Model}
+\subsection{Release 1 Domain Model}
 
 Figure~\ref{fig:class-release1} shows the slice of the domain model
 introduced by Release~1: the \texttt{User} together with its
@@ -70,31 +62,33 @@ which the two sprints operate.
 
 The release backlog draws sixteen user stories from the product backlog
 of Section~\ref{chap:requirements} and allocates them to the two
-sprints, as summarised in Table~\ref{tab:backlog-r1}. Story points reuse
-the complexity estimates of the product backlog.
+sprints, as summarised in Table~\ref{tab:backlog-r1}. Each sprint carries
+an estimated duration, in line with the overall five-to-six-month
+schedule.
 
 \begin{table}[H]
   \centering
+  \caption{Release~1 backlog, user stories grouped by sprint and feature.}
+  \label{tab:backlog-r1}
+  \footnotesize
   \renewcommand{\arraystretch}{1.2}
-  \begin{tabularx}{\textwidth}{|l|l|X|c|}
+  \begin{tabularx}{\textwidth}{|l|l|X|>{\centering\arraybackslash}p{1.9cm}|}
     \hline
     \rowcolor{tableHeader}
     \textcolor{white}{\textbf{Sprint}} & \textcolor{white}{\textbf{Feature}} &
-    \textcolor{white}{\textbf{User stories}} & \textcolor{white}{\textbf{Pts}} \\
+    \textcolor{white}{\textbf{User stories}} & \textcolor{white}{\textbf{Est. time}} \\
     \hline
-    \multirow{2}{*}{Sprint 1} & Authentication      & US01--US04, US37       & 8 \\ \cline{2-4}
-                              & Administration      & US18                   & 2 \\ \hline
-    \multirow{2}{*}{Sprint 2} & Store Management    & US05--US09, US34       & 15 \\ \cline{2-4}
-                              & Product Management  & US10, US11, US12, US13 & 6 \\ \hline
-    \multicolumn{3}{|r|}{\textbf{Release~1 total}} & \textbf{31} \\ \hline
+    \multirow{2}{*}{Sprint 1} & Authentication & US01 account creation, US02 email verification, US03 sign-in, US04 sign-out, US37 password reset & \multirow{2}{*}{\textasciitilde1 month} \\ \cline{2-3}
+                              & Administration & US18 seller-application review & \\ \hline
+    \multirow{2}{*}{Sprint 2} & Store Management & US05 store creation, US06 readable store slug, US07 storefront WYSIWYG editor, US08 style presets, US09 multiple stores (premium), US34 store-wide sales & \multirow{2}{*}{\textasciitilde1.5 months} \\ \cline{2-3}
+                              & Product Management & US10 product CRUD, US11 product images, US12 product tags, US13 category browsing & \\ \hline
+    \multicolumn{3}{|r|}{\textbf{Release~1 total}} & \textbf{\textasciitilde2.5 months} \\ \hline
   \end{tabularx}
-  \caption{Release~1 backlog --- user stories grouped by sprint and feature.}
-  \label{tab:backlog-r1}
 \end{table}
 
-\section{Sprint 1 --- Authentication \& Seller Onboarding}
+\section{Sprint 1, Authentication \& Seller Onboarding}
 
-\subsection{Sprint Objective}
+\subsection{Sprint 1 Objective}
 
 Sprint~1 delivers the identity layer of the marketplace and the loop
 that turns a customer into a seller. By the end of the sprint a visitor
@@ -110,7 +104,7 @@ cryptography is hand-written. Every protected route is gated by an
 authentication guard and the \texttt{@Roles()} decorator, with
 object-level ownership enforced in the service layer.
 
-\subsection{Sprint Use-Case Diagram}
+\subsection{Sprint 1 Use-Case Diagram}
 
 Figure~\ref{fig:uc-sprint1} details the sprint's use cases. Registration
 \emph{includes} email verification; submitting a seller application
@@ -134,6 +128,8 @@ the authentication exchange as a sequence diagram.
 
 \begin{table}[H]
   \centering
+  \caption{Textual description of the \emph{Register} use case.}
+  \label{tab:uc-register}
   \renewcommand{\arraystretch}{1.25}
   \begin{tabularx}{\textwidth}{|>{\bfseries}p{3cm}|X|}
     \hline
@@ -147,12 +143,12 @@ the authentication exchange as a sequence diagram.
     Nominal scenario & 1.~The visitor opens the sign-up page. \newline 2.~The visitor enters a name, email and password. \newline 3.~The visitor submits the form. \newline 4.~Better-Auth creates the user and persists the credentials. \newline 5.~The system sends the verification email and shows a ``check your inbox'' screen. \\ \hline
     Alternative scenarios & A1.~Email already registered: an error invites the visitor to sign in instead. \newline E1.~Weak or malformed input: client- and server-side validation reject the request and the form is redisplayed with messages. \\ \hline
   \end{tabularx}
-  \caption{Textual description of the \emph{Register} use case.}
-  \label{tab:uc-register}
 \end{table}
 
 \begin{table}[H]
   \centering
+  \caption{Textual description of the \emph{Log in} use case.}
+  \label{tab:uc-login}
   \renewcommand{\arraystretch}{1.25}
   \begin{tabularx}{\textwidth}{|>{\bfseries}p{3cm}|X|}
     \hline
@@ -166,12 +162,12 @@ the authentication exchange as a sequence diagram.
     Nominal scenario & 1.~The user opens the sign-in page. \newline 2.~The user enters their email and password. \newline 3.~Better-Auth validates the credentials against the \texttt{User} table. \newline 4.~A session row is created and the session cookie is set. \newline 5.~The user is redirected to their dashboard. \\ \hline
     Alternative scenarios & A1.~Invalid credentials: a generic error is shown without revealing which field failed. \newline A2.~Unverified email: sign-in succeeds but store creation and ordering remain blocked until the email is verified. \\ \hline
   \end{tabularx}
-  \caption{Textual description of the \emph{Log in} use case.}
-  \label{tab:uc-login}
 \end{table}
 
 \begin{table}[H]
   \centering
+  \caption{Textual description of the \emph{Reset password} use case.}
+  \label{tab:uc-reset}
   \renewcommand{\arraystretch}{1.25}
   \begin{tabularx}{\textwidth}{|>{\bfseries}p{3cm}|X|}
     \hline
@@ -185,12 +181,12 @@ the authentication exchange as a sequence diagram.
     Nominal scenario & 1.~The user opens the ``forgot password'' page from the sign-in screen and enters their email. \newline 2.~Better-Auth generates a one-time token and the system emails a reset link. \newline 3.~The user opens the link and enters a new password with confirmation. \newline 4.~Better-Auth validates the token, replaces the password and revokes all other sessions. \newline 5.~The user is returned to the sign-in page to log in with the new password. \\ \hline
     Alternative scenarios & A1.~Unknown email: the same generic confirmation is shown, so the request never reveals whether an account exists. \newline E1.~Expired or invalid token: the reset is refused and the user is invited to request a new link. \\ \hline
   \end{tabularx}
-  \caption{Textual description of the \emph{Reset password} use case.}
-  \label{tab:uc-reset}
 \end{table}
 
 \begin{table}[H]
   \centering
+  \caption{Textual description of the \emph{Apply to become seller} use case.}
+  \label{tab:uc-apply}
   \renewcommand{\arraystretch}{1.25}
   \begin{tabularx}{\textwidth}{|>{\bfseries}p{3cm}|X|}
     \hline
@@ -204,12 +200,12 @@ the authentication exchange as a sequence diagram.
     Nominal scenario & 1.~The customer opens the ``become a seller'' form. \newline 2.~The customer enters their full name, phone number, home address and business description, optionally a website, and uploads an identity document. \newline 3.~The customer submits the form. \newline 4.~The system stores the application as \textsc{pending} and notifies the administrators. \\ \hline
     Alternative scenarios & A1.~An application already exists: its current status is displayed instead of the form. \newline E1.~A required document is missing: validation rejects the submission. \\ \hline
   \end{tabularx}
-  \caption{Textual description of the \emph{Apply to become seller} use case.}
-  \label{tab:uc-apply}
 \end{table}
 
 \begin{table}[H]
   \centering
+  \caption{Textual description of the \emph{Review seller application} use case.}
+  \label{tab:uc-review}
   \renewcommand{\arraystretch}{1.25}
   \begin{tabularx}{\textwidth}{|>{\bfseries}p{3cm}|X|}
     \hline
@@ -223,8 +219,6 @@ the authentication exchange as a sequence diagram.
     Nominal scenario & 1.~The administrator opens the applications panel. \newline 2.~The administrator selects a pending application and inspects its details and documents. \newline 3.~The administrator approves, rejects, or requests more information, optionally adding a note. \newline 4.~The system updates the status and notifies the applicant. \\ \hline
     Alternative scenarios & A1.~Request more information: the status becomes \textsc{more\_info\_requested} and the applicant may amend and resubmit. \\ \hline
   \end{tabularx}
-  \caption{Textual description of the \emph{Review seller application} use case.}
-  \label{tab:uc-review}
 \end{table}
 
 \subsubsection{Activity Diagram}
@@ -239,7 +233,7 @@ the protected actions of store creation and order placement.
 \begin{figure}[H]
   \centering
   \includegraphics[height=0.82\textheight,keepaspectratio]{img/act-registration.png}
-  \caption{Activity diagram --- registration and email verification.}
+  \caption{Activity diagram, registration and email verification.}
   \label{fig:act-registration}
 \end{figure}
 
@@ -257,7 +251,7 @@ subsequent protected request.
 \begin{figure}[H]
   \centering
   \includegraphics[width=\columnwidth,keepaspectratio]{img/seq-auth.png}
-  \caption{Sequence diagram --- registration, email verification and login.}
+  \caption{Sequence diagram, registration, email verification and login.}
   \label{fig:seq-auth}
 \end{figure}
 
@@ -269,49 +263,49 @@ screenshot of the running application.
 
 \begin{figure}[H]
   \centering
-  \imagePlaceholder[6cm]{Registration page --- name, email and password form}
+  \imagePlaceholder[6cm]{Registration page, name, email and password form}
   \caption{Registration page.}
   \label{fig:real-register}
 \end{figure}
 
 \begin{figure}[H]
   \centering
-  \imagePlaceholder[5cm]{Email-verification screen --- ``check your inbox'' and verified confirmation}
+  \imagePlaceholder[5cm]{Email-verification screen, ``check your inbox'' and verified confirmation}
   \caption{Email-verification screen.}
   \label{fig:real-verify}
 \end{figure}
 
 \begin{figure}[H]
   \centering
-  \imagePlaceholder[6cm]{Login page --- credentials form and session redirect}
+  \imagePlaceholder[6cm]{Login page, credentials form and session redirect}
   \caption{Login page.}
   \label{fig:real-login}
 \end{figure}
 
 \begin{figure}[H]
   \centering
-  \imagePlaceholder[5cm]{Password-reset flow --- ``forgot password'' request page and the new-password page reached from the emailed link}
+  \imagePlaceholder[5cm]{Password-reset flow, ``forgot password'' request page and the new-password page reached from the emailed link}
   \caption{Password-reset pages.}
   \label{fig:real-reset}
 \end{figure}
 
 \begin{figure}[H]
   \centering
-  \imagePlaceholder[7cm]{Seller-application form --- identity, business details and document upload}
+  \imagePlaceholder[7cm]{Seller-application form, identity, business details and document upload}
   \caption{Seller-application form.}
   \label{fig:real-apply}
 \end{figure}
 
 \begin{figure}[H]
   \centering
-  \imagePlaceholder[7cm]{Administrator review panel --- pending applications with approve / reject / request-more-info actions}
+  \imagePlaceholder[7cm]{Administrator review panel, pending applications with approve / reject / request-more-info actions}
   \caption{Administrator seller-application review panel.}
   \label{fig:real-review}
 \end{figure}
 
-\section{Sprint 2 --- Store \& Product Management}
+\section{Sprint 2, Store \& Product Management}
 
-\subsection{Sprint Objective}
+\subsection{Sprint 2 Objective}
 
 Sprint~2 turns an approved seller into an active merchant. By the end of
 the sprint a seller can create a store reachable at a human-readable
@@ -328,7 +322,7 @@ built on the storefront foundation in this sprint, but their premium
 (Chapter~\ref{chap:release2}); until then free accounts use the curated
 subset and a single store.
 
-\subsection{Sprint Use-Case Diagram}
+\subsection{Sprint 2 Use-Case Diagram}
 
 Figure~\ref{fig:uc-sprint2} details the sprint's use cases. Storefront
 customisation \emph{includes} applying a preset and uploading a banner,
@@ -352,6 +346,8 @@ diagrams and the AI-redesign exchange as a sequence diagram.
 
 \begin{table}[H]
   \centering
+  \caption{Textual description of the \emph{Create store} use case.}
+  \label{tab:uc-createstore}
   \renewcommand{\arraystretch}{1.25}
   \begin{tabularx}{\textwidth}{|>{\bfseries}p{3cm}|X|}
     \hline
@@ -365,12 +361,12 @@ diagrams and the AI-redesign exchange as a sequence diagram.
     Nominal scenario & 1.~The seller opens the create-store form. \newline 2.~The seller enters a name, description and logo. \newline 3.~The seller submits the form. \newline 4.~The system derives a slug from the name and enforces uniqueness, appending a numeric suffix on collision. \newline 5.~The store is persisted as \textsc{pending}, the status is logged and AI verification is queued. \newline 6.~The storefront editor opens. \\ \hline
     Alternative scenarios & A1.~A free-tier seller already owns a store: the seller is prompted to upgrade to premium. \newline E1.~Unsupported logo type or size: validation rejects the upload. \\ \hline
   \end{tabularx}
-  \caption{Textual description of the \emph{Create store} use case.}
-  \label{tab:uc-createstore}
 \end{table}
 
 \begin{table}[H]
   \centering
+  \caption{Textual description of the \emph{Customise storefront} use case.}
+  \label{tab:uc-customise}
   \renewcommand{\arraystretch}{1.25}
   \begin{tabularx}{\textwidth}{|>{\bfseries}p{3cm}|X|}
     \hline
@@ -384,12 +380,12 @@ diagrams and the AI-redesign exchange as a sequence diagram.
     Nominal scenario & 1.~The seller opens the Craft.js editor. \newline 2.~The seller clicks a section (Theme, Announcement Bar, Banner, Header, Product Grid, Sidebar or Footer) to open its settings. \newline 3.~The seller adjusts colours, fonts and radius with a live preview and undo/redo. \newline 4.~The seller optionally applies a preset (\textit{Default} or \textit{Minimal}; \textit{Modern} or \textit{Classic} for premium). \newline 5.~The seller saves the customisation. \\ \hline
     Alternative scenarios & A1.~A free account edits a premium-only field: the control is locked with an upgrade hint. \newline A2.~Unsaved changes on exit: the seller is warned before discarding. \\ \hline
   \end{tabularx}
-  \caption{Textual description of the \emph{Customise storefront} use case.}
-  \label{tab:uc-customise}
 \end{table}
 
 \begin{table}[H]
   \centering
+  \caption{Textual description of the \emph{AI redesign storefront} use case.}
+  \label{tab:uc-airedesign}
   \renewcommand{\arraystretch}{1.25}
   \begin{tabularx}{\textwidth}{|>{\bfseries}p{3cm}|X|}
     \hline
@@ -403,12 +399,12 @@ diagrams and the AI-redesign exchange as a sequence diagram.
     Nominal scenario & 1.~The seller clicks ``AI Redesign'' and enters a prompt. \newline 2.~The backend checks ownership and forwards the prompt with the store name and description to the n8n workflow. \newline 3.~n8n builds the system prompt, calls the Groq model and parses and sanitises the returned JSON. \newline 4.~The design is persisted and applied to the canvas. \newline 5.~The seller reviews, refines or saves. \\ \hline
     Alternative scenarios & E1.~The model returns invalid JSON: the sanitiser rejects it, the current design is kept and an error is shown. \\ \hline
   \end{tabularx}
-  \caption{Textual description of the \emph{AI redesign storefront} use case.}
-  \label{tab:uc-airedesign}
 \end{table}
 
 \begin{table}[H]
   \centering
+  \caption{Textual description of the \emph{Create product} use case.}
+  \label{tab:uc-createproduct}
   \renewcommand{\arraystretch}{1.25}
   \begin{tabularx}{\textwidth}{|>{\bfseries}p{3cm}|X|}
     \hline
@@ -422,8 +418,6 @@ diagrams and the AI-redesign exchange as a sequence diagram.
     Nominal scenario & 1.~The seller opens product management. \newline 2.~The seller enters a name, description, price, stock and sub-category. \newline 3.~The seller uploads one or more images, validated by MIME type and size. \newline 4.~The seller assigns tags. \newline 5.~The seller saves; the product is queued for AI verification. \\ \hline
     Alternative scenarios & A1.~The seller edits or deletes an existing product. \newline E1.~An unsupported or oversized image is rejected. \\ \hline
   \end{tabularx}
-  \caption{Textual description of the \emph{Create product} use case.}
-  \label{tab:uc-createproduct}
 \end{table}
 
 \subsubsection{Activity Diagrams}
@@ -438,14 +432,14 @@ seller's review-and-save decision.
 \begin{figure}[H]
   \centering
   \includegraphics[height=0.62\textheight,keepaspectratio]{img/act-create-store.png}
-  \caption{Activity diagram --- store creation.}
+  \caption{Activity diagram, store creation.}
   \label{fig:act-create-store}
 \end{figure}
 
 \begin{figure}[H]
   \centering
   \includegraphics[height=0.8\textheight,keepaspectratio]{img/act-ai-redesign.png}
-  \caption{Activity diagram --- AI storefront redesign.}
+  \caption{Activity diagram, AI storefront redesign.}
   \label{fig:act-ai-redesign}
 \end{figure}
 
@@ -453,7 +447,7 @@ seller's review-and-save decision.
 
 Figure~\ref{fig:seq-ai-redesign} traces the AI-redesign exchange. The
 seller's prompt travels from the editor to the NestJS API, which
-forwards it --- after an ownership check --- to the n8n webhook; n8n
+forwards it, after an ownership check, to the n8n webhook; n8n
 builds the prompt, calls the Groq model, then parses and sanitises the
 returned \texttt{StoreCustomization} before the backend persists it and
 streams it back to the live editor.
@@ -461,7 +455,7 @@ streams it back to the live editor.
 \begin{figure}[H]
   \centering
   \includegraphics[width=\columnwidth,keepaspectratio]{img/seq-ai-redesign.png}
-  \caption{Sequence diagram --- AI storefront redesign.}
+  \caption{Sequence diagram, AI storefront redesign.}
   \label{fig:seq-ai-redesign}
 \end{figure}
 
@@ -473,53 +467,47 @@ application.
 
 \begin{figure}[H]
   \centering
-  \imagePlaceholder[6cm]{Seller store dashboard --- metrics, store status and quick actions}
+  \imagePlaceholder[6cm]{Seller store dashboard, metrics, store status and quick actions}
   \caption{Seller store dashboard.}
   \label{fig:real-storedash}
 \end{figure}
 
 \begin{figure}[H]
   \centering
-  \imagePlaceholder[7cm]{Storefront WYSIWYG editor --- Craft.js canvas with the seven-section settings panel}
+  \imagePlaceholder[7cm]{Storefront WYSIWYG editor, Craft.js canvas with the seven-section settings panel}
   \caption{Storefront customisation editor.}
   \label{fig:real-editor}
 \end{figure}
 
 \begin{figure}[H]
   \centering
-  \imagePlaceholder[5cm]{AI redesign dialog --- natural-language prompt input}
+  \imagePlaceholder[5cm]{AI redesign dialog, natural-language prompt input}
   \caption{AI storefront-redesign dialog.}
   \label{fig:real-airedesign}
 \end{figure}
 
 \begin{figure}[H]
   \centering
-  \imagePlaceholder[6cm]{Product management --- catalogue list with create/edit form, image upload and tags}
+  \imagePlaceholder[6cm]{Product management, catalogue list with create/edit form, image upload and tags}
   \caption{Product management interface.}
   \label{fig:real-product}
 \end{figure}
 
 \begin{figure}[H]
   \centering
-  \imagePlaceholder[5cm]{Store-wide sale configuration --- discount percentage, label and expiry}
+  \imagePlaceholder[5cm]{Store-wide sale configuration, discount percentage, label and expiry}
   \caption{Store-wide sale configuration.}
   \label{fig:real-sale}
 \end{figure}
 
 \section*{Conclusion}
 
-This chapter delivered Release~1, the foundations of the marketplace.
-Sprint~1 established the identity layer --- registration with email
-verification, database-backed sessions, email-based password reset and
-role-based access --- together with the seller-onboarding loop of
-application and administrative review.
-Sprint~2 turned approved sellers into active merchants with store
-creation, the seven-section storefront editor, AI-assisted redesign,
-product management and store-wide sales, while opening catalogue browsing
-to customers. The marketplace can now be populated with stores and
-products, but it cannot yet transact. Release~2, presented in the next
-chapter, adds the cart and checkout, the Stripe payment flow,
-administration and moderation, automated AI verification, the premium
-tier, and the testing and deployment that bring the platform to
-production.
+Release~1 laid the foundations of the marketplace. Sprint~1 delivered the
+identity layer, registration with email verification, sessions, password
+reset and role-based access, plus the seller-onboarding loop. Sprint~2
+turned approved sellers into active merchants, store creation, the
+storefront editor, AI-assisted redesign, product management and
+store-wide sales, and opened catalogue browsing to customers. The
+marketplace can now be populated, but not yet transact; Release~2 adds
+that.
 
