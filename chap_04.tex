@@ -28,22 +28,6 @@ Section~\ref{chap:requirements} are not repeated; this release
 instantiates them for the transactional, intelligence and delivery
 features.
 
-\subsection{Release 2 Use-Case Diagram}
-
-Figure~\ref{fig:uc-release2} scopes the use cases delivered by
-Release~2. Customers gain the cart, checkout and payment; sellers gain
-order visibility, the premium tier and AI redesign; administrators gain
-moderation, featured curation, category management and the authority to
-override AI verdicts; the AI service and the Stripe payment gateway act
-as secondary actors.
-
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=\linewidth,keepaspectratio]{img/uc-release2.png}
-  \caption{Release~2 use-case diagram (transactions, intelligence and delivery).}
-  \label{fig:uc-release2}
-\end{figure}
-
 \subsection{Release 2 Domain Model}
 
 Figure~\ref{fig:class-release2} shows the slice of the domain model
@@ -54,7 +38,7 @@ trail and the featured-content entities.
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=\columnwidth,keepaspectratio]{img/class-release2.png}
+  \includegraphics[width=\linewidth,keepaspectratio]{img/class-release2.png}
   \caption{Release~2 domain model (subset of the platform class diagram).}
   \label{fig:class-release2}
 \end{figure}
@@ -124,109 +108,29 @@ gateway and the confirmation email; suspending a store is an
 
 \subsection{Analysis and Design}
 
-The five central use cases of the sprint are specified textually, then
-the checkout-and-payment control flow is given as an activity diagram and
-the order placement as a sequence diagram. The Stripe payment mechanism
-is then described in its own section.
-
-\subsubsection{Textual Use-Case Descriptions}
-
-\begin{table}[H]
-  \centering
-  \caption{Textual description of the \emph{Checkout} use case.}
-  \label{tab:uc-checkout}
-  \renewcommand{\arraystretch}{1.25}
-  \begin{tabularx}{\textwidth}{|>{\bfseries}p{3cm}|X|}
-    \hline
-    \rowcolor{tableHeader}
-    \multicolumn{2}{|l|}{\textcolor{white}{\textbf{Use case: Checkout}}} \\
-    \hline
-    Actor & Customer (authenticated, verified). \\ \hline
-    Objective & Convert the cart into an order, even when it spans several stores. \\ \hline
-    Pre-conditions & The cart is non-empty and the customer is signed in with a verified email. \\ \hline
-    Post-conditions & A single \textsc{pending} \texttt{Order} is created with one \texttt{OrderItem} per product line across all stores, and stock is reserved. \\ \hline
-    Nominal scenario & 1.~The customer opens the checkout page. \newline 2.~The customer reviews the items, quantities and shipping form. \newline 3.~The customer confirms. \newline 4.~The server prices each line server-side (using the sale price when a sale is active), reserves stock, and creates one order spanning all stores with its order items. \newline 5.~The payment step opens. \\ \hline
-    Alternative scenarios & A1.~Insufficient stock on a line: the line is flagged and checkout halts. \newline A2.~Unverified email: checkout is blocked until verification. \\ \hline
-  \end{tabularx}
-\end{table}
-
-\begin{table}[H]
-  \centering
-  \caption{Textual description of the \emph{Pay securely} use case.}
-  \label{tab:uc-pay}
-  \renewcommand{\arraystretch}{1.25}
-  \begin{tabularx}{\textwidth}{|>{\bfseries}p{3cm}|X|}
-    \hline
-    \rowcolor{tableHeader}
-    \multicolumn{2}{|l|}{\textcolor{white}{\textbf{Use case: Pay securely}}} \\
-    \hline
-    Actor & Customer; Payment Gateway (Stripe, secondary). \\ \hline
-    Objective & Pay the order total securely and have the order confirmed. \\ \hline
-    Pre-conditions & A \textsc{pending} order with a positive total and reserved stock exists. \\ \hline
-    Post-conditions & A Stripe PaymentIntent is opened for the server-computed total; on a signature-verified success webhook the order is marked \textsc{paid} and \textsc{confirmed} and a confirmation email is sent; on failure the reserved stock is released. \\ \hline
-    Nominal scenario & 1.~The server computes the grand total and converts it from TND to USD minor units. \newline 2.~The server opens one PaymentIntent for the total with an idempotency key and stamps its id on the order. \newline 3.~The client confirms the payment with Stripe. \newline 4.~Stripe sends a signed webhook; the backend verifies the signature against the raw body. \newline 5.~On \texttt{payment\_intent.succeeded} the order becomes \textsc{paid} and \textsc{confirmed} and the confirmation email is sent. \\ \hline
-    Alternative scenarios & E1.~Payment fails or is canceled: the order is marked failed and the reserved stock is released (idempotently). \newline E2.~Lost webhook: a periodic reconciliation sweep retrieves the intent from Stripe and settles or restocks the order. \\ \hline
-  \end{tabularx}
-\end{table}
-
-\begin{table}[H]
-  \centering
-  \caption{Textual description of the \emph{Manage profile} use case.}
-  \label{tab:uc-profile}
-  \renewcommand{\arraystretch}{1.25}
-  \begin{tabularx}{\textwidth}{|>{\bfseries}p{3cm}|X|}
-    \hline
-    \rowcolor{tableHeader}
-    \multicolumn{2}{|l|}{\textcolor{white}{\textbf{Use case: Manage profile}}} \\
-    \hline
-    Actor & Any authenticated user (Customer, Seller or Administrator). \\ \hline
-    Objective & View and update one's own account: display name, phone and avatar, change the password, and review the purchase history. \\ \hline
-    Pre-conditions & The user is signed in. \\ \hline
-    Post-conditions & The editable fields (name, phone, avatar) are updated; a password change revokes the other sessions; privileged fields (role, premium status, email) are never altered through this surface. \\ \hline
-    Nominal scenario & 1.~The user opens their account page (a customer through the tabbed account page, a seller through the dashboard). \newline 2.~The user edits the name, phone or avatar and saves; the server accepts only those fields. \newline 3.~The user optionally changes the password by supplying the current and a new one. \newline 4.~The user opens the purchase-history view to consult past orders, paginated. \\ \hline
-    Alternative scenarios & A1.~A privileged field is submitted: the server ignores it, so a user can never self-grant a role or premium status. \newline E1.~Invalid input (e.g.\ a too-short new password or a mismatched confirmation): validation rejects the change with a message. \\ \hline
-  \end{tabularx}
-\end{table}
-
-\begin{table}[H]
-  \centering
-  \caption{Textual description of the \emph{Suspend store} use case.}
-  \label{tab:uc-suspend}
-  \renewcommand{\arraystretch}{1.25}
-  \begin{tabularx}{\textwidth}{|>{\bfseries}p{3cm}|X|}
-    \hline
-    \rowcolor{tableHeader}
-    \multicolumn{2}{|l|}{\textcolor{white}{\textbf{Use case: Suspend store}}} \\
-    \hline
-    Actor & Administrator. \\ \hline
-    Objective & Suspend or delete a store that violates the marketplace rules. \\ \hline
-    Pre-conditions & The target store exists. \\ \hline
-    Post-conditions & The store \texttt{currentStatus} becomes \textsc{suspended} (or \textsc{deleted}, cascade-removing its products); a \texttt{StoreStatusLog} entry records the change; the store leaves public browsing. \\ \hline
-    Nominal scenario & 1.~The administrator opens the store moderation panel. \newline 2.~The administrator selects a store and inspects it. \newline 3.~The administrator chooses suspend or delete, optionally with a reason. \newline 4.~The system updates the status, writes a \texttt{StoreStatusLog} entry, and on delete cascades to the store's products. \\ \hline
-    Alternative scenarios & A1.~Reactivate a suspended store: \texttt{currentStatus} returns to \textsc{active}. \\ \hline
-  \end{tabularx}
-\end{table}
-
-\begin{table}[H]
-  \centering
-  \caption{Textual description of the \emph{Override AI verdict} use case.}
-  \label{tab:uc-override}
-  \renewcommand{\arraystretch}{1.25}
-  \begin{tabularx}{\textwidth}{|>{\bfseries}p{3cm}|X|}
-    \hline
-    \rowcolor{tableHeader}
-    \multicolumn{2}{|l|}{\textcolor{white}{\textbf{Use case: Override AI verdict}}} \\
-    \hline
-    Actor & Administrator. \\ \hline
-    Objective & Override the automated verification verdict on a store or product. \\ \hline
-    Pre-conditions & The entity carries an AI verdict (\texttt{aiReviewed = true}) or has been flagged. \\ \hline
-    Post-conditions & The entity's \texttt{adminReviewed} flag is set and its verification status reflects the administrator's decision, which takes precedence over the AI verdict. \\ \hline
-    Nominal scenario & 1.~The administrator opens the moderation panel. \newline 2.~The administrator reviews the AI verdict and rationale on the flagged entity. \newline 3.~The administrator approves or rejects, overriding the AI. \newline 4.~The system sets \texttt{adminReviewed} and updates the verification status; the administrator's decision is final. \\ \hline
-    Alternative scenarios & A1.~The administrator agrees with the AI: no override is needed and the AI verdict stands. \\ \hline
-  \end{tabularx}
-\end{table}
+The checkout-and-payment control flow is summarised in
+Table~\ref{tab:act-checkout-desc} and then modelled as an activity
+diagram. The Stripe payment mechanism is detailed in its own section.
 
 \subsubsection{Activity Diagram}
+
+\begin{table}[H]
+  \centering
+  \caption{Textual description of the checkout-and-payment activity.}
+  \label{tab:act-checkout-desc}
+  \renewcommand{\arraystretch}{1.3}
+  \begin{tabularx}{\textwidth}{|>{\bfseries}p{3.2cm}|X|}
+    \hline
+    Title & Checkout and secure payment \\ \hline
+    Objective & Convert a multi-store cart into a single order and collect payment securely through Stripe. \\ \hline
+    Primary actor & Customer (authenticated, verified). \\ \hline
+    Secondary actor & Payment Gateway (Stripe). \\ \hline
+    Pre-condition & The cart is non-empty and the customer is signed in with a verified email. \\ \hline
+    Nominal scenario & 1.~The customer opens checkout and confirms the items and shipping details. \newline 2.~The server prices each line server-side, reserves stock, and creates one \textsc{pending} order spanning all stores. \newline 3.~The server opens a Stripe PaymentIntent for the server-computed total and stamps its id on the order. \newline 4.~The customer confirms payment with Stripe. \newline 5.~On a signature-verified success webhook the order becomes \textsc{paid} and \textsc{confirmed} and a confirmation email is sent. \\ \hline
+    Alternative scenario & A1.~Insufficient stock on a line: the line is flagged and checkout halts. \newline E1.~Payment fails or is canceled: the order is marked failed and the reserved stock is released. \newline E2.~Lost webhook: a periodic reconciliation sweep settles or restocks the order. \\ \hline
+    Post-condition & A \textsc{paid}, \textsc{confirmed} order exists, or the reserved stock is released on failure. \\ \hline
+  \end{tabularx}
+\end{table}
 
 Figure~\ref{fig:act-checkout-payment} models the checkout-and-payment
 control flow. After stock is reserved and the pending order priced
@@ -239,19 +143,6 @@ success or back to released stock on failure.
   \includegraphics[height=0.82\textheight,keepaspectratio]{img/act-checkout-payment.png}
   \caption{Activity diagram, multi-store checkout and Stripe payment.}
   \label{fig:act-checkout-payment}
-\end{figure}
-
-\subsubsection{Sequence Diagram}
-
-Figure~\ref{fig:seq-order} traces order placement across the React
-application, the NestJS API and the database, including the creation of
-the single multi-store order and its items.
-
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=\columnwidth,keepaspectratio]{img/seq-order.png}
-  \caption{Sequence diagram, multi-store order placement.}
-  \label{fig:seq-order}
 \end{figure}
 
 \subsection{Stripe Payment Design}
@@ -391,143 +282,68 @@ afterwards managed through that same gateway.
 
 \subsection{Analysis and Design}
 
-The five central use cases of the sprint are specified textually, then
-the verification and moderation control flows are given as activity
-diagrams, and the verification and product-suggestion exchanges as
-sequence diagrams.
-
-\subsubsection{Textual Use-Case Descriptions}
-
-\begin{table}[H]
-  \centering
-  \caption{Textual description of the \emph{AI verification} use case.}
-  \label{tab:uc-aiverify}
-  \renewcommand{\arraystretch}{1.25}
-  \begin{tabularx}{\textwidth}{|>{\bfseries}p{3cm}|X|}
-    \hline
-    \rowcolor{tableHeader}
-    \multicolumn{2}{|l|}{\textcolor{white}{\textbf{Use case: AI verification}}} \\
-    \hline
-    Actor & AI Service (n8n + vision LLM); triggered by store or product creation. \\ \hline
-    Objective & Automatically screen every new store and product before it becomes visible. \\ \hline
-    Pre-conditions & A new entity exists with \texttt{aiReviewed = false} and \texttt{verificationStatus = pending}, and its images are uploaded. \\ \hline
-    Post-conditions & \texttt{aiReviewed} becomes \texttt{true} and the verification status is set to \textsc{approved} (auto-published) or the entity is flagged for administrator review; a verdict and rationale are recorded. \\ \hline
-    Nominal scenario & 1.~After image upload, the backend fires the \texttt{ai-verify} webhook with the listing text and image list. \newline 2.~n8n downloads each image and submits it with the text to the vision model. \newline 3.~The per-image verdicts are aggregated, flagging the entity if any image is flagged. \newline 4.~The decision is posted to the \texttt{/ai-review} callback. \newline 5.~The backend publishes clean entities and queues flagged ones for moderation. \\ \hline
-    Alternative scenarios & E1.~The webhook or model fails: the entity stays \textsc{pending} and is surfaced in the administrator's queue for manual review. \\ \hline
-  \end{tabularx}
-\end{table}
-
-\begin{table}[H]
-  \centering
-  \caption{Textual description of the \emph{AI chat query} use case.}
-  \label{tab:uc-aichat}
-  \renewcommand{\arraystretch}{1.25}
-  \begin{tabularx}{\textwidth}{|>{\bfseries}p{3cm}|X|}
-    \hline
-    \rowcolor{tableHeader}
-    \multicolumn{2}{|l|}{\textcolor{white}{\textbf{Use case: AI chat query}}} \\
-    \hline
-    Actor & Administrator; AI Service (n8n + LLM + SQL tool). \\ \hline
-    Objective & Query the database in natural language for diagnostics and insight. \\ \hline
-    Pre-conditions & The administrator is authenticated. \\ \hline
-    Post-conditions & A natural-language answer, derived from a generated SQL query executed read-only against the database, is returned; no data is modified. \\ \hline
-    Nominal scenario & 1.~The administrator types a question in the chat assistant. \newline 2.~The backend forwards it to the n8n chat workflow. \newline 3.~The AI agent translates the question into SQL, executes it against MariaDB through the SQL tool, and formats the result. \newline 4.~The answer is returned to the administrator. \\ \hline
-    Alternative scenarios & A1.~An ambiguous question: the assistant asks for clarification, using its conversation memory for context. \\ \hline
-  \end{tabularx}
-\end{table}
-
-\begin{table}[H]
-  \centering
-  \caption{Textual description of the \emph{Subscribe to / manage premium subscription} use case.}
-  \label{tab:uc-premium}
-  \renewcommand{\arraystretch}{1.25}
-  \begin{tabularx}{\textwidth}{|>{\bfseries}p{3cm}|X|}
-    \hline
-    \rowcolor{tableHeader}
-    \multicolumn{2}{|l|}{\textcolor{white}{\textbf{Use case: Subscribe to / manage premium subscription}}} \\
-    \hline
-    Actor & Seller; Payment Gateway (Stripe, secondary). \\ \hline
-    Objective & Take out and manage a recurring monthly premium subscription that unlocks full storefront customisation and multiple stores. \\ \hline
-    Pre-conditions & The user holds the seller role. \\ \hline
-    Post-conditions & Once Stripe confirms the subscription, \texttt{isPremium} becomes \texttt{true} and \texttt{premiumExpiresAt} is set to the current billing period end; the entitlement renews automatically, and premium customisation and multi-store operation are unlocked. \\ \hline
-    Nominal scenario & 1.~The seller opens the upgrade page and starts the subscription. \newline 2.~The backend opens a Stripe Checkout session in subscription mode and redirects the seller to the hosted page. \newline 3.~The seller pays on Stripe. \newline 4.~On a signature-verified \texttt{customer.subscription.created} webhook the account is marked premium until the current period end. \newline 5.~Each renewal fires \texttt{customer.subscription.updated} and advances the expiry. \newline 6.~The seller later manages the subscription, cancel, update card, download invoices, through the Stripe Customer Portal. \\ \hline
-    Alternative scenarios & A1.~Cancellation through the portal is \emph{cancel-at-period-end}: premium is kept until the paid period ends, then a \texttt{customer.subscription.deleted} webhook revokes it. \newline A2.~A non-seller is redirected to the become-a-seller flow. \newline A3.~An administrator grants premium manually, a comp account with no Stripe subscription. \newline A4.~After expiry the premium customisation values are preserved and stay visible to buyers; only further editing of premium fields is locked (US27). \\ \hline
-  \end{tabularx}
-\end{table}
-
-\begin{table}[H]
-  \centering
-  \caption{Textual description of the \emph{Switch theme} use case.}
-  \label{tab:uc-theme}
-  \renewcommand{\arraystretch}{1.25}
-  \begin{tabularx}{\textwidth}{|>{\bfseries}p{3cm}|X|}
-    \hline
-    \rowcolor{tableHeader}
-    \multicolumn{2}{|l|}{\textcolor{white}{\textbf{Use case: Switch theme}}} \\
-    \hline
-    Actor & Any user, whether authenticated or not. \\ \hline
-    Objective & Choose how the application is rendered: a light theme, a dimmed dark theme, or automatically following the operating-system preference. \\ \hline
-    Pre-conditions & None; the theme switch is reachable from any page through the navigation chrome. \\ \hline
-    Post-conditions & The interface re-themes immediately and the choice is persisted on the device, so it is re-applied before first paint on later visits. \\ \hline
-    Nominal scenario & 1.~The user opens the theme switch and picks light, dark or system. \newline 2.~The interface re-themes at once through CSS design tokens, with no page reload. \newline 3.~The preference is stored locally and restored on the next visit before the first paint, so there is no flash of the wrong theme. \\ \hline
-    Alternative scenarios & A1.~The user picks \emph{system}: the interface follows the OS light/dark setting and updates live when that setting changes. \newline A2.~A seller storefront keeps its own seller-chosen palette and is intentionally not overridden by the application theme. \\ \hline
-  \end{tabularx}
-\end{table}
-
-\begin{table}[H]
-  \centering
-  \caption{Textual description of the \emph{View product suggestions} use case.}
-  \label{tab:uc-suggestions}
-  \renewcommand{\arraystretch}{1.25}
-  \begin{tabularx}{\textwidth}{|>{\bfseries}p{3cm}|X|}
-    \hline
-    \rowcolor{tableHeader}
-    \multicolumn{2}{|l|}{\textcolor{white}{\textbf{Use case: View product suggestions}}} \\
-    \hline
-    Actor & Customer (visitor or authenticated); AI suggestion service (secondary). \\ \hline
-    Objective & On a product page, surface a cheaper same-item offer and relevant alternatives drawn from across the marketplace. \\ \hline
-    Pre-conditions & The viewed product exists and is publicly visible. \\ \hline
-    Post-conditions & The page shows a validated ``same item, cheaper'' offer (or none) and a list of eligible alternatives; only approved, available, in-stock products other than the viewed one are ever shown. \\ \hline
-    Nominal scenario & 1.~The customer opens a product page. \newline 2.~The frontend requests suggestions for that product on its own asynchronous query, so the page paints immediately. \newline 3.~The backend calls the suggestion workflow, which reasons over the catalogue and returns candidate ids. \newline 4.~The backend hydrates and validates the ids, dropping ineligible ones and keeping the better deal only if genuinely cheaper. \newline 5.~The validated suggestions render in their own section once ready. \\ \hline
-    Alternative scenarios & E1.~The workflow errors, times out or returns nothing usable: the backend falls back to a deterministic catalogue query (same category, ranked by name similarity and tag overlap), so the section is never empty on a transient failure. \newline A1.~Nothing qualifies even from the fallback: the section stays empty rather than showing irrelevant items. \\ \hline
-  \end{tabularx}
-\end{table}
+The AI-verification and content-moderation control flows are summarised
+in Tables~\ref{tab:act-aiverify-desc} and~\ref{tab:act-moderation-desc}
+and then each modelled as an activity diagram.
 
 \subsubsection{Activity Diagrams}
+
+\begin{table}[H]
+  \centering
+  \caption{Textual description of the AI-verification activity.}
+  \label{tab:act-aiverify-desc}
+  \renewcommand{\arraystretch}{1.3}
+  \begin{tabularx}{\textwidth}{|>{\bfseries}p{3.2cm}|X|}
+    \hline
+    Title & AI verification pipeline \\ \hline
+    Objective & Automatically screen every new store and product before it becomes visible. \\ \hline
+    Primary actor & AI Service (n8n + vision LLM), triggered by store or product creation. \\ \hline
+    Secondary actor & Administrator (for flagged entities). \\ \hline
+    Pre-condition & A new entity exists with \texttt{aiReviewed = false} and \texttt{verificationStatus = pending}, with its images uploaded. \\ \hline
+    Nominal scenario & 1.~After image upload, the backend fires the \texttt{ai-verify} webhook with the listing text and image list. \newline 2.~n8n downloads each image and submits it with the text to the vision model. \newline 3.~The per-image verdicts are aggregated, flagging the entity if any image is flagged. \newline 4.~The decision is posted to the \texttt{/ai-review} callback. \newline 5.~The backend publishes clean entities and queues flagged ones for moderation. \\ \hline
+    Alternative scenario & E1.~The webhook or model fails: the entity stays \textsc{pending} and is surfaced in the administrator's queue for manual review. \\ \hline
+    Post-condition & \texttt{aiReviewed} is \texttt{true}; the entity is auto-published or flagged for administrator review, with a recorded verdict and rationale. \\ \hline
+  \end{tabularx}
+\end{table}
 
 Figure~\ref{fig:act-ai-verification} models the AI verification pipeline,
 including the per-image screening loop inside the n8n workflow and the
 branch that either publishes a clean entity or routes a flagged one to
-moderation. Figure~\ref{fig:act-moderation} models the administrator's
-content-moderation decision over a flagged entity.
+moderation.
 
 \begin{figure}[H]
   \centering
-  \includegraphics[height=0.84\textheight,keepaspectratio]{img/act-ai-verification.png}
+  \includegraphics[height=0.82\textheight,keepaspectratio]{img/act-ai-verification.png}
   \caption{Activity diagram, AI verification pipeline.}
   \label{fig:act-ai-verification}
 \end{figure}
 
+\begin{table}[H]
+  \centering
+  \caption{Textual description of the content-moderation activity.}
+  \label{tab:act-moderation-desc}
+  \renewcommand{\arraystretch}{1.3}
+  \begin{tabularx}{\textwidth}{|>{\bfseries}p{3.2cm}|X|}
+    \hline
+    Title & Content moderation \\ \hline
+    Objective & Let an administrator arbitrate a flagged store or product, overriding the AI verdict or suspending offending content. \\ \hline
+    Primary actor & Administrator. \\ \hline
+    Secondary actor & AI verification service (provides the verdict). \\ \hline
+    Pre-condition & An entity carries an AI verdict or has been flagged for review. \\ \hline
+    Nominal scenario & 1.~The administrator opens the moderation panel. \newline 2.~The administrator reviews the AI verdict and rationale on the flagged entity. \newline 3.~The administrator approves or rejects, overriding the AI; \texttt{adminReviewed} is set and the decision is final. \newline 4.~For a violating store, the administrator suspends or deletes it, optionally with a reason. \newline 5.~The system updates the status and writes a \texttt{StoreStatusLog} entry, cascading to products on delete. \\ \hline
+    Alternative scenario & A1.~The administrator agrees with the AI: no override is needed and the verdict stands. \newline A2.~Reactivate a suspended store: its status returns to \textsc{active}. \\ \hline
+    Post-condition & The entity's \texttt{adminReviewed} flag is set and its verification or store status reflects the administrator's final decision. \\ \hline
+  \end{tabularx}
+\end{table}
+
+Figure~\ref{fig:act-moderation} models the administrator's
+content-moderation decision over a flagged entity.
+
 \begin{figure}[H]
   \centering
-  \includegraphics[width=\columnwidth,keepaspectratio]{img/act-moderation.png}
+  \includegraphics[width=\linewidth,keepaspectratio]{img/act-moderation.png}
   \caption{Activity diagram, content moderation.}
   \label{fig:act-moderation}
-\end{figure}
-
-\subsubsection{Sequence Diagram}
-
-Figure~\ref{fig:seq-verify} traces the verification exchange for both
-products and stores: creation with a pending status, image upload, the
-per-image moderation loop against the vision model, the aggregated
-verdict posted to the callback, and the alternative branches of
-automatic approval or administrative override.
-
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=\columnwidth,keepaspectratio]{img/seq-verify.png}
-  \caption{Sequence diagram, AI verification with administrative override.}
-  \label{fig:seq-verify}
 \end{figure}
 
 \subsection{n8n Workflow Design}
@@ -662,16 +478,7 @@ ability to operate several stores. As before, the design deliberately
 \emph{preserves} a seller's premium customisation values after expiry: the
 stored design remains visible to buyers and only the editing of premium
 fields is locked, so a lapsed subscription never degrades a storefront
-that is already live (US27). Figure~\ref{fig:seq-premium-subscription}
-traces the subscription exchange from checkout through the webhook-driven
-entitlement update.
-
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=\columnwidth,keepaspectratio]{img/seq-premium-subscription.png}
-  \caption{Sequence diagram, premium subscription checkout and webhook-driven entitlement.}
-  \label{fig:seq-premium-subscription}
-\end{figure}
+that is already live (US27).
 
 \subsection{Realisation}
 
