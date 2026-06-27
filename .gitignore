@@ -26,3 +26,8 @@ malek_example.pdf
 .DS_Store
 *.swp
 *~
+
+# ── draw.io autosave / backup temp files ──────────────
+.$*
+*.dtmp
+*.bkp

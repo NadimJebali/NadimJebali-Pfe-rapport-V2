@@ -160,13 +160,13 @@
   \DTLnewrow{list}% Create a new entry
   \DTLnewdbentry{list}{sortlabel}{#1}
   \DTLnewdbentry{list}{description}{
-      \begin{minipage}[l]{0.1\columnwidth}
+      \begin{minipage}[l]{0.18\columnwidth}
             ~\textbf{#1}
         \end{minipage}
         \begin{minipage}[l]{0.05\columnwidth}
             \textbf{=}
         \end{minipage}
-        \begin{minipage}[l]{0.85\columnwidth}
+        \begin{minipage}[l]{0.77\columnwidth}
             #2
         \end{minipage}
   }% Add entry description
