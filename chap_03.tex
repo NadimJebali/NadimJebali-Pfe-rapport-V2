@@ -41,11 +41,12 @@ and \texttt{ProductTag}) organised by \texttt{Category} and
 
 \section{Release~1 Backlog}
 
-The release backlog draws sixteen user stories from the product backlog
+The release backlog draws nineteen user stories from the product backlog
 of Section~\ref{chap:requirements} and allocates them to the two
-sprints, as summarised in Table~\ref{tab:backlog-r1}. Each sprint carries
-an estimated duration, in line with the overall five-to-six-month
-schedule.
+sprints, as summarised in Table~\ref{tab:backlog-r1}. Each story carries
+an estimated duration in working days, derived from its complexity; the
+per-story estimates add up to each sprint's envelope, in line with the
+overall five-to-six-month schedule.
 
 \begin{table}[H]
   \centering
@@ -53,16 +54,33 @@ schedule.
   \label{tab:backlog-r1}
   \footnotesize
   \renewcommand{\arraystretch}{1.2}
-  \begin{tabularx}{\textwidth}{|l|l|X|>{\centering\arraybackslash}p{1.9cm}|}
+  \begin{tabularx}{\textwidth}{|l|l|X|>{\centering\arraybackslash}p{1.5cm}|}
     \hline
     \rowcolor{tableHeader}
     \textcolor{white}{\textbf{Sprint}} & \textcolor{white}{\textbf{Feature}} &
-    \textcolor{white}{\textbf{User stories}} & \textcolor{white}{\textbf{Est. time}} \\
+    \textcolor{white}{\textbf{User story}} & \textcolor{white}{\textbf{Est. (days)}} \\
     \hline
-    \multirow{2}{*}{Sprint 1} & Authentication & US01 account creation, US02 email verification, US03 sign-in, US04 sign-out, US37 password reset & \multirow{2}{*}{\textasciitilde1 month} \\ \cline{2-3}
-                              & Administration & US18 seller-application review & \\ \hline
-    \multirow{2}{*}{Sprint 2} & Store Management & US05 store creation, US06 readable store slug, US07 storefront WYSIWYG editor, US08 style presets, US09 multiple stores (premium), US34 store-wide sales, US42 per-product sales & \multirow{2}{*}{\textasciitilde1.5 months} \\ \cline{2-3}
-                              & Product Management & US10 product CRUD, US11 product images, US12 product tags, US13 category browsing & \\ \hline
+    \multirow{6}{*}{Sprint 1} & \multirow{5}{*}{Authentication} & US01 account creation & 4 \\ \cline{3-4}
+                              & & US02 email verification & 4 \\ \cline{3-4}
+                              & & US03 sign-in & 2 \\ \cline{3-4}
+                              & & US04 sign-out & 2 \\ \cline{3-4}
+                              & & US37 password reset & 4 \\ \cline{2-4}
+                              & Administration & US18 seller-application review & 4 \\ \hline
+    \multicolumn{3}{|r|}{\textit{Sprint 1 subtotal}} & \textit{20 (\textasciitilde1 mo.)} \\ \hline
+    \multirow{13}{*}{Sprint 2} & \multirow{7}{*}{Store Management} & US05 store creation & 3 \\ \cline{3-4}
+                               & & US06 readable store slug & 2 \\ \cline{3-4}
+                               & & US07 storefront WYSIWYG editor & 8 \\ \cline{3-4}
+                               & & US08 style presets & 2 \\ \cline{3-4}
+                               & & US09 multiple stores (premium) & 3 \\ \cline{3-4}
+                               & & US34 store-wide sales & 2 \\ \cline{3-4}
+                               & & US42 per-product sales & 2 \\ \cline{2-4}
+                               & \multirow{6}{*}{Product Management} & US10 create product & 2 \\ \cline{3-4}
+                               & & US43 edit product & 1 \\ \cline{3-4}
+                               & & US44 delete product & 1 \\ \cline{3-4}
+                               & & US11 product images & 2 \\ \cline{3-4}
+                               & & US12 product tags & 1 \\ \cline{3-4}
+                               & & US13 category browsing & 1 \\ \hline
+    \multicolumn{3}{|r|}{\textit{Sprint 2 subtotal}} & \textit{30 (\textasciitilde1.5 mo.)} \\ \hline
     \multicolumn{3}{|r|}{\textbf{Release~1 total}} & \textbf{\textasciitilde2.5 months} \\ \hline
   \end{tabularx}
 \end{table}

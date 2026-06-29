@@ -226,7 +226,7 @@ organised by \texttt{Category} and \texttt{Tag}; orders are modelled by an
 \texttt{Order} aggregate and its \texttt{OrderItem} lines, allowing a
 single checkout to span several stores.
 
-\begin{figure}[p]
+\begin{figure}[H]
   \centering
   \includegraphics[width=\linewidth,height=0.92\textheight,keepaspectratio]{img/class-diagram.png}
   \caption{Class diagram of the platform domain model}
@@ -240,11 +240,11 @@ single checkout to span several stores.
 The Scrum accountabilities were distributed as follows:
 
 \begin{itemize}[leftmargin=*,itemsep=2pt]
-  \item \textbf{Product Owner:} Mr.\ Mohammed Aziz Chibani (NeuralBey),
-        who owned the product vision and prioritised the backlog.
-  \item \textbf{Scrum Master and Development Team:} Nadim Jebali (the
-        student), responsible for applying the framework and for the
-        entire technical realisation.
+  \item \textbf{Product Owner and Scrum Master:} Mr.\ Mohammed Aziz
+        Chibani (NeuralBey), who owned the product vision, prioritised
+        the backlog and ensured the Scrum framework was applied.
+  \item \textbf{Development Team:} Nadim Jebali (the student),
+        responsible for the entire technical realisation.
 \end{itemize}
 
 \subsection{MoSCoW Priority Legend}
@@ -319,7 +319,9 @@ the estimated complexity.
   \cellcolor{featStore} & US34 & As a seller, I want a store-wide percentage sale so that all my products show discounted prices and a badge automatically. & \cellcolor{moscowShould}\textbf{Should} & \cellcolor{complexMed}\textbf{2} \\\hline
 
   \cellcolor{featProduct}\makecell[c]{\textbf{F3}\\\small Product\\Management}
-  & US10 & As a seller, I want to create, edit and delete products so that I can keep my catalogue up to date. & \cellcolor{moscowMust}\textbf{Must} & \cellcolor{complexMed}\textbf{2} \\\cline{2-5}
+  & US10 & As a seller, I want to create a product so that I can add it to my catalogue. & \cellcolor{moscowMust}\textbf{Must} & \cellcolor{complexMed}\textbf{2} \\\cline{2-5}
+  \cellcolor{featProduct} & US43 & As a seller, I want to edit an existing product so that I can keep its details accurate. & \cellcolor{moscowMust}\textbf{Must} & \cellcolor{complexLow}\textbf{1} \\\cline{2-5}
+  \cellcolor{featProduct} & US44 & As a seller, I want to delete a product so that I can remove items I no longer sell. & \cellcolor{moscowMust}\textbf{Must} & \cellcolor{complexLow}\textbf{1} \\\cline{2-5}
   \cellcolor{featProduct} & US11 & As a seller, I want to upload multiple product images so that customers can see my products clearly. & \cellcolor{moscowMust}\textbf{Must} & \cellcolor{complexMed}\textbf{2} \\\cline{2-5}
   \cellcolor{featProduct} & US12 & As a seller, I want to assign tags to products so that the recommendation engine can surface them. & \cellcolor{moscowShould}\textbf{Should} & \cellcolor{complexLow}\textbf{1} \\\cline{2-5}
   \cellcolor{featProduct} & US13 & As a customer, I want to browse products by category so that I can discover relevant items. & \cellcolor{moscowMust}\textbf{Must} & \cellcolor{complexLow}\textbf{1} \\\cline{2-5}
@@ -359,7 +361,8 @@ the estimated complexity.
   \cellcolor{featCICD} & US33 & As a developer, I want DNS records updated automatically to the new droplet IP so that the application is always reachable. & \cellcolor{moscowShould}\textbf{Should} & \cellcolor{complexMed}\textbf{2} \\\hline
 
   \cellcolor{featAccount}\makecell[c]{\textbf{F9}\\\small Account\\Management}
-  & US38 & As a user, I want to view and edit my profile and change my password so that I can keep my account details current and secure. & \cellcolor{moscowMust}\textbf{Must} & \cellcolor{complexMed}\textbf{2} \\\cline{2-5}
+  & US38 & As a user, I want to view and edit my profile so that I can keep my account details current. & \cellcolor{moscowMust}\textbf{Must} & \cellcolor{complexMed}\textbf{2} \\\cline{2-5}
+  \cellcolor{featAccount} & US45 & As a user, I want to change my password so that I can keep my account secure. & \cellcolor{moscowMust}\textbf{Must} & \cellcolor{complexMed}\textbf{2} \\\cline{2-5}
   \cellcolor{featAccount} & US39 & As a customer, I want to consult my purchase history so that I can review my past orders. & \cellcolor{moscowShould}\textbf{Should} & \cellcolor{complexLow}\textbf{1} \\\hline
 
   \cellcolor{featTheme}\makecell[c]{\textbf{F10}\\\small Appearance\\\& Theming}
@@ -369,7 +372,7 @@ the estimated complexity.
 
 \subsection{Analysis Summary}
 
-The product backlog comprises \textbf{41 user stories} across
+The product backlog comprises \textbf{45 user stories} across
 \textbf{10 features}. The bulk are \textit{Must} or \textit{Should}
 priorities forming the marketplace core, while a few advanced
 capabilities (AI redesign, premium-customisation preservation) are
@@ -403,10 +406,10 @@ six months.
     \multirow{2}{*}{\textbf{Release 1}}
       & Sprint 1 & Authentication and seller onboarding & US01 account creation, US02 email verification, US03 sign-in, US04 sign-out, US18 seller-application review, US37 password reset & \textasciitilde1 month \\
     \cline{2-5}
-      & Sprint 2 & Store and product management & US05 store creation, US06 readable store slug, US07 storefront WYSIWYG editor, US08 style presets, US09 multiple stores (premium), US10 product CRUD, US11 product images, US12 product tags, US13 category browsing, US34 store-wide sales, US42 per-product sales & \textasciitilde1.5 months \\
+      & Sprint 2 & Store and product management & US05 store creation, US06 readable store slug, US07 storefront WYSIWYG editor, US08 style presets, US09 multiple stores (premium), US10 create product, US43 edit product, US44 delete product, US11 product images, US12 product tags, US13 category browsing, US34 store-wide sales, US42 per-product sales & \textasciitilde1.5 months \\
     \hline
     \multirow{2}{*}{\textbf{Release 2}}
-      & Sprint 3 & Orders, payment, account and administration & US14 shopping cart, US15 multi-store checkout, US16 order-confirmation email, US17 seller order view, US19 store suspension/deletion, US20 featured-content curation, US21 category management, US36 secure card payment, US38 profile management, US39 purchase history & \textasciitilde1.5 months \\
+      & Sprint 3 & Orders, payment, account and administration & US14 shopping cart, US15 multi-store checkout, US16 order-confirmation email, US17 seller order view, US19 store suspension/deletion, US20 featured-content curation, US21 category management, US36 secure card payment, US38 profile, US45 change password, US39 purchase history & \textasciitilde1.5 months \\
     \cline{2-5}
       & Sprint 4 & AI verification, product suggestions, premium tier, theming and DevOps & US22 AI store/product verification, US23 AI verdict override, US24 verified badge, US25 premium subscription, US26 premium customisation controls, US27 premium preservation on expiry, US28 service containerisation, US29 CI image builds, US30 Terraform provisioning, US31 SSH deployment, US32 CI-managed secrets, US33 DNS automation, US35 AI storefront redesign, US40 light/dark theming, US41 cross-store product suggestions & \textasciitilde1.5 months \\
     \hline
@@ -545,7 +548,7 @@ actors were identified, the functional requirements grouped into eight
 domains and the non-functional requirements stated, then illustrated
 with the global use-case diagram and the class diagram. The Scrum
 management of the project was presented, the team, the MoSCoW-prioritised
-product backlog of 41 user stories across 10 features, and the planning
+product backlog of 45 user stories across 10 features, and the planning
 of four sprints over two releases, together with the schedule and the
 architecture and technical choices that frame the realisation. The
 following chapters describe the development of the two releases.
