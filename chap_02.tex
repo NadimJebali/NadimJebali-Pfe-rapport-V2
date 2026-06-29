@@ -104,6 +104,10 @@ the React frontend.
   \item Each product shall carry an \texttt{aiReviewed} flag set by the
         verification pipeline and an \texttt{adminReviewed} flag set on
         manual override.
+  \item A Seller shall put an individual product on sale with a
+        percentage discount and an optional end date; when a product and
+        its store both have an active sale, the larger discount is
+        applied (the discounts never stack).
   \item Products shall be browsable by category and sub-category.
 \end{itemize}
 
@@ -319,7 +323,8 @@ the estimated complexity.
   \cellcolor{featProduct} & US11 & As a seller, I want to upload multiple product images so that customers can see my products clearly. & \cellcolor{moscowMust}\textbf{Must} & \cellcolor{complexMed}\textbf{2} \\\cline{2-5}
   \cellcolor{featProduct} & US12 & As a seller, I want to assign tags to products so that the recommendation engine can surface them. & \cellcolor{moscowShould}\textbf{Should} & \cellcolor{complexLow}\textbf{1} \\\cline{2-5}
   \cellcolor{featProduct} & US13 & As a customer, I want to browse products by category so that I can discover relevant items. & \cellcolor{moscowMust}\textbf{Must} & \cellcolor{complexLow}\textbf{1} \\\cline{2-5}
-  \cellcolor{featProduct} & US41 & As a customer, I want to see on a product page a cheaper offer for the same item and relevant alternatives across stores so that I can compare and avoid overpaying. & \cellcolor{moscowCould}\textbf{Could} & \cellcolor{complexHigh}\textbf{3} \\\hline
+  \cellcolor{featProduct} & US41 & As a customer, I want to see on a product page a cheaper offer for the same item and relevant alternatives across stores so that I can compare and avoid overpaying. & \cellcolor{moscowCould}\textbf{Could} & \cellcolor{complexHigh}\textbf{3} \\\cline{2-5}
+  \cellcolor{featProduct} & US42 & As a seller, I want to put an individual product on sale with a percentage discount so that I can promote single items; the larger of the product and store discount applies. & \cellcolor{moscowShould}\textbf{Should} & \cellcolor{complexMed}\textbf{2} \\\hline
 
   \cellcolor{featOrder}\makecell[c]{\textbf{F4}\\\small Order\\System}
   & US14 & As a customer, I want to add products to a cart so that I can purchase multiple items at once. & \cellcolor{moscowMust}\textbf{Must} & \cellcolor{complexMed}\textbf{2} \\\cline{2-5}
@@ -398,7 +403,7 @@ six months.
     \multirow{2}{*}{\textbf{Release 1}}
       & Sprint 1 & Authentication and seller onboarding & US01 account creation, US02 email verification, US03 sign-in, US04 sign-out, US18 seller-application review, US37 password reset & \textasciitilde1 month \\
     \cline{2-5}
-      & Sprint 2 & Store and product management & US05 store creation, US06 readable store slug, US07 storefront WYSIWYG editor, US08 style presets, US09 multiple stores (premium), US10 product CRUD, US11 product images, US12 product tags, US13 category browsing, US34 store-wide sales & \textasciitilde1.5 months \\
+      & Sprint 2 & Store and product management & US05 store creation, US06 readable store slug, US07 storefront WYSIWYG editor, US08 style presets, US09 multiple stores (premium), US10 product CRUD, US11 product images, US12 product tags, US13 category browsing, US34 store-wide sales, US42 per-product sales & \textasciitilde1.5 months \\
     \hline
     \multirow{2}{*}{\textbf{Release 2}}
       & Sprint 3 & Orders, payment, account and administration & US14 shopping cart, US15 multi-store checkout, US16 order-confirmation email, US17 seller order view, US19 store suspension/deletion, US20 featured-content curation, US21 category management, US36 secure card payment, US38 profile management, US39 purchase history & \textasciitilde1.5 months \\

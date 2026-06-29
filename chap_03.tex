@@ -61,7 +61,7 @@ schedule.
     \hline
     \multirow{2}{*}{Sprint 1} & Authentication & US01 account creation, US02 email verification, US03 sign-in, US04 sign-out, US37 password reset & \multirow{2}{*}{\textasciitilde1 month} \\ \cline{2-3}
                               & Administration & US18 seller-application review & \\ \hline
-    \multirow{2}{*}{Sprint 2} & Store Management & US05 store creation, US06 readable store slug, US07 storefront WYSIWYG editor, US08 style presets, US09 multiple stores (premium), US34 store-wide sales & \multirow{2}{*}{\textasciitilde1.5 months} \\ \cline{2-3}
+    \multirow{2}{*}{Sprint 2} & Store Management & US05 store creation, US06 readable store slug, US07 storefront WYSIWYG editor, US08 style presets, US09 multiple stores (premium), US34 store-wide sales, US42 per-product sales & \multirow{2}{*}{\textasciitilde1.5 months} \\ \cline{2-3}
                               & Product Management & US10 product CRUD, US11 product images, US12 product tags, US13 category browsing & \\ \hline
     \multicolumn{3}{|r|}{\textbf{Release~1 total}} & \textbf{\textasciitilde2.5 months} \\ \hline
   \end{tabularx}
@@ -194,8 +194,9 @@ screenshot of the running application.
 Sprint~2 turns an approved seller into an active merchant. By the end of
 the sprint a seller can create a store reachable at a human-readable
 slug, customise its storefront across seven sections through a WYSIWYG
-editor, populate a product catalogue with images and tags, and run a
-store-wide sale; customers can browse that catalogue by category. The
+editor, populate a product catalogue with images and tags, and run
+sales either store-wide or on individual products; customers can browse
+that catalogue by category. The
 storefront editor is built with \textbf{Craft.js}~\cite{craftjs}, where clicking any
 section on the live canvas opens its settings panel, with undo/redo and
 preset starting points. Several capabilities exposed here are
@@ -322,8 +323,8 @@ application.
 
 \begin{figure}[H]
   \centering
-  \imagePlaceholder[5cm]{Store-wide sale configuration, discount percentage, label and expiry}
-  \caption{Store-wide sale configuration.}
+  \imagePlaceholder[5cm]{Sale panel: store-wide discount (percentage, label, expiry) and the per-product sale list}
+  \caption{Sale configuration: store-wide and per-product.}
   \label{fig:real-sale}
 \end{figure}
 
@@ -334,7 +335,8 @@ identity layer, registration with email verification, sessions, password
 reset and role-based access, plus the seller-onboarding loop. Sprint~2
 turned approved sellers into active merchants, store creation, the
 storefront editor, AI-assisted redesign, product management and
-store-wide sales, and opened catalogue browsing to customers. The
+store-wide and per-product sales, and opened catalogue browsing to
+customers. The
 marketplace can now be populated, but not yet transact; Release~2 adds
 that.
 
