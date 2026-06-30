@@ -74,7 +74,8 @@
         % https://tex.stackexchange.com/questions/18045/problem-with-compiling-bibtex-no-citation-commands-error
         %\nocite{*}
 
-        \printbibliography[title={Bibliography},heading=bibintoc]
+        \printbibliography[keyword=biblio,title={Bibliography},heading=bibintoc]
+        \printbibliography[notkeyword=biblio,title={Webography},heading=bibintoc]
         
        
         
@@ -82,6 +83,11 @@
         % \clearpage
 
     \backmatter
+        % The résumé/abstract is a back-cover page: clear the running header
+        % (otherwise it inherits the last bibliography heading, e.g. "Webography").
+        \clearpage
+        \markboth{}{}
+        \pagestyle{backcover}
         \input{./tpl/resume}
     
 \end{document}
