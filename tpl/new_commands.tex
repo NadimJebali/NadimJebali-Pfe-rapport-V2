@@ -156,6 +156,41 @@
   \end{tcolorbox}%
 }
 
+%====== realisation screenshots (chapters 3 & 4) ======%
+% Helpers for laying out application screenshots inside a figure.
+%
+% \shotPair[height]{desktop}{mobile} — a wide desktop capture and its
+%   portrait mobile counterpart, aligned to a common height so the phone
+%   sits naturally beside the desktop view (evidences the responsive UI).
+% \shotDuo{left}{right} — two same-orientation captures side by side
+%   (e.g. two desktop states, or light vs. dark theme).
+% \shotSolo[width]{image} — a single centred capture.
+\newcommand{\shotPair}[3][6cm]{%
+  \begin{center}
+    \includegraphics[height=#1,keepaspectratio]{#2}\hspace{0.5cm}%
+    \includegraphics[height=#1,keepaspectratio]{#3}%
+  \end{center}%
+}
+\newcommand{\shotDuo}[2]{%
+  \begin{minipage}[c]{0.49\linewidth}\centering
+    \includegraphics[width=\linewidth,keepaspectratio]{#1}%
+  \end{minipage}\hfill
+  \begin{minipage}[c]{0.49\linewidth}\centering
+    \includegraphics[width=\linewidth,keepaspectratio]{#2}%
+  \end{minipage}%
+}
+\newcommand{\shotSolo}[2][0.82\linewidth]{%
+  \begin{center}\includegraphics[width=#1,keepaspectratio]{#2}\end{center}%
+}
+% \shotStack[width]{top}{bottom} — two desktop captures stacked vertically so
+%   each is shown large enough to read (preferred over side-by-side desktops).
+\newcommand{\shotStack}[3][0.82\linewidth]{%
+  \begin{center}
+    \includegraphics[width=#1,keepaspectratio]{#2}\\[8pt]
+    \includegraphics[width=#1,keepaspectratio]{#3}%
+  \end{center}%
+}
+
 %====== colours for the product backlog table (chapter 2) ======%
 \definecolor{tableHeader}{RGB}{31,78,121}
 % MoSCoW priorities

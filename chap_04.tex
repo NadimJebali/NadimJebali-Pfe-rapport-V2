@@ -233,48 +233,81 @@ so a lost webhook can never strand stock or a payment.
 \subsection{Realisation}
 
 The sprint delivers the transaction and administration interfaces shown
-below. Each frame is a placeholder for the corresponding screenshot of
-the running application.
+below, captured from the running application.
+
+Figure~\ref{fig:real-checkout} shows the checkout page, with the
+multi-store cart summary, the shipping form and the embedded Stripe
+payment element that collects the card details.
 
 \begin{figure}[H]
   \centering
-  \imagePlaceholder[6cm]{Checkout page, multi-store cart summary, shipping form and Stripe payment element}
-  \caption{Checkout page with Stripe payment.}
+  \shotPair{img/shot-checkout-desktop.png}{img/shot-checkout-mobile.png}
+  \caption{Checkout page with Stripe payment (desktop and mobile).}
   \label{fig:real-checkout}
 \end{figure}
 
+Figure~\ref{fig:real-profile} shows the customer account area: the profile
+view and edit page (top) and the paginated purchase history of past orders
+(bottom).
+
 \begin{figure}[H]
   \centering
-  \imagePlaceholder[6cm]{Account page, profile view/edit (name, phone, avatar), change-password form and the paginated purchase history}
-  \caption{User account and profile page.}
+  \shotStack{img/shot-profile-desktop.png}{img/shot-history-desktop.png}
+  \caption{User account, the profile view/edit page (top) and the paginated purchase history (bottom).}
   \label{fig:real-profile}
 \end{figure}
 
+Figure~\ref{fig:real-admindash} shows the administrator dashboard, the
+marketplace-wide control centre with headline metrics and navigation to
+every moderation tool.
+
 \begin{figure}[H]
   \centering
-  \imagePlaceholder[6cm]{Administrator dashboard, marketplace metrics and navigation}
-  \caption{Administrator dashboard.}
+  \shotPair{img/shot-admindash-desktop.png}{img/shot-admindash-mobile.png}
+  \caption{Administrator dashboard (desktop and mobile).}
   \label{fig:real-admindash}
 \end{figure}
 
+Figure~\ref{fig:real-adminanalytics} shows the marketplace analytics view,
+charting platform-wide orders, revenue and category breakdowns.
+
 \begin{figure}[H]
   \centering
-  \imagePlaceholder[6cm]{Moderation panel, stores and products with suspend / delete and verdict-override actions}
-  \caption{Store and product moderation panel.}
+  \shotPair{img/shot-adminanalytics-desktop.png}{img/shot-adminanalytics-mobile.png}
+  \caption{Marketplace analytics, orders, revenue and category breakdowns (desktop and mobile).}
+  \label{fig:real-adminanalytics}
+\end{figure}
+
+Figure~\ref{fig:real-moderation} shows the moderation panel, where the
+administrator suspends or deletes stores and products and overrides the AI
+verification verdict on any entity.
+
+\begin{figure}[H]
+  \centering
+  \shotPair{img/shot-moderation-desktop.png}{img/shot-moderation-mobile.png}
+  \caption{Store and product moderation panel (desktop and mobile).}
   \label{fig:real-moderation}
 \end{figure}
 
-\begin{figure}[H]
-  \centering
-  \imagePlaceholder[5cm]{Category management, category and sub-category tree}
-  \caption{Category management.}
-  \label{fig:real-categories}
-\end{figure}
+Figure~\ref{fig:real-categories} shows category management, where the
+administrator maintains the category and sub-category tree that organises
+the catalogue.
 
 \begin{figure}[H]
   \centering
-  \imagePlaceholder[5cm]{Featured-content curation, selecting featured stores and products for the landing page}
-  \caption{Featured-content curation.}
+  \shotPair{img/shot-categories-desktop.png}{img/shot-categories-mobile.png}
+  \caption{Category management, the category and sub-category tree (desktop and mobile).}
+  \label{fig:real-categories}
+\end{figure}
+
+Figure~\ref{fig:real-featured} shows featured-content curation, where the
+administrator selects the stores and products promoted on the landing
+page.
+
+\begin{figure}[H]
+  \centering
+  \shotPair{img/shot-featured-desktop.png}{img/shot-featured-mobile.png}
+  \caption{Featured-content curation for the landing page (desktop and mobile).}
   \label{fig:real-featured}
 \end{figure}
 
@@ -519,41 +552,51 @@ that is already live (US27).
 
 \subsection{Realisation}
 
-The sprint delivers the interfaces shown below. Each frame is a
-placeholder for the corresponding screenshot of the running application.
+The sprint delivers the interfaces shown below, captured from the running
+application. The AI verification verdicts surface inside the moderation
+panel already shown in Figure~\ref{fig:real-moderation}.
+
+Figure~\ref{fig:real-aichat} shows the AI database-chat assistant, where
+an administrator asks a question in plain language and receives a
+formatted answer drawn from the live database.
 
 \begin{figure}[H]
   \centering
-  \imagePlaceholder[6cm]{AI verification panel, entity verdict, rationale and admin override controls}
-  \caption{AI verification and moderation panel.}
-  \label{fig:real-aiverify}
-\end{figure}
-
-\begin{figure}[H]
-  \centering
-  \imagePlaceholder[6cm]{AI chat assistant, natural-language database query and formatted answer}
-  \caption{AI database-chat assistant.}
+  \shotPair{img/shot-aichat-desktop.png}{img/shot-aichat-mobile.png}
+  \caption{AI database-chat assistant, a natural-language query and its formatted answer (desktop and mobile).}
   \label{fig:real-aichat}
 \end{figure}
 
+Figure~\ref{fig:real-suggestions} shows the cross-store product
+suggestions on a product page: the ``same item, cheaper'' offer and the
+``alternatives'' row gathered from other stores.
+
 \begin{figure}[H]
   \centering
-  \imagePlaceholder[6cm]{Product page, the ``Same item, cheaper'' offer and the ``Alternatives'' row across stores, with the brief loading state shown while the live suggestions are fetched}
-  \caption{Cross-store product suggestions on the product page.}
+  \shotPair{img/shot-suggestions-desktop.png}{img/shot-suggestions-mobile.png}
+  \caption{Cross-store product suggestions, the ``same item, cheaper'' offer and the ``alternatives'' row (desktop and mobile).}
   \label{fig:real-suggestions}
 \end{figure}
 
-\begin{figure}[H]
-  \centering
-  \imagePlaceholder[6cm]{Upgrade page, the premium plan with the subscribe call to action, and, for an active subscriber, the manage-subscription controls (cancel at period end, update card, invoices)}
-  \caption{Premium upgrade and subscription-management page.}
-  \label{fig:real-upgrade}
-\end{figure}
+Figure~\ref{fig:real-upgrade} shows the premium page, with the plan and
+its subscribe call to action and, for an active subscriber, the
+manage-subscription controls.
 
 \begin{figure}[H]
   \centering
-  \imagePlaceholder[6cm]{Appearance, the same page in the light theme and in the dimmed dark theme, with the theme switch open in the navigation bar}
-  \caption{Light and dimmed-dark application themes.}
+  \shotPair{img/shot-upgrade-desktop.png}{img/shot-upgrade-mobile.png}
+  \caption{Premium upgrade and subscription-management page (desktop and mobile).}
+  \label{fig:real-upgrade}
+\end{figure}
+
+Figure~\ref{fig:real-theme} shows the same page rendered in the two
+application themes, the warm-coral light theme (top) and the dimmed dark
+theme (bottom), both driven by the shared design tokens.
+
+\begin{figure}[H]
+  \centering
+  \shotStack{img/shot-theme-light-desktop.png}{img/shot-theme-dim-desktop.png}
+  \caption{The application in the light theme (top) and in the dimmed dark theme (bottom).}
   \label{fig:real-theme}
 \end{figure}
 
@@ -649,12 +692,14 @@ Both runners collect coverage, and the whole suite is wired into the
 continuous-integration pipeline: every push runs linting, a build and the
 full test run for the backend and the frontend, and a red suite blocks
 the build-and-deploy jobs that follow (Section~\ref{sec:cicd}).
-Figure~\ref{fig:real-ci} stands in for the CI run and coverage summary.
+Figure~\ref{fig:real-ci} shows the test runs that gate that pipeline: the
+backend Jest suite (left) and the frontend Vitest suite (right), both
+passing with their coverage summary.
 
 \begin{figure}[H]
   \centering
-  \imagePlaceholder[5cm]{Continuous-integration run, test and coverage summary for backend and frontend}
-  \caption{Continuous-integration test and coverage summary.}
+  \shotDuo{img/shot-tests-backend.png}{img/shot-tests-frontend.png}
+  \caption{Test and coverage summary, the backend (left) and frontend (right) suites.}
   \label{fig:real-ci}
 \end{figure}
 
@@ -728,6 +773,17 @@ services:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
 \end{lstlisting}
 
+Figure~\ref{fig:devops-docker} shows the image build in action, the
+backend (left) and frontend (right) images being built and pushed to the
+registry by the CI pipeline.
+
+\begin{figure}[H]
+  \centering
+  \shotDuo{img/shot-docker-backend.png}{img/shot-docker-frontend.png}
+  \caption{Building and pushing the backend and frontend Docker images in CI.}
+  \label{fig:devops-docker}
+\end{figure}
+
 \subsection{Infrastructure as Code}
 
 The production environment is described declaratively with
@@ -742,6 +798,16 @@ first boot zero-touch: it installs Docker Engine and the Compose plugin,
 then configures UFW to \emph{deny all inbound by default} while allowing
 only SSH, HTTP, HTTPS and the n8n webhook port. The provider also manages
 the DNS records that point the domain at the droplet.
+
+Figure~\ref{fig:devops-droplet} shows the resulting droplet, the
+Ubuntu server created on DigitalOcean by a single \texttt{terraform apply}.
+
+\begin{figure}[H]
+  \centering
+  \shotSolo[0.6\linewidth]{img/shot-droplet.png}
+  \caption{The DigitalOcean droplet provisioned by Terraform.}
+  \label{fig:devops-droplet}
+\end{figure}
 
 \subsection{CI/CD Pipeline}
 \label{sec:cicd}
@@ -778,6 +844,25 @@ jobs:
       - name: Deploy over SSH
         run: ssh $HOST "docker compose pull && docker compose up -d"
 \end{lstlisting}
+
+Figure~\ref{fig:devops-pipeline} shows a full pipeline run, with the test,
+provision, build-and-push and deploy jobs executing in order, and
+Figure~\ref{fig:devops-deploy} shows the resulting stack live on
+DigitalOcean.
+
+\begin{figure}[H]
+  \centering
+  \shotSolo[0.92\linewidth]{img/shot-pipeline.png}
+  \caption{The GitHub Actions build, push and deploy pipeline run.}
+  \label{fig:devops-pipeline}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \shotSolo[0.55\linewidth]{img/shot-deploy-do.png}
+  \caption{The deployed stack running on DigitalOcean.}
+  \label{fig:devops-deploy}
+\end{figure}
 
 \section*{Conclusion}
 

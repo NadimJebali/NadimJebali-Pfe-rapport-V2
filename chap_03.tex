@@ -160,48 +160,61 @@ the protected actions of store creation and order placement.
 \subsection{Realisation}
 
 The sprint delivers the authentication and onboarding interfaces shown in
-the following figures. Each frame is a placeholder for the corresponding
-screenshot of the running application.
+the following figures, each captured from the running application.
+
+Figure~\ref{fig:real-register} shows the registration page, where a new
+visitor enters their name, email and password; the form validates each
+field inline before the account is created and the verification email is
+sent.
 
 \begin{figure}[H]
   \centering
-  \imagePlaceholder[6cm]{Registration page, name, email and password form}
-  \caption{Registration page.}
+  \shotPair{img/shot-register-desktop.png}{img/shot-register-mobile.png}
+  \caption{Registration page (desktop and mobile).}
   \label{fig:real-register}
 \end{figure}
 
+Figure~\ref{fig:real-verify} shows the two states of email verification:
+the ``check your inbox'' prompt displayed right after sign-up, and the
+confirmation screen reached once the emailed link is opened.
+
 \begin{figure}[H]
   \centering
-  \imagePlaceholder[5cm]{Email-verification screen, ``check your inbox'' and verified confirmation}
-  \caption{Email-verification screen.}
+  \shotStack{img/shot-verify-email-desktop.png}{img/shot-verified-desktop.png}
+  \caption{Email-verification screen, the ``check your inbox'' prompt (top) and the verified confirmation (bottom).}
   \label{fig:real-verify}
 \end{figure}
 
-\begin{figure}[H]
-  \centering
-  \imagePlaceholder[6cm]{Login page, credentials form and session redirect}
-  \caption{Login page.}
-  \label{fig:real-login}
-\end{figure}
+Figure~\ref{fig:real-reset} shows the password-reset flow: the request
+form where the user submits their email, and the new-password page reached
+from the emailed link, after which every existing session is revoked.
 
 \begin{figure}[H]
   \centering
-  \imagePlaceholder[5cm]{Password-reset flow, ``forgot password'' request page and the new-password page reached from the emailed link}
-  \caption{Password-reset pages.}
+  \shotStack{img/shot-forgot-desktop.png}{img/shot-reset-desktop.png}
+  \caption{Password-reset pages, the request form (top) and the new-password page reached from the emailed link (bottom).}
   \label{fig:real-reset}
 \end{figure}
 
-\begin{figure}[H]
-  \centering
-  \imagePlaceholder[7cm]{Seller-application form, identity, business details and document upload}
-  \caption{Seller-application form.}
-  \label{fig:real-apply}
-\end{figure}
+Figure~\ref{fig:real-apply} shows the seller-application form, where a
+customer submits their identity, business details and supporting documents
+to request the seller role.
 
 \begin{figure}[H]
   \centering
-  \imagePlaceholder[7cm]{Administrator review panel, pending applications with approve / reject / request-more-info actions}
-  \caption{Administrator seller-application review panel.}
+  \shotPair{img/shot-apply-desktop.png}{img/shot-apply-mobile.png}
+  \caption{Seller-application form (desktop and mobile).}
+  \label{fig:real-apply}
+\end{figure}
+
+Figure~\ref{fig:real-review} shows the administrator review panel, which
+lists pending applications with their uploaded documents and the approve,
+reject and request-more-info actions that decide each one.
+
+\begin{figure}[H]
+  \centering
+  \shotPair{img/shot-review-desktop.png}{img/shot-review-mobile.png}
+  \caption{Administrator seller-application review panel (desktop and mobile).}
   \label{fig:real-review}
 \end{figure}
 
@@ -307,43 +320,102 @@ seller's review-and-save decision.
 
 \subsection{Realisation}
 
-The sprint delivers the store and product interfaces shown below. Each
-frame is a placeholder for the corresponding screenshot of the running
-application.
+The sprint delivers the store and product interfaces shown below, captured
+from the running application.
+
+Figure~\ref{fig:real-storedash} shows the seller store dashboard, the
+merchant's home base summarising store status, key metrics and quick
+actions for managing the store.
 
 \begin{figure}[H]
   \centering
-  \imagePlaceholder[6cm]{Seller store dashboard, metrics, store status and quick actions}
-  \caption{Seller store dashboard.}
+  \shotPair{img/shot-storedash-desktop.png}{img/shot-storedash-mobile.png}
+  \caption{Seller store dashboard (desktop and mobile).}
   \label{fig:real-storedash}
 \end{figure}
 
+Figure~\ref{fig:real-selleranalytics} shows the seller analytics view,
+which charts the store's orders, revenue and best-performing products over
+time.
+
 \begin{figure}[H]
   \centering
-  \imagePlaceholder[7cm]{Storefront WYSIWYG editor, Craft.js canvas with the seven-section settings panel}
-  \caption{Storefront customisation editor.}
+  \shotPair{img/shot-selleranalytics-desktop.png}{img/shot-selleranalytics-mobile.png}
+  \caption{Seller analytics, orders, revenue and product performance (desktop and mobile).}
+  \label{fig:real-selleranalytics}
+\end{figure}
+
+Figure~\ref{fig:real-editor} shows the storefront customisation editor,
+the Craft.js canvas where clicking any of the seven sections opens its
+settings panel, with undo/redo and preset starting points.
+
+\begin{figure}[H]
+  \centering
+  \shotSolo{img/shot-editor-desktop.png}
+  \caption{Storefront customisation editor, the Craft.js canvas with the seven-section settings panel.}
   \label{fig:real-editor}
 \end{figure}
 
+Figure~\ref{fig:real-airedesign} shows the AI storefront-redesign dialog,
+where a premium seller types a natural-language prompt that regenerates the
+whole storefront design.
+
 \begin{figure}[H]
   \centering
-  \imagePlaceholder[5cm]{AI redesign dialog, natural-language prompt input}
-  \caption{AI storefront-redesign dialog.}
+  \shotSolo[0.72\linewidth]{img/shot-airedesign-desktop.png}
+  \caption{AI storefront-redesign dialog, the natural-language prompt input.}
   \label{fig:real-airedesign}
 \end{figure}
 
+Figure~\ref{fig:real-product} shows product management: the catalogue list
+of a store's products (top) and the create/edit form with image upload and
+tagging (bottom).
+
 \begin{figure}[H]
   \centering
-  \imagePlaceholder[6cm]{Product management, catalogue list with create/edit form, image upload and tags}
-  \caption{Product management interface.}
+  \shotStack{img/shot-productlist-desktop.png}{img/shot-productcreate-desktop.png}
+  \caption{Product management, the catalogue list (top) and the create/edit form with image upload and tags (bottom).}
   \label{fig:real-product}
+\end{figure}
+
+Figure~\ref{fig:real-sale} shows the sale configuration, where a seller
+sets a store-wide discount and individual per-product sales, with the
+best price winning when both apply.
+
+\begin{figure}[H]
+  \centering
+  \shotPair{img/shot-sale-desktop.png}{img/shot-sale-mobile.png}
+  \caption{Sale configuration, store-wide and per-product (desktop and mobile).}
+  \label{fig:real-sale}
+\end{figure}
+
+On the customer side, the catalogue is browsable across the whole
+marketplace. Figure~\ref{fig:real-home} shows the marketplace home page,
+the customer's entry point, with the global search bar and the featured
+stores and products. Figure~\ref{fig:real-allproducts} shows the
+product-listing page, where shoppers filter the full catalogue by
+category, and Figure~\ref{fig:real-allstores} shows the store directory
+listing every storefront on the platform.
+
+\begin{figure}[H]
+  \centering
+  \shotPair{img/shot-home-desktop.png}{img/shot-home-mobile.png}
+  \caption{Marketplace home page with the global search bar (desktop and mobile).}
+  \label{fig:real-home}
 \end{figure}
 
 \begin{figure}[H]
   \centering
-  \imagePlaceholder[5cm]{Sale panel: store-wide discount (percentage, label, expiry) and the per-product sale list}
-  \caption{Sale configuration: store-wide and per-product.}
-  \label{fig:real-sale}
+  \shotPair{img/shot-allproducts-desktop.png}{img/shot-allproducts-mobile.png}
+  \caption{Marketplace product listing with category filtering (desktop and mobile).}
+  \label{fig:real-allproducts}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \shotPair{img/shot-allstores-desktop.png}{img/shot-allstores-mobile.png}
+  \caption{Store directory across the marketplace (desktop and mobile).}
+  \label{fig:real-allstores}
 \end{figure}
 
 \section*{Conclusion}
