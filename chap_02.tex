@@ -45,11 +45,15 @@ administrator account is created automatically on first boot.
         platform through a database-aware AI chat assistant.
 \end{itemize}
 
+\clearpage
 \subsection{Functional Requirements}
 
-The functional requirements are grouped into eight domains. Each domain
+The functional requirements are grouped into nine domains. Each domain
 corresponds to a backend NestJS module and to a matching set of pages on
-the React frontend.
+the React frontend. Cross-cutting concerns that the product backlog tracks
+as separate features, light/dark theming and the DevOps delivery chain,
+are specified as non-functional requirements and detailed in
+Chapter~\ref{chap:release2} rather than as functional domains.
 
 \paragraph{User Registration and Authentication.}
 \begin{itemize}[leftmargin=*,itemsep=1pt]
@@ -119,6 +123,22 @@ the React frontend.
         trigger a confirmation email.
   \item Each Customer shall consult their order history and each Seller
         the orders that include at least one of their products.
+\end{itemize}
+
+\paragraph{Payments and Premium Subscription.}
+\begin{itemize}[leftmargin=*,itemsep=1pt]
+  \item Checkout payment shall be collected through Stripe: the server
+        opens a PaymentIntent for the server-computed total and confirms
+        the order only on a signature-verified webhook.
+  \item A Seller shall subscribe to a recurring monthly premium tier
+        through Stripe Checkout and manage or cancel it through the Stripe
+        Customer Portal.
+  \item Premium entitlement shall be driven by signature-verified
+        subscription webhooks: access is granted on creation, preserved
+        until the paid period ends on a scheduled cancellation, and revoked
+        when the subscription is deleted.
+  \item The Administrator shall be able to grant premium manually, without
+        a Stripe subscription.
 \end{itemize}
 
 \paragraph{Administration.}
@@ -192,7 +212,7 @@ supervisor during the requirements review.
     Performance      & Catalogue and store pages render in under one second on a 10\,Mbit/s connection; typical API endpoints respond in under 300\,ms. \\ \hline
     Security         & Passwords hashed by Better-Auth; sessions in HTTP-only, \texttt{SameSite=Lax} cookies; HTTP security headers via Helmet; uploads validated by type and size; every protected route gated by an auth guard and the \texttt{@Roles()} decorator, with object-level ownership enforced in the service layer. Required secrets are validated at start-up. \\ \hline
     Scalability      & The backend is stateless and horizontally scalable behind a reverse proxy; uploads live on a volume that can migrate to object storage with no code change. \\ \hline
-    Availability     & The production stack runs under Docker Compose with restart policies; deployment is zero-downtime through rolling container replacement. \\ \hline
+    Availability     & The production stack runs under Docker Compose with per-service restart policies that bring containers back automatically after a failure or reboot; releases are deployed by pulling the new images and recreating the affected containers. \\ \hline
     Usability        & The frontend follows accessible component patterns, is fully responsive, and uses slug-based, human-readable URLs. \\ \hline
     Maintainability  & The codebase is split into bounded NestJS modules, the schema is versioned through Prisma migrations, and the infrastructure is reproducible through Terraform. \\ \hline
     Observability    & Application logs are emitted to \texttt{stdout} and aggregated by Docker; the chat assistant offers a queryable view of the database for diagnostics. \\ \hline

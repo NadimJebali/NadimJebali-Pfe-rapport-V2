@@ -145,11 +145,17 @@ gateway and the confirmation email; suspending a store is an
 
 \subsection{Analysis and Design}
 
-The checkout-and-payment control flow is summarised in
-Table~\ref{tab:act-checkout-desc} and then modelled as an activity
-diagram. The Stripe payment mechanism is detailed in its own section.
+The checkout-and-payment control flow is first specified as a textual
+description, then modelled as an activity diagram. The Stripe payment
+mechanism is detailed in its own section.
 
-\subsubsection{Activity Diagram}
+\subsubsection{Textual Description}
+
+The textual description specifies the use case before it is drawn: it fixes
+the title, the objective, the primary and secondary actors, the pre- and
+post-conditions, and the nominal and alternative scenarios in a single
+structured table. Table~\ref{tab:act-checkout-desc} gives it for the
+checkout-and-payment activity.
 
 \begin{table}[H]
   \centering
@@ -168,6 +174,8 @@ diagram. The Stripe payment mechanism is detailed in its own section.
     Post-condition & A \textsc{paid}, \textsc{confirmed} order exists, or the reserved stock is released on failure. \\ \hline
   \end{tabularx}
 \end{table}
+
+\subsubsection{Activity Diagram}
 
 Figure~\ref{fig:act-checkout-payment} models the checkout-and-payment
 control flow. After stock is reserved and the pending order priced
@@ -252,8 +260,9 @@ view and edit page (top) and the paginated purchase history of past orders
 
 \begin{figure}[H]
   \centering
-  \shotStack{img/shot-profile-desktop.png}{img/shot-history-desktop.png}
-  \caption{User account, the profile view/edit page (top) and the paginated purchase history (bottom).}
+  \shotPair{img/shot-profile-desktop.png}{img/shot-profile-mobile.png}
+  \shotPair{img/shot-history-desktop.png}{img/shot-history-mobile.png}
+  \caption{User account, the profile view/edit page (top) and the paginated purchase history (bottom), each shown on desktop and mobile.}
   \label{fig:real-profile}
 \end{figure}
 
@@ -352,11 +361,17 @@ afterwards managed through that same gateway.
 
 \subsection{Analysis and Design}
 
-The AI-verification and content-moderation control flows are summarised
-in Tables~\ref{tab:act-aiverify-desc} and~\ref{tab:act-moderation-desc}
-and then each modelled as an activity diagram.
+The AI-verification and content-moderation control flows are first
+specified as textual descriptions, then each modelled as an activity
+diagram.
 
-\subsubsection{Activity Diagrams}
+\subsubsection{Textual Descriptions}
+
+The textual descriptions specify each use case before it is drawn, fixing
+its title, objective, the primary and secondary actors, the pre- and
+post-conditions and the nominal and alternative scenarios.
+Tables~\ref{tab:act-aiverify-desc} and~\ref{tab:act-moderation-desc} give
+them for the AI-verification and content-moderation activities.
 
 \begin{table}[H]
   \centering
@@ -376,18 +391,6 @@ and then each modelled as an activity diagram.
   \end{tabularx}
 \end{table}
 
-Figure~\ref{fig:act-ai-verification} models the AI verification pipeline,
-including the per-image screening loop inside the n8n workflow and the
-branch that either publishes a clean entity or routes a flagged one to
-moderation.
-
-\begin{figure}[H]
-  \centering
-  \includegraphics[height=0.82\textheight,keepaspectratio]{img/act-ai-verification.png}
-  \caption{Activity diagram, AI verification pipeline.}
-  \label{fig:act-ai-verification}
-\end{figure}
-
 \begin{table}[H]
   \centering
   \caption{Textual description of the content-moderation activity.}
@@ -405,6 +408,20 @@ moderation.
     Post-condition & The entity's \texttt{adminReviewed} flag is set and its verification or store status reflects the administrator's final decision. \\ \hline
   \end{tabularx}
 \end{table}
+
+\subsubsection{Activity Diagrams}
+
+Figure~\ref{fig:act-ai-verification} models the AI verification pipeline,
+including the per-image screening loop inside the n8n workflow and the
+branch that either publishes a clean entity or routes a flagged one to
+moderation.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[height=0.82\textheight,keepaspectratio]{img/act-ai-verification.png}
+  \caption{Activity diagram, AI verification pipeline.}
+  \label{fig:act-ai-verification}
+\end{figure}
 
 Figure~\ref{fig:act-moderation} models the administrator's
 content-moderation decision over a flagged entity.
@@ -500,7 +517,7 @@ serve-time validation, and the fallback.
 
 \begin{figure}[H]
   \centering
-  \imagePlaceholder[6cm]{Sequence diagram, the product page requests suggestions; the backend calls the workflow, validates and hydrates the returned ids, and falls back to the deterministic catalogue query on any failure}
+  \includegraphics[width=\linewidth,keepaspectratio]{img/seq-suggestions.png}
   \caption{Sequence diagram, product-suggestions request, serve-time validation and fallback.}
   \label{fig:seq-suggestions}
 \end{figure}
@@ -605,11 +622,13 @@ theme (bottom), both driven by the shared design tokens.
 
 \begin{figure}[H]
   \centering
-  \shotStack{img/shot-theme-light-desktop.png}{img/shot-theme-dim-desktop.png}
-  \caption{The application in the light theme (top) and in the dimmed dark theme (bottom).}
+  \shotPair{img/shot-theme-light-desktop.png}{img/shot-theme-light-mobile.png}
+  \shotPair{img/shot-theme-dim-desktop.png}{img/shot-theme-dim-mobile.png}
+  \caption{The application in the light theme (top) and in the dimmed dark theme (bottom), each shown on desktop and mobile.}
   \label{fig:real-theme}
 \end{figure}
 
+\clearpage
 Across both themes the application carries a deliberate visual identity,
 applied entirely through CSS design tokens: a \textbf{warm-coral} brand
 accent in the light theme, a dimmed dark theme for low-light use, and

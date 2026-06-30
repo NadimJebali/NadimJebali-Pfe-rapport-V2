@@ -119,11 +119,16 @@ approval, a rejection or a request for more information.
 
 \subsection{Analysis and Design}
 
-The registration and email-verification control flow is summarised in
-Table~\ref{tab:act-registration-desc} and then modelled as an activity
-diagram.
+The registration and email-verification control flow is first specified as
+a textual description, then modelled as an activity diagram.
 
-\subsubsection{Activity Diagram}
+\subsubsection{Textual Description}
+
+The textual description specifies the use case before it is drawn: it fixes
+the title, the objective, the primary and secondary actors, the pre- and
+post-conditions, and the nominal and alternative scenarios in a single
+structured table. Table~\ref{tab:act-registration-desc} gives it for the
+registration and email-verification activity.
 
 \begin{table}[H]
   \centering
@@ -142,6 +147,8 @@ diagram.
     Post-condition & A verified \texttt{User} with the \textsc{customer} role and an authenticated session. \\ \hline
   \end{tabularx}
 \end{table}
+
+\subsubsection{Activity Diagram}
 
 Figure~\ref{fig:act-registration} models the registration and
 email-verification control flow. Two decision points govern the path: a
@@ -180,8 +187,9 @@ confirmation screen reached once the emailed link is opened.
 
 \begin{figure}[H]
   \centering
-  \shotStack{img/shot-verify-email-desktop.png}{img/shot-verified-desktop.png}
-  \caption{Email-verification screen, the ``check your inbox'' prompt (top) and the verified confirmation (bottom).}
+  \shotPair{img/shot-verify-email-desktop.png}{img/shot-verify-email-mobile.png}
+  \shotPair{img/shot-verified-desktop.png}{img/shot-verified-mobile.png}
+  \caption{Email-verification screen, the ``check your inbox'' prompt (top) and the verified confirmation (bottom), each shown on desktop and mobile.}
   \label{fig:real-verify}
 \end{figure}
 
@@ -191,8 +199,9 @@ from the emailed link, after which every existing session is revoked.
 
 \begin{figure}[H]
   \centering
-  \shotStack{img/shot-forgot-desktop.png}{img/shot-reset-desktop.png}
-  \caption{Password-reset pages, the request form (top) and the new-password page reached from the emailed link (bottom).}
+  \shotPair{img/shot-forgot-desktop.png}{img/shot-forgot-mobile.png}
+  \shotPair{img/shot-reset-desktop.png}{img/shot-reset-mobile.png}
+  \caption{Password-reset pages, the request form (top) and the new-password page reached from the emailed link (bottom), each shown on desktop and mobile.}
   \label{fig:real-reset}
 \end{figure}
 
@@ -254,11 +263,16 @@ and \emph{extends} into the AI redesign; product management
 
 \subsection{Analysis and Design}
 
-The store-creation and AI-redesign control flows are summarised in
-Tables~\ref{tab:act-create-store-desc} and~\ref{tab:act-ai-redesign-desc}
-and then each modelled as an activity diagram.
+The store-creation and AI-redesign control flows are first specified as
+textual descriptions, then each modelled as an activity diagram.
 
-\subsubsection{Activity Diagrams}
+\subsubsection{Textual Descriptions}
+
+The textual descriptions specify each use case before it is drawn, fixing
+its title, objective, the primary and secondary actors, the pre- and
+post-conditions and the nominal and alternative scenarios.
+Tables~\ref{tab:act-create-store-desc} and~\ref{tab:act-ai-redesign-desc}
+give them for store creation and the AI storefront redesign.
 
 \begin{table}[H]
   \centering
@@ -278,17 +292,6 @@ and then each modelled as an activity diagram.
   \end{tabularx}
 \end{table}
 
-Figure~\ref{fig:act-create-store} models store creation, including slug
-derivation with collision handling and the transition to a
-\textsc{pending} store queued for verification.
-
-\begin{figure}[H]
-  \centering
-  \includegraphics[height=0.82\textheight,keepaspectratio]{img/act-create-store.png}
-  \caption{Activity diagram, store creation.}
-  \label{fig:act-create-store}
-\end{figure}
-
 \begin{table}[H]
   \centering
   \caption{Textual description of the AI storefront-redesign activity.}
@@ -306,6 +309,19 @@ derivation with collision handling and the transition to a
     Post-condition & A complete, sanitised \texttt{StoreCustomization} covering all seven sections is applied to the canvas for review. \\ \hline
   \end{tabularx}
 \end{table}
+
+\subsubsection{Activity Diagrams}
+
+Figure~\ref{fig:act-create-store} models store creation, including slug
+derivation with collision handling and the transition to a
+\textsc{pending} store queued for verification.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[height=0.82\textheight,keepaspectratio]{img/act-create-store.png}
+  \caption{Activity diagram, store creation.}
+  \label{fig:act-create-store}
+\end{figure}
 
 Figure~\ref{fig:act-ai-redesign} models the AI-redesign flow, from the
 prompt to the sanitised design applied on the live canvas, with the
@@ -368,13 +384,14 @@ whole storefront design.
 \end{figure}
 
 Figure~\ref{fig:real-product} shows product management: the catalogue list
-of a store's products (top) and the create/edit form with image upload and
+of a store's products (top) and the product edit form with image upload and
 tagging (bottom).
 
 \begin{figure}[H]
   \centering
-  \shotStack{img/shot-productlist-desktop.png}{img/shot-productcreate-desktop.png}
-  \caption{Product management, the catalogue list (top) and the create/edit form with image upload and tags (bottom).}
+  \shotPair{img/shot-productlist-desktop.png}{img/shot-productlist-mobile.png}
+  \shotPair{img/shot-productedit-desktop.png}{img/shot-productedit-mobile.png}
+  \caption{Product management, the catalogue list (top) and the product edit form with image upload and tags (bottom), each shown on desktop and mobile.}
   \label{fig:real-product}
 \end{figure}
 

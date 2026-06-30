@@ -1,0 +1,98 @@
+<mxfile host="app.diagrams.net" type="device">
+  <diagram name="Product Suggestions" id="seq-suggestions">
+    <mxGraphModel dx="960" dy="640" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="980" pageHeight="640" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- ===== Lifeline heads ===== -->
+        <mxCell id="hPage" value="Product Page&#10;(frontend)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;fontStyle=1;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="80" y="30" width="140" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="hBack" value="Backend API&#10;(NestJS)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;fontStyle=1;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="320" y="30" width="140" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="hN8n" value="n8n Workflow&#10;(AI suggestions)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=12;fontStyle=1;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="560" y="30" width="150" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="hDb" value="Database&#10;(MariaDB)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=12;fontStyle=1;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="800" y="30" width="140" height="44" as="geometry" />
+        </mxCell>
+
+        <!-- ===== Lifelines (dashed) ===== -->
+        <mxCell id="lPage" style="endArrow=none;dashed=1;html=1;strokeColor=#6c8ebf;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="150" y="74" as="sourcePoint" /><mxPoint x="150" y="610" as="targetPoint" /></mxGeometry>
+        </mxCell>
+        <mxCell id="lBack" style="endArrow=none;dashed=1;html=1;strokeColor=#82b366;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="390" y="74" as="sourcePoint" /><mxPoint x="390" y="610" as="targetPoint" /></mxGeometry>
+        </mxCell>
+        <mxCell id="lN8n" style="endArrow=none;dashed=1;html=1;strokeColor=#d79b00;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="635" y="74" as="sourcePoint" /><mxPoint x="635" y="610" as="targetPoint" /></mxGeometry>
+        </mxCell>
+        <mxCell id="lDb" style="endArrow=none;dashed=1;html=1;strokeColor=#b85450;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="870" y="74" as="sourcePoint" /><mxPoint x="870" y="610" as="targetPoint" /></mxGeometry>
+        </mxCell>
+
+        <!-- ===== Messages ===== -->
+        <mxCell id="m1" value="GET /products/{id}/suggestions" style="endArrow=block;html=1;fontSize=11;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="150" y="110" as="sourcePoint" /><mxPoint x="390" y="110" as="targetPoint" /></mxGeometry>
+        </mxCell>
+        <mxCell id="m2" value="request candidate product IDs (product context)" style="endArrow=block;html=1;fontSize=11;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="390" y="150" as="sourcePoint" /><mxPoint x="635" y="150" as="targetPoint" /></mxGeometry>
+        </mxCell>
+        <mxCell id="m3" value="candidate IDs" style="endArrow=open;dashed=1;html=1;fontSize=11;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="635" y="190" as="sourcePoint" /><mxPoint x="390" y="190" as="targetPoint" /></mxGeometry>
+        </mxCell>
+
+        <!-- self message: validate -->
+        <mxCell id="m4" value="validate &amp; filter IDs" style="endArrow=block;html=1;fontSize=11;rounded=1;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="390" y="222" as="sourcePoint" />
+            <mxPoint x="390" y="252" as="targetPoint" />
+            <Array as="points"><mxPoint x="470" y="222" /><mxPoint x="470" y="252" /></Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- ===== alt fragment ===== -->
+        <mxCell id="altBox" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#999999;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="105" y="275" width="820" height="305" as="geometry" />
+        </mxCell>
+        <mxCell id="altTag" value="alt" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#999999;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="105" y="275" width="44" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="cond1" value="[valid candidates returned]" style="text;html=1;align=left;fontSize=11;fontStyle=2;" vertex="1" parent="1">
+          <mxGeometry x="155" y="277" width="300" height="20" as="geometry" />
+        </mxCell>
+
+        <mxCell id="m5" value="hydrate: fetch products by ID" style="endArrow=block;html=1;fontSize=11;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="390" y="330" as="sourcePoint" /><mxPoint x="870" y="330" as="targetPoint" /></mxGeometry>
+        </mxCell>
+        <mxCell id="m6" value="product rows" style="endArrow=open;dashed=1;html=1;fontSize=11;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="870" y="368" as="sourcePoint" /><mxPoint x="390" y="368" as="targetPoint" /></mxGeometry>
+        </mxCell>
+        <mxCell id="m7" value="same-item offer + alternatives" style="endArrow=open;dashed=1;html=1;fontSize=11;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="390" y="406" as="sourcePoint" /><mxPoint x="150" y="406" as="targetPoint" /></mxGeometry>
+        </mxCell>
+
+        <!-- divider -->
+        <mxCell id="divider" style="endArrow=none;dashed=1;html=1;strokeColor=#999999;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="105" y="430" as="sourcePoint" /><mxPoint x="925" y="430" as="targetPoint" /></mxGeometry>
+        </mxCell>
+        <mxCell id="cond2" value="[workflow error / invalid / empty]" style="text;html=1;align=left;fontSize=11;fontStyle=2;" vertex="1" parent="1">
+          <mxGeometry x="155" y="433" width="320" height="20" as="geometry" />
+        </mxCell>
+
+        <mxCell id="m8" value="deterministic catalogue query (same category)" style="endArrow=block;html=1;fontSize=11;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="390" y="490" as="sourcePoint" /><mxPoint x="870" y="490" as="targetPoint" /></mxGeometry>
+        </mxCell>
+        <mxCell id="m9" value="fallback products" style="endArrow=open;dashed=1;html=1;fontSize=11;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="870" y="528" as="sourcePoint" /><mxPoint x="390" y="528" as="targetPoint" /></mxGeometry>
+        </mxCell>
+        <mxCell id="m10" value="fallback suggestions" style="endArrow=open;dashed=1;html=1;fontSize=11;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="390" y="566" as="sourcePoint" /><mxPoint x="150" y="566" as="targetPoint" /></mxGeometry>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
