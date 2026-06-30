@@ -554,7 +554,17 @@ that is already live (US27).
 
 The sprint delivers the interfaces shown below, captured from the running
 application. The AI verification verdicts surface inside the moderation
-panel already shown in Figure~\ref{fig:real-moderation}.
+panel already shown in Figure~\ref{fig:real-moderation};
+Figure~\ref{fig:real-aiverify} shows the two outcomes on a product row, an
+approved item (top) and a flagged item (bottom), each carrying the model's
+verdict and rationale for the administrator to confirm or override.
+
+\begin{figure}[H]
+  \centering
+  \shotStack[0.95\linewidth]{img/shot-ai-approved.png}{img/shot-ai-flagged.png}
+  \caption{AI verification verdicts on a product, approved (top) and flagged (bottom).}
+  \label{fig:real-aiverify}
+\end{figure}
 
 Figure~\ref{fig:real-aichat} shows the AI database-chat assistant, where
 an administrator asks a question in plain language and receives a
