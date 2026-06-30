@@ -47,8 +47,8 @@ trail and the featured-content entities.
 
 The release backlog draws the remaining user stories from the product
 backlog of Section~\ref{chap:requirements}, including the payment
-story US36, the account-management stories US38, US45 and US39 and the
-theming story US40, and allocates them to the two sprints, as summarised
+story US24, the account-management stories US44, US46 and US45 and the
+theming story US47, and allocates them to the two sprints, as summarised
 per sprint in Tables~\ref{tab:backlog-r2-s3} and~\ref{tab:backlog-r2-s4}.
 As in Release~1, each story carries an estimated duration in working days
 that adds up to its sprint envelope.
@@ -65,18 +65,20 @@ that adds up to its sprint envelope.
     \textcolor{white}{\textbf{Feature}} & \textcolor{white}{\textbf{User story}} &
     \textcolor{white}{\textbf{Est. (days)}} \\
     \hline
-    \multirow{5}{*}{\makecell[l]{Order System\\\& Payment}} & US14 shopping cart & 3 \\ \cline{2-3}
-      & US15 multi-store checkout & 5 \\ \cline{2-3}
-      & US16 order-confirmation email & 1 \\ \cline{2-3}
-      & US17 seller order view & 3 \\ \cline{2-3}
-      & US36 secure card payment & 6 \\ \hline
-    \multirow{3}{*}{\makecell[l]{Account\\Management}} & US38 profile & 2 \\ \cline{2-3}
-      & US45 change password & 2 \\ \cline{2-3}
-      & US39 purchase history & 2 \\ \hline
-    \multirow{3}{*}{Administration} & US19 store suspension/deletion & 2 \\ \cline{2-3}
-      & US20 featured-content curation & 2 \\ \cline{2-3}
-      & US21 category management & 2 \\ \hline
-    \multicolumn{2}{|r|}{\textit{Sprint~3 subtotal}} & \textit{30 (\textasciitilde1.5 mo.)} \\ \hline
+    \multirow{5}{*}{\makecell[l]{Order System\\\& Payment}} & US20 shopping cart & 3 \\ \cline{2-3}
+      & US21 multi-store checkout & 5 \\ \cline{2-3}
+      & US22 order-confirmation email & 1 \\ \cline{2-3}
+      & US23 seller order view & 3 \\ \cline{2-3}
+      & US24 secure card payment & 6 \\ \hline
+    \multirow{3}{*}{\makecell[l]{Account\\Management}} & US44 profile & 2 \\ \cline{2-3}
+      & US46 change password & 2 \\ \cline{2-3}
+      & US45 purchase history & 2 \\ \hline
+    \multirow{5}{*}{Administration} & US26 store suspension/deletion & 2 \\ \cline{2-3}
+      & US27 featured-content curation & 2 \\ \cline{2-3}
+      & US28 create category & 1 \\ \cline{2-3}
+      & US29 update category & 1 \\ \cline{2-3}
+      & US30 delete category & 1 \\ \hline
+    \multicolumn{2}{|r|}{\textit{Sprint~3 subtotal}} & \textit{31 (\textasciitilde1.5 mo.)} \\ \hline
   \end{tabularx}
 \end{table}
 
@@ -92,21 +94,21 @@ that adds up to its sprint envelope.
     \textcolor{white}{\textbf{Feature}} & \textcolor{white}{\textbf{User story}} &
     \textcolor{white}{\textbf{Est. (days)}} \\
     \hline
-    \multirow{4}{*}{AI Verification} & US22 AI store/product verification & 3 \\ \cline{2-3}
-      & US23 AI verdict override & 1 \\ \cline{2-3}
-      & US24 verified badge & 1 \\ \cline{2-3}
-      & US35 AI storefront redesign & 3 \\ \hline
-    Product Suggestions & US41 cross-store product suggestions & 3 \\ \hline
-    \multirow{3}{*}{Premium Tier} & US25 premium subscription & 3 \\ \cline{2-3}
-      & US26 premium customisation controls & 2 \\ \cline{2-3}
-      & US27 premium preservation on expiry & 2 \\ \hline
-    Appearance \& Theming & US40 light/dark theming & 2 \\ \hline
-    \multirow{6}{*}{\makecell[l]{CI/CD \&\\Deployment}} & US28 service containerisation & 2 \\ \cline{2-3}
-      & US29 CI image builds & 2 \\ \cline{2-3}
-      & US30 Terraform provisioning & 2 \\ \cline{2-3}
-      & US31 SSH deployment & 2 \\ \cline{2-3}
-      & US32 CI-managed secrets & 1 \\ \cline{2-3}
-      & US33 DNS automation & 1 \\ \hline
+    \multirow{4}{*}{AI Verification} & US31 AI store/product verification & 3 \\ \cline{2-3}
+      & US32 AI verdict override & 1 \\ \cline{2-3}
+      & US33 verified badge & 1 \\ \cline{2-3}
+      & US34 AI storefront redesign & 3 \\ \hline
+    Product Suggestions & US16 cross-store product suggestions & 3 \\ \hline
+    \multirow{3}{*}{Premium Tier} & US35 premium subscription & 3 \\ \cline{2-3}
+      & US36 premium customisation controls & 2 \\ \cline{2-3}
+      & US37 premium preservation on expiry & 2 \\ \hline
+    Appearance \& Theming & US47 light/dark theming & 2 \\ \hline
+    \multirow{6}{*}{\makecell[l]{CI/CD \&\\Deployment}} & US38 service containerisation & 2 \\ \cline{2-3}
+      & US39 CI image builds & 2 \\ \cline{2-3}
+      & US40 Terraform provisioning & 2 \\ \cline{2-3}
+      & US41 SSH deployment & 2 \\ \cline{2-3}
+      & US42 CI-managed secrets & 1 \\ \cline{2-3}
+      & US43 DNS automation & 1 \\ \hline
     \multicolumn{2}{|r|}{\textit{Sprint~4 subtotal}} & \textit{30 (\textasciitilde1.5 mo.)} \\ \hline
     \multicolumn{2}{|r|}{\textbf{Release~2 total}} & \textbf{\textasciitilde3 months} \\ \hline
   \end{tabularx}
@@ -511,15 +513,19 @@ product-name tokens most, then shared tags, then the same sub-category,
 with popularity breaking ties. The fallback guarantees the section is
 never empty on a transient failure, while the live workflow, when
 available, adds semantic reasoning over the product name and
-description that a rigid query cannot. Figure~\ref{fig:seq-suggestions}
-traces the request from the product page through the workflow call,
-serve-time validation, and the fallback.
+description that a rigid query cannot.
+
+Figure~\ref{fig:act-suggestions} models this control flow as an activity
+diagram: the product page requests suggestions, the backend calls the n8n
+workflow within a timeout, the returned ids are validated and hydrated, and
+either the assembled offer and alternatives or, on any failure or empty
+result, the deterministic catalogue query is returned to the page.
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=\linewidth,keepaspectratio]{img/seq-suggestions.png}
-  \caption{Sequence diagram, product-suggestions request, serve-time validation and fallback.}
-  \label{fig:seq-suggestions}
+  \includegraphics[height=0.82\textheight,keepaspectratio]{img/act-suggestions.png}
+  \caption{Activity diagram, product-suggestions request, serve-time validation and fallback.}
+  \label{fig:act-suggestions}
 \end{figure}
 
 \subsection{Premium Tier}
@@ -565,7 +571,7 @@ ability to operate several stores. As before, the design deliberately
 \emph{preserves} a seller's premium customisation values after expiry: the
 stored design remains visible to buyers and only the editing of premium
 fields is locked, so a lapsed subscription never degrades a storefront
-that is already live (US27).
+that is already live (US37).
 
 \subsection{Realisation}
 
